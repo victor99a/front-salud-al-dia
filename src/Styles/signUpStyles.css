@@ -1,0 +1,100 @@
+/* src/Styles/signUpStyles.css */
+.signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  background-color: #f0f4f8;
+}
+
+.signup-box {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 500px;
+  border-top: 6px solid #1e40af;
+  text-align: center;
+}
+
+/* Estilo para el logo en el registro */
+.signup-logo {
+  width: 200px; /* Un poco más pequeño que en login para dar espacio a los campos */
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  text-align: left;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  color: #1e40af;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input {
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+
+.btn-signup {
+  grid-column: span 2; 
+  margin-top: 20px;
+  padding: 14px;
+  background-color: #1e40af;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-signup:hover {
+  background-color: #1d4ed8;
+}
+
+.signup-footer {
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.signup-footer a {
+  color: #1e40af;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+@media (max-width: 480px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .btn-signup {
+    grid-column: span 1;
+  }
+  .signup-box {
+    padding: 1.5rem;
+    box-shadow: none;
+  }
+  .signup-logo {
+    width: 160px;
+  }
+}

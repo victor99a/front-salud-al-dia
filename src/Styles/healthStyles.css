@@ -1,0 +1,78 @@
+.health-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  background-color: #f0f4f8;
+}
+
+.health-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  width: 100%;
+  max-width: 450px;
+  border-top: 6px solid #1e40af; /* Azul médico */
+}
+
+.health-card h3 {
+  color: #1e3a8a;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.input-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: #1e40af;
+  font-weight: bold;
+}
+
+.dual-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.health-card input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.btn-save {
+  width: 100%;
+  padding: 14px;
+  background-color: #1e40af;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-save:hover {
+  background-color: #1d4ed8;
+}
+
+/* Responsive para celulares pequeños */
+@media (max-width: 480px) {
+  .health-card {
+    padding: 1.5rem;
+  }
+  .dual-input {
+    flex-direction: column;
+  }
+}

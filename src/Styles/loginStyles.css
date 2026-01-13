@@ -1,0 +1,93 @@
+/* Contenedor principal centrado */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  background-color: #f0f4f8;
+}
+
+/* Tarjeta blanca del login */
+.login-box {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 400px;
+  border-top: 6px solid #1e40af; 
+  text-align: center;
+}
+
+/* Logo con tamaño ajustado */
+.login-logo {
+  width: 220px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+/* Grupos de inputs */
+.input-group-login {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.input-group-login label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+  color: #1e3a8a;
+  font-weight: bold;
+}
+
+.input-group-login input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  box-sizing: border-box; /* Evita que el input se salga en mobile */
+}
+
+/* Botón principal */
+.btn-login {
+  width: 100%;
+  padding: 14px;
+  background-color: #1e40af; 
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-top: 10px;
+}
+
+.btn-login:hover {
+  background-color: #1d4ed8;
+}
+
+.auth-footer {
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.auth-footer a {
+  color: #2563eb;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+/* Responsivo para celulares */
+@media (max-width: 480px) {
+  .login-box {
+    padding: 1.5rem;
+    box-shadow: none;
+    border-radius: 8px;
+  }
+  .login-logo {
+    width: 180px;
+  }
+}
