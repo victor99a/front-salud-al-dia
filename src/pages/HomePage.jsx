@@ -1,4 +1,4 @@
-import "../styles/homeStyles.css";
+import "../Styles/homeStyles.css";
 import logo from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import imagen2 from "../assets/imagen2.png";
