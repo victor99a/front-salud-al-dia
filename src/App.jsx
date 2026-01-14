@@ -6,28 +6,38 @@ import ProtectedRoute from './components/Admin/ProtectedRoute';
 import AdminPage from './pages/AdminPage';
 import Dashboard from './pages/Dashboard';
 import HistoryPage from './pages/HistoryPage';
-
-
+import MedicalRecords from './pages/MedicalRecords'; 
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* HOME - TU PANTALLA */}
+        {/* --- Rutas Públicas  --- */}
         <Route path="/" element={<HomePage />} />
-
-        {/* PANTALLAS DE TU COMPAÑERO */}
+        <Route path="/home" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<RegisterPage />} />
+
+        {/* --- Ruta de Onboarding --- */}
+        <Route path="/ficha-medica" element={<MedicalRecords />} />
+
+        {/* --- Rutas Privadas --- */}
         <Route path="/Dashboard" element={<Dashboard />} />
         <Route path="/historial" element={<HistoryPage />} />
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="/home" element={<HomePage />} />
+
+        {/* --- Rutas Administrativas --- */}
+        <Route 
+          path="/admin" 
+          element={
+            <ProtectedRoute>
+              <AdminPage />
+            </ProtectedRoute>
+          } 
+        />
 
       </Routes>
     </Router>
   );
 }
-
 
 export default App;
