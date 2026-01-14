@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import '../../Styles/loginStyles.css';
-import logo from '../../assets/logo.png'; 
+import '../Styles/loginStyles.css';
+import logo from '../assets/logo.png'; 
 
 const Login = () => {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
