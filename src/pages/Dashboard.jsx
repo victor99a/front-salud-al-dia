@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import GlucoseCard from "../components/GlucoseCard";
-import PressureCard from "../components/PressureCard";
+import GlucoseCard from "../components/Dashboard/GlucoseCard";
+import PressureCard from "../components/Dashboard/PressureCard";
 import "../Styles/DashboardStyles.css";
 
 export default function Dashboard() {

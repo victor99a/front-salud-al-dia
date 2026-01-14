@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom'; // Importamos Link para navegación interna
 import axios from 'axios';
-import '../../Styles/signUpStyles.css';
-import logo from '../../assets/logo.png'; // Importamos el mismo logo de assets
+import '../Styles/signUpStyles.css';
+import logo from '../assets/logo.png'; // Importamos el mismo logo de assets
 
 const Signup = () => {
   const navigate = useNavigate();
