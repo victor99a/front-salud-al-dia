@@ -1,0 +1,127 @@
+.health-page {
+  padding: 20px;
+  max-width: 900px;
+  margin: auto;
+}
+
+.health-page h1 {
+  font-size: 2.2rem;
+  color: #1f4fd8;
+}
+
+.health-page p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.health-form {
+  display: grid;
+  gap: 20px;
+}
+
+.form-card {
+  background: white;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.form-card.blue {
+  border: 3px solid #2b63e0;
+}
+
+.form-card.red {
+  border: 3px solid #d92c2c;
+}
+
+.form-card h2 {
+  font-size: 1.6rem;
+  margin-bottom: 15px;
+}
+
+.form-card input {
+  width: 100%;
+  font-size: 1.5rem;
+  padding: 15px;
+  border-radius: 10px;
+  border: 2px solid #ccc;
+}
+
+.pressure-inputs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pressure-inputs span {
+  font-size: 2rem;
+}
+
+.save-btn {
+  margin-top: 20px;
+  background: linear-gradient(90deg, #1f4fd8, #d92c2c);
+  color: white;
+  border: none;
+  padding: 20px;
+  font-size: 1.6rem;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.save-btn:hover {
+  opacity: 0.9;
+}
+
+/* Responsive para celulares */
+@media (max-width: 600px) {
+  .health-page h1 {
+    font-size: 1.8rem;
+  }
+
+  .form-card h2 {
+    font-size: 1.4rem;
+  }
+
+  .form-card input {
+    font-size: 1.3rem;
+  }
+
+  .save-btn {
+    font-size: 1.4rem;
+  }
+}
+.bp-inputs {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.bp-inputs input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.bp-inputs input {
+  flex: 1;
+  min-width: 0;
+}
+
+/* MODO MÓVIL */
+@media (max-width: 480px) {
+  .bp-inputs {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .bp-inputs span {
+    display: none;
+  }
+
+  .bp-inputs input {
+    width: 100%;
+    font-size: 18px;
+    padding: 14px;
+  }
+}
