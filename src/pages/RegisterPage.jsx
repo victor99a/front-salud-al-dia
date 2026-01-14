@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom'; // Importamos Link para navegación interna
 import axios from 'axios';
-import '../../Styles/signUpStyles.css';
-import logo from '../../assets/logo.png'; // Importamos el mismo logo de assets
+import '../Styles/signUpStyles.css';
+import logo from '../assets/logo.png'; // Importamos el mismo logo de assets
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -14,16 +14,32 @@ const Signup = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post('http://localhost:3000/auth/signup', formData);
-      alert('Cuenta creada exitosamente. Ahora puedes iniciar sesión.');
-      navigate('/login'); // Redirigimos al login tras el éxito
-    } catch (error) {
-      alert('Error al registrar paciente');
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const response = await axios.post('http://localhost:3000/auth/signup', formData);
+    
+    // Basado en tu captura de Network:
+    // La respuesta contiene el objeto "user" y el "message"
+    console.log("Respuesta exitosa:", response.data);
+
+    // Si tu microservicio no devuelve la sesión completa, 
+    // usaremos el ID del usuario recién creado para permitir el acceso a la ficha
+    if (response.data.user || response.data.data?.user) {
+      const user = response.data.user || response.data.data.user;
+      
+      localStorage.setItem('user_id', user.id);
+      // Guardamos un flag temporal si no hay token aún, para que MedicalRecords te deje pasar
+      localStorage.setItem('temp_access', 'true'); 
+
+      alert('¡Cuenta creada con éxito! Vamos a completar tu ficha médica.');
+      navigate('/ficha-medica'); 
     }
-  };
+  } catch (error) {
+    console.error("Detalle del error:", error.response?.data || error.message);
+    alert('Error: ' + (error.response?.data?.error || 'No se pudo crear la cuenta'));
+  }
+};
 
   return (
     <div className="signup-container">
