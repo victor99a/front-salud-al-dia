@@ -8,10 +8,14 @@ const Login = () => {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const navigate = useNavigate();
 
+const handleChange = (e) => {
+    setCredentials({ ...credentials, [e.target.name]: e.target.value });
+  };  
+  
 const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      // Usamos la variable de entorno configurada en Railway
+      
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
       
       const response = await axios.post(`${API_URL}/auth/login`, credentials);
