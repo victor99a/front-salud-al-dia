@@ -1,0 +1,74 @@
+.main-container {
+  width: 100%;
+  padding: 40px 10%;
+  background: #f4f8ff;
+}
+
+.slider-container {
+  position: relative;
+  width: 100%;
+  height: 500px;
+}
+
+.container-images {
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* Esconde el scroll */
+  border-radius: 22px;
+}
+
+.container-images ul {
+  display: flex;
+  list-style: none;
+  width: 100%;
+  height: 100%;
+}
+
+.slide-item {
+  min-width: 100%; /* Cada slide ocupa todo el ancho */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.slide-item img {
+  width: 50%;
+  height: 400px;
+  object-fit: cover;
+  border-radius: 22px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+/* Flechas */
+.leftArrow, .rightArrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 50px;
+  color: #2563eb;
+  cursor: pointer;
+  z-index: 10;
+  transition: 0.3s;
+}
+
+.leftArrow { left: -60px; }
+.rightArrow { right: -60px; }
+
+/* Puntos */
+.dots-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.dot-item {
+  cursor: pointer;
+  color: #cbd5e1;
+  font-size: 20px;
+}
+
+.dot-item.active {
+  color: #2563eb;
+}
