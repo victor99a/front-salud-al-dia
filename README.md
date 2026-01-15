@@ -1,4 +1,4 @@
-# Frontend - Salud Al Día 🏥🌐
+# Frontend - Salud Al Día 
 
 Esta es la interfaz de usuario de **Salud Al Día**, una plataforma web moderna desarrollada con **React** y **Vite**. Permite a los usuarios gestionar su salud mediante un flujo de registro, autenticación y creación de fichas médicas detalladas.
 
