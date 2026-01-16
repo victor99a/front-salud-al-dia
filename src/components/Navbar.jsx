@@ -12,7 +12,7 @@ const Navbar = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user_id');
         navigate('/login');
-        setIsOpen(false); 
+        setIsOpen(false);
     };
 
     return (
@@ -31,10 +31,13 @@ const Navbar = () => {
                 <div className={`nav-collapse ${isOpen ? 'active' : ''}`}>
                     
                     <div className="nav-menu">
-                <Link to="/about" className="nav-item" onClick={() => setIsOpen(false)}>
-                    Sobre Nosotros
-                </Link>
-                        <a href="#contact" className="nav-item" onClick={() => setIsOpen(false)}>Contáctanos</a>
+                        <Link to="/about" className="nav-item" onClick={() => setIsOpen(false)}>
+                            Sobre Nosotros
+                        </Link>
+                        
+                        <Link to="/contact" className="nav-item" onClick={() => setIsOpen(false)}>
+                            Contáctanos
+                        </Link>
                         
                         {token && (
                             <>
