@@ -1,0 +1,120 @@
+.sos-button-final {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #D32F2F;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  height: 40px;
+  padding: 0 16px;
+  font-size: 14px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  animation: pulse-emergency 2s infinite;
+}
+
+.sos-button-final > svg {
+  width: 20px;
+  height: 20px;
+}
+
+.sos-button-final > span {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .sos-button-final > span {
+    display: inline;
+  }
+}
+
+@keyframes pulse-emergency {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.sos-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.sos-modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 24px;
+  text-align: center;
+  width: 90%;
+  max-width: 380px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border-top: 10px solid #D32F2F;
+}
+
+.phone-display-box {
+  background-color: #f3f4f6;
+  border: 2px dashed #9ca3af;
+  border-radius: 12px;
+  padding: 15px;
+  margin: 15px 0 25px 0;
+}
+
+.phone-number {
+  font-family: monospace;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #b91c1c;
+}
+
+.sos-modal-actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.btn-whatsapp-action {
+  background-color: #25D366;
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.btn-call-action {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.btn-cancel-action {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.btn-whatsapp-action:hover, 
+.btn-call-action:hover, 
+.btn-cancel-action:hover {
+  filter: brightness(0.9);
+}

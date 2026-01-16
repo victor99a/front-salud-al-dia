@@ -3,6 +3,7 @@ import AdminStats from '../components/Admin/AdminStats';
 import UserTable from '../components/Admin/UserTable';
 import { getUsers } from '../services/AdminService';
 import '../Styles/AdminStyles.css';
+import SosButton from '../components/SosButton';
 
 const AdminPage = () => {
   const [count, setCount] = useState(0);

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import SosButton from './SosButton'
 import '../Styles/NavbarStyles.css';
 import logo1 from '../assets/logo1.png';
 
@@ -50,7 +51,10 @@ const Navbar = () => {
 
                     <div className="nav-auth">
                         {token ? (
-                            <button onClick={handleLogout} className="btn-login">Cerrar Sesión</button>
+                            <div className="auth-logged-container">
+                                <SosButton /> 
+                                <button onClick={handleLogout} className="btn-login">Cerrar Sesión</button>
+                            </div>
                         ) : (
                             <>
                                 <Link to="/login" className="btn-login" onClick={() => setIsOpen(false)}>Iniciar Sesión</Link>
