@@ -49,17 +49,7 @@ function HomePage() {
 
   return (
     <>
-      {/* HEADER */}
-      <header className="header">
-        <div className="logo">
-          <img src={logo} alt="Salud al Día" />
-          <span>Salud al Día</span>
-        </div>
-        <div className="header-buttons">
-          <button className="btn-outline" onClick={() => navigate("/login")}>Iniciar Sesión</button>
-          <button className="btn-primary" onClick={() => navigate("/signup")}>Registrarse</button>
-        </div>
-      </header>
+
 
       {/* HERO CON CARRUSEL INTERACTIVO */}
       <section className="hero-modern-container">

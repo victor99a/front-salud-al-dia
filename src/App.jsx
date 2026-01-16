@@ -9,12 +9,13 @@ import HistoryPage from "./pages/HistoryPage";
 import HealthRegisterPage from "./pages/HealthRegisterPage";
 import MedicalRecords from "./pages/MedicalRecords";
 import AdminPage from "./pages/AdminPage";
-
+import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/Admin/ProtectedRoute";
 
 function App() {
   return (
     <Router>
+      <Navbar />
       <Routes>
 
         {/* Rutas públicas */}
