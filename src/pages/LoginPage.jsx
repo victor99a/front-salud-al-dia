@@ -13,22 +13,29 @@ const handleChange = (e) => {
   };  
 
 const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      
-      const response = await axios.post(`${API_URL}/auth/login`, credentials);
-      
-      // Guardamos el token de sesión
-      localStorage.setItem('token', response.data.session.access_token);
-      
-      alert('¡Bienvenido a Salud Al Día!');
-      navigate('/Dashboard');
-    } catch (error) {
-      console.error("Error en login:", error.response?.data || error.message);
-      alert('Error: Verifique sus credenciales');
+  e.preventDefault();
+  try {
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+    const response = await axios.post(`${API_URL}/auth/login`, credentials);
+
+    const token = response.data.session?.access_token;
+    const userId = response.data.session?.user?.id;
+
+    if (!token || !userId) {
+      throw new Error("No se recibió token o user_id");
     }
+
+    localStorage.setItem("token", token);
+    localStorage.setItem("user_id", userId);
+
+    alert("¡Bienvenido a Salud Al Día!");
+    navigate("/Dashboard");
+
+  } catch (error) {
+    console.error("Error en login:", error.message);
+    alert("Error: Verifique sus credenciales");
+  }
 };
 
   return (
