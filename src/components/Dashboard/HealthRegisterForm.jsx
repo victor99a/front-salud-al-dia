@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "axios";
 import "../../Styles/healthRegister.css";
 
 export default function HealthRegisterForm() {
@@ -6,17 +7,42 @@ export default function HealthRegisterForm() {
   const [systolic, setSystolic] = useState("");
   const [diastolic, setDiastolic] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = {
-      glucose,
-      pressure: `${systolic}/${diastolic}`,
-      date: new Date().toISOString()
-    };
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
-    console.log("Datos enviados:", data);
-    alert("Registro guardado correctamente");
+      const payload = {
+        userId: localStorage.getItem("user_id"), // 👈 clave
+        glucosa: Number(glucose),
+        sistolica: Number(systolic),
+        diastolica: Number(diastolic)
+      };
+
+      console.log("Enviando:", payload);
+
+      await axios.post(
+        `${API_URL}/api/registros`,
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      );
+
+      alert("✅ Registro guardado correctamente");
+
+      // limpiar formulario
+      setGlucose("");
+      setSystolic("");
+      setDiastolic("");
+
+    } catch (error) {
+      console.error("Error al guardar:", error.response?.data || error.message);
+      alert("❌ Error al guardar registro");
+    }
   };
 
   return (

@@ -1,4 +1,4 @@
-import { useState } from "react";
+/*import { useState } from "react";
 
 export default function RegisterReadingModal({ onClose, onSave }) {
   const [glucose, setGlucose] = useState("");
@@ -60,4 +60,4 @@ export default function RegisterReadingModal({ onClose, onSave }) {
       </div>
     </div>
   );
-}
+}*/
