@@ -31,7 +31,9 @@ const Navbar = () => {
                 <div className={`nav-collapse ${isOpen ? 'active' : ''}`}>
                     
                     <div className="nav-menu">
-                        <a href="#about" className="nav-item" onClick={() => setIsOpen(false)}>Sobre Nosotros</a>
+                <Link to="/about" className="nav-item" onClick={() => setIsOpen(false)}>
+                    Sobre Nosotros
+                </Link>
                         <a href="#contact" className="nav-item" onClick={() => setIsOpen(false)}>Contáctanos</a>
                         
                         {token && (
