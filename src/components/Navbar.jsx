@@ -31,15 +31,15 @@ const Navbar = () => {
         setIsOpen(false);
     };
 
+    const showSos = token && !isUserAdmin;
+
     return (
         <nav className="navbar">
             <div className="navbar-container">
-                {/* 1. LOGO (Izquierda) */}
                 <Link to="/" className="nav-logo" onClick={() => setIsOpen(false)}>
                     <img src={logo1} alt="Salud al Día" className="logo-img" />
                 </Link>
 
-                {/* 2. MENÚ DESPLEGABLE (Centro/Derecha en PC - Oculto en Móvil) */}
                 <div className={`nav-collapse ${isOpen ? 'active' : ''}`}>
                     <div className="nav-menu">
                         <Link to="/about" className="nav-item" onClick={() => setIsOpen(false)}>Sobre Nosotros</Link>
@@ -61,10 +61,11 @@ const Navbar = () => {
                     <div className="nav-auth">
                         {token ? (
                             <>
-                                {/* SOS DE ESCRITORIO (Se oculta en móvil vía CSS) */}
-                                <div className="sos-desktop-wrapper">
-                                    <SosButton />
-                                </div>
+                                {showSos && (
+                                    <div className="sos-desktop-wrapper">
+                                        <SosButton />
+                                    </div>
+                                )}
                                 <button onClick={handleLogout} className="btn-login">Cerrar Sesión</button>
                             </>
                         ) : (
@@ -76,23 +77,19 @@ const Navbar = () => {
                     </div>
                 </div>
 
-                {/* 3. ACCIONES MÓVILES (SOS + Hamburguesa) - Solo visible en móvil */}
                 <div className="nav-mobile-actions">
-                    {/* Botón SOS Móvil (Siempre visible en la barra) */}
-                    {token && (
+                    {showSos && (
                         <div className="sos-mobile-wrapper">
                              <SosButton />
                         </div>
                     )}
                     
-                    {/* Icono Hamburguesa */}
                     <div className={`hamburger ${isOpen ? 'active' : ''}`} onClick={() => setIsOpen(!isOpen)}>
                         <span className="bar"></span>
                         <span className="bar"></span>
                         <span className="bar"></span>
                     </div>
                 </div>
-
             </div>
         </nav>
     );
