@@ -6,36 +6,35 @@ const SosButton = () => {
   const [contactPhone, setContactPhone] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const USER_ID = localStorage.getItem('user_id'); 
+  const USER_ID = localStorage.getItem("user_id");
 
   const handleSOSClick = async () => {
     if (!USER_ID) {
-      alert("⚠️ Error: Debes iniciar sesión.");
+      alert("Error: Debe iniciar sesión para utilizar el servicio de emergencia.");
       return;
     }
 
     setLoading(true);
     try {
-      const API_SOS_URL = import.meta.env.VITE_API_SOS_URL || 'http://localhost:3000';
+      const API_SOS_URL = import.meta.env.VITE_API_SOS_URL || "http://localhost:3000";
+
+      const response = await fetch(
+        `${API_SOS_URL}/api/sos/emergency-contact/${USER_ID}`
+      );
       
-      const response = await fetch(`${API_SOS_URL}/api/sos/emergency-contact/${USER_ID}`);
-      
-      // Validación extra por si el servidor falla (500, 404, etc)
-      if (!response.ok) throw new Error("Error en la petición");
+      if (!response.ok) throw new Error("Error en la petición al servidor");
 
       const data = await response.json();
 
-      // --- CORRECCIÓN 1: Avisar si no hay contacto ---
       if (data.success && data.phone) {
         setContactPhone(data.phone);
         setShowModal(true);
       } else {
-        alert("⚠️ No tienes un contacto de emergencia configurado. Por favor ve a 'Mi Perfil' y agrégalo.");
+        alert(data.message || "No se encontró un contacto de emergencia asociado.");
       }
-
     } catch (err) {
       console.error("Error conectando al servicio SOS:", err);
-      alert("❌ Error de conexión. Llama al 131 manualmente.");
+      alert("Error de conexión: No se pudo contactar con el servicio de emergencia.");
     } finally {
       setLoading(false);
     }
@@ -47,44 +46,44 @@ const SosButton = () => {
 
   const handleWhatsApp = () => {
     if (contactPhone) {
-      // --- CORRECCIÓN 2: Limpieza profunda del número ---
-      // /\D/g significa "todo lo que NO sea dígito".
-      // Esto convierte "+56 9-1234 5678" en "56912345678" (Perfecto para la API de WA)
-      const cleanNum = contactPhone.replace(/\D/g, ''); 
+      const cleanNum = contactPhone.replace(/\D/g, '');
+      const message = encodeURIComponent("🚨 ¡EMERGENCIA! Necesito ayuda urgente.");
       
-      const message = encodeURIComponent("🚨 ¡EMERGENCIA! Necesito ayuda urgente. Alerta enviada desde Salud Al Día.");
-      window.open(`https://wa.me/${cleanNum}?text=${message}`, '_blank');
+      window.open(`https://wa.me/${cleanNum}?text=${message}`, "_blank");
     }
   };
 
   return (
     <>
-      <button 
-        className={`sos-button-final ${loading ? 'loading-pulse' : ''}`} 
-        onClick={handleSOSClick} 
+      <button
+        className={`sos-button-final ${loading ? 'loading' : ''}`}
+        onClick={handleSOSClick}
         disabled={loading}
+        aria-label="Emergencia SOS"
       >
-        <div className="icon-container">
-            {/* SVG simple de alerta */}
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-            <line x1="12" y1="9" x2="12" y2="13"></line>
-            <line x1="12" y1="17" x2="12.01" y2="17"></line>
-            </svg>
-        </div>
-        <span>{loading ? 'CONECTANDO...' : 'SOS'}</span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M18.6 2.5a2 2 0 0 1 2 2v15a2 2 0 0 1-2 2H5.4a2 2 0 0 1-2-2V4.5a2 2 0 0 1 2-2h13.2zM12 18h.01M12 21v1" /> 
+        </svg>
+        <span>{loading ? "..." : "SOS"}</span>
       </button>
 
       {showModal && (
         <div className="sos-modal-overlay">
           <div className="sos-modal-content">
-            <div className="sos-header-modal">
-                <div className="sos-modal-icon">🚨</div>
-                <h3>Emergencia</h3>
-            </div>
-            
-            <p className="sos-info-text">Contactando a tu enlace de confianza:</p>
-            
+            <div className="sos-modal-icon">🚨</div>
+            <h3>Ayuda de Emergencia</h3>
+            <p className="sos-info-text">
+              Selecciona una opción para contactar a tu enlace de confianza:
+            </p>
+
             <div className="phone-display-box">
               <span className="phone-number">{contactPhone}</span>
             </div>
@@ -95,10 +94,13 @@ const SosButton = () => {
               </button>
 
               <button className="btn-call-action" onClick={handleCall}>
-                📞 Llamar Ahora
+                📞 Llamar por Teléfono
               </button>
 
-              <button className="btn-cancel-action" onClick={() => setShowModal(false)}>
+              <button
+                className="btn-cancel-action"
+                onClick={() => setShowModal(false)}
+              >
                 Cancelar
               </button>
             </div>
