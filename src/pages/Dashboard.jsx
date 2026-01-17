@@ -26,6 +26,8 @@ export default function Dashboard() {
         
         if (!res.ok) throw new Error("Error cargando dashboard");
 
+        const data = await res.json();
+
         setReading({
           glucose: data.glucose?.value || 0,
           systolic: data.pressure?.systolic || 0,
