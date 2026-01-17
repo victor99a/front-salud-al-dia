@@ -14,7 +14,7 @@ export default function HealthRegisterForm() {
       const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
       const payload = {
-        userId: localStorage.getItem("user_id"), // 👈 clave
+        patientId: localStorage.getItem("user_id"), // ✅ CORRECTO
         glucosa: Number(glucose),
         sistolica: Number(systolic),
         diastolica: Number(diastolic)
@@ -34,7 +34,6 @@ export default function HealthRegisterForm() {
 
       alert("✅ Registro guardado correctamente");
 
-      // limpiar formulario
       setGlucose("");
       setSystolic("");
       setDiastolic("");
