@@ -47,10 +47,16 @@ const Navbar = () => {
                         
                         {token && (
                             <>
-                                <Link to="/dashboard" className="nav-item" onClick={() => setIsOpen(false)}>Mi Panel</Link>
-                                <Link to="/historial" className="nav-item" onClick={() => setIsOpen(false)}>Historial</Link>
-                                <Link to="/perfil" className="nav-item" onClick={() => setIsOpen(false)}>Mi Perfil</Link>
+                                {/* Solo visible para Pacientes */}
+                                {!isUserAdmin && (
+                                    <>
+                                        <Link to="/dashboard" className="nav-item" onClick={() => setIsOpen(false)}>Mi Panel</Link>
+                                        <Link to="/historial" className="nav-item" onClick={() => setIsOpen(false)}>Historial</Link>
+                                        <Link to="/perfil" className="nav-item" onClick={() => setIsOpen(false)}>Mi Perfil</Link>
+                                    </>
+                                )}
                                 
+                                {/* Solo visible para Administradores */}
                                 {isUserAdmin && (
                                     <Link to="/admin" className="nav-item" onClick={() => setIsOpen(false)}>Panel Admin</Link>
                                 )}
