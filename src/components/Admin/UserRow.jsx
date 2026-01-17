@@ -49,7 +49,8 @@ const UserRow = ({ user, onUpdate }) => {
       <td>{user.email}</td>
 
       <td>
-        <span className={`status-badge ${user.role === 'admin' ? 'status-admin' : 'status-user'}`}>
+        {/* Lógica corregida: convertimos a minúsculas antes de comparar el rol */}
+        <span className={`status-badge ${user.role?.toLowerCase() === 'admin' ? 'status-admin' : 'status-user'}`}>
           {user.role || 'user'}
         </span>
       </td>

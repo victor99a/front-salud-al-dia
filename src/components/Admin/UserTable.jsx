@@ -11,7 +11,7 @@ const UserTable = () => {
   const fetchUsers = async () => {
     setLoading(true);
     const data = await getUsers();
-    setUsers(data);
+    setUsers(Array.isArray(data) ? data : []); // Asegura que siempre sea un array
     setLoading(false);
   };
 
@@ -21,9 +21,18 @@ const UserTable = () => {
 
   const filteredUsers = users.filter(user => {
     const fullName = `${user.first_names || ''} ${user.last_names || ''}`.toLowerCase();
-    const rut = user.rut?.toLowerCase() || "";
+    const rut = (user.rut || "").toLowerCase();
+    const email = (user.email || "").toLowerCase();
+    const role = (user.role || "").toLowerCase();
     const term = searchTerm.toLowerCase();
-    return fullName.includes(term) || rut.includes(term);
+
+    // Ahora puedes buscar por nombre, rut, email o rol
+    return (
+      fullName.includes(term) || 
+      rut.includes(term) || 
+      email.includes(term) || 
+      role.includes(term)
+    );
   });
 
   if (loading) return <div className="loading-text">Cargando pacientes...</div>;
@@ -35,7 +44,7 @@ const UserTable = () => {
           <Search className="search-icon" size={18} />
           <input
             type="text"
-            placeholder="Buscar por RUT o nombre..."
+            placeholder="Buscar por nombre, RUT o rol..."
             className="search-input"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}

@@ -14,13 +14,21 @@ const AdminStats = () => {
     const loadStats = async () => {
       const data = await getStats();
       
-      if (data) {
-        const adminCount = data.roles.find(r => r.role === 'admin')?.count || 0;
-        const patientCount = data.roles.find(r => r.role === 'user' || r.role === 'patient')?.count || 0;
+      if (data && data.roles) {
+        // Buscamos el conteo de administradores ignorando mayúsculas/minúsculas
+        const adminCount = data.roles.find(r => 
+          r.role?.toLowerCase() === 'admin'
+        )?.count || 0;
+
+        // Buscamos pacientes o usuarios normales ignorando mayúsculas/minúsculas
+        const patientCount = data.roles.find(r => 
+          r.role?.toLowerCase() === 'user' || 
+          r.role?.toLowerCase() === 'patient'
+        )?.count || 0;
 
         setStats({
-          total: data.total,
-          active: data.active,
+          total: data.total || 0,
+          active: data.active || 0,
           admins: adminCount,
           patients: patientCount
         });
