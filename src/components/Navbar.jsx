@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import SosButton from './SosButton'
+import SosButton from './SosButton';
 import '../Styles/NavbarStyles.css';
 import logo1 from '../assets/logo1.png';
 
@@ -23,14 +23,7 @@ const Navbar = () => {
                     <img src={logo1} alt="Salud al Día" className="logo-img" />
                 </Link>
 
-                <div className={`hamburger ${isOpen ? 'active' : ''}`} onClick={() => setIsOpen(!isOpen)}>
-                    <span className="bar"></span>
-                    <span className="bar"></span>
-                    <span className="bar"></span>
-                </div>
-
                 <div className={`nav-collapse ${isOpen ? 'active' : ''}`}>
-                    
                     <div className="nav-menu">
                         <Link to="/about" className="nav-item" onClick={() => setIsOpen(false)}>
                             Sobre Nosotros
@@ -51,16 +44,32 @@ const Navbar = () => {
 
                     <div className="nav-auth">
                         {token ? (
-                            <div className="auth-logged-container">
-                                <SosButton /> 
+                            <>
+                                <div className="sos-desktop-wrapper">
+                                    <SosButton />
+                                </div>
                                 <button onClick={handleLogout} className="btn-login">Cerrar Sesión</button>
-                            </div>
+                            </>
                         ) : (
                             <>
                                 <Link to="/login" className="btn-login" onClick={() => setIsOpen(false)}>Iniciar Sesión</Link>
                                 <Link to="/signup" className="btn-register" onClick={() => setIsOpen(false)}>Registrarse</Link>
                             </>
                         )}
+                    </div>
+                </div>
+
+                <div className="nav-mobile-actions">
+                    {token && (
+                        <div className="sos-mobile-wrapper">
+                            <SosButton />
+                        </div>
+                    )}
+                    
+                    <div className={`hamburger ${isOpen ? 'active' : ''}`} onClick={() => setIsOpen(!isOpen)}>
+                        <span className="bar"></span>
+                        <span className="bar"></span>
+                        <span className="bar"></span>
                     </div>
                 </div>
 
