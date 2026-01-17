@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import SosButton from './SosButton'; // Asegúrate que la ruta sea correcta
+import SosButton from './SosButton'; 
+import { isAdmin } from '../services/AuthService'; 
 import '../Styles/NavbarStyles.css';
 import logo1 from '../assets/logo1.png';
 
@@ -8,11 +9,24 @@ const Navbar = () => {
     const navigate = useNavigate();
     const token = localStorage.getItem('token');
     const [isOpen, setIsOpen] = useState(false);
+    const [isUserAdmin, setIsUserAdmin] = useState(false);
+
+    useEffect(() => {
+        const checkAdminStatus = async () => {
+            if (token) {
+                const adminStatus = await isAdmin();
+                setIsUserAdmin(adminStatus);
+            }
+        };
+        checkAdminStatus();
+    }, [token]);
 
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user_id');
         localStorage.removeItem('user_name');
+        localStorage.removeItem('user_email');
+        setIsUserAdmin(false);
         navigate('/login');
         setIsOpen(false);
     };
@@ -36,6 +50,10 @@ const Navbar = () => {
                                 <Link to="/dashboard" className="nav-item" onClick={() => setIsOpen(false)}>Mi Panel</Link>
                                 <Link to="/historial" className="nav-item" onClick={() => setIsOpen(false)}>Historial</Link>
                                 <Link to="/perfil" className="nav-item" onClick={() => setIsOpen(false)}>Mi Perfil</Link>
+                                
+                                {isUserAdmin && (
+                                    <Link to="/admin" className="nav-item" onClick={() => setIsOpen(false)}>Panel Admin</Link>
+                                )}
                             </>
                         )}
                     </div>
