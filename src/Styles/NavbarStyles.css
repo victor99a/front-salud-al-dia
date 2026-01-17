@@ -8,6 +8,7 @@
   height: 75px;
   display: flex;
   align-items: center;
+  transition: box-shadow 0.3s ease;
 }
 
 .navbar-container {
@@ -19,6 +20,17 @@
   margin: 0 auto;
 }
 
+.nav-logo {
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  margin-right: auto;
+}
+
+.nav-logo:hover {
+  transform: scale(1.05);
+}
+
 .logo-img {
   height: 45px;
   width: auto;
@@ -28,8 +40,6 @@
   display: flex;
   align-items: center;
   gap: 30px;
-  width: 100%;
-  justify-content: flex-end;
 }
 
 .nav-menu {
@@ -42,7 +52,27 @@
   color: #4b5563;
   font-size: 0.95rem;
   font-weight: 500;
-  transition: color 0.2s;
+  position: relative; 
+  transition: color 0.3s ease;
+}
+
+.nav-item::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: #2563eb;
+  transition: width 0.3s ease-in-out;
+}
+
+.nav-item:hover {
+  color: #2563eb;
+}
+
+.nav-item:hover::after {
+  width: 100%;
 }
 
 .nav-auth {
@@ -51,7 +81,10 @@
   gap: 12px;
 }
 
-/* Botones (Manteniendo tu simetría) */
+.sos-desktop-wrapper {
+  display: block;
+}
+
 .btn-login, .btn-register {
   display: inline-flex;
   align-items: center;
@@ -65,124 +98,11 @@
   text-decoration: none;
   cursor: pointer;
   box-sizing: border-box;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-login {
   color: #2563eb;
   background: transparent;
   border: 1.5px solid #e5e7eb;
-}
-
-.btn-register {
-  color: white;
-  background: #2563eb;
-  border: 1.5px solid transparent;
-}
-
-/* Hamburger Icon (Oculto en PC) */
-.hamburger {
-  display: none;
-  cursor: pointer;
-}
-
-.bar {
-  display: block;
-  width: 25px;
-  height: 3px;
-  margin: 5px auto;
-  transition: all 0.3s ease-in-out;
-  background-color: #2563eb; 
-  border-radius: 2px;
-}
-
-/* --- ESTILOS MÓVILES (Responsivo) --- */
-@media (max-width: 768px) {
-  .hamburger {
-    display: block;
-    z-index: 1001;
-  }
-
-  .hamburger.active .bar:nth-child(2) { opacity: 0; }
-  .hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-  .hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
-
-  .nav-collapse {
-    position: fixed;
-    left: -100%; 
-    top: 75px;   
-    flex-direction: column;
-    background-color: white;
-    width: 100%;
-    height: calc(100vh - 75px); 
-    padding: 30px 0;
-    transition: 0.3s ease-in-out;
-    justify-content: flex-start;
-    box-shadow: 0 10px 10px rgba(0,0,0,0.05);
-  }
-
-  .nav-collapse.active {
-    left: 0;
-  }
-
-  .nav-menu {
-    flex-direction: column;
-    align-items: center;
-    gap: 30px;
-    margin-bottom: 30px;
-  }
-
-  .nav-item {
-    font-size: 1.2rem;
-  }
-
-  .nav-auth {
-    flex-direction: column;
-    width: 100%;
-  }
-}
-
-.nav-auth {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  height: 100%; 
-}
-
-.btn-login, .btn-register {
-  display: flex;           
-  align-items: center;
-  justify-content: center;
-  width: 150px;              
-  height: 45px;             
-  padding: 0;                
-  margin: 0;                 
-  border-radius: 8px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  box-sizing: border-box; 
-  transition: all 0.2s ease;
-}
-
-.btn-login {
-  background-color: #ffffff;
-  color: #2563eb;
-  border: 2px solid #e5e7eb;
-}
-
-.btn-login:hover {
-  background-color: #f8fafc;
-  border-color: #2563eb;
-}
-
-.btn-register {
-  background-color: #2563eb;
-  color: #ffffff;
-  border: 2px solid transparent; 
-}
-
-.btn-register:hover {
-  background-color: #1d4ed8;
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
 }
