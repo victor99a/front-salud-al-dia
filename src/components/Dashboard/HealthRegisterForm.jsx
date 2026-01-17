@@ -11,7 +11,7 @@ export default function HealthRegisterForm() {
     e.preventDefault();
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+      const API_URL = import.meta.env.VITE_API_REGISTRO_URL || "http://localhost:3001";
 
       const payload = {
         patientId: localStorage.getItem("user_id"), // ✅ CORRECTO
