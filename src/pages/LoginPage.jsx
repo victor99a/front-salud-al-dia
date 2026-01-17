@@ -23,7 +23,8 @@ const Login = () => {
       const response = await axios.post(`${API_URL}/auth/login`, credentials);
       
       localStorage.setItem('token', response.data.session.access_token);
-      
+      localStorage.setItem('user_email', credentials.email); 
+
       if (response.data.user && response.data.user.id) {
           localStorage.setItem('user_id', response.data.user.id);
           
@@ -34,10 +35,8 @@ const Login = () => {
           localStorage.setItem('user_name', `${firstName} ${lastName}`.trim());
       } 
 
-      alert('¡Bienvenido a Salud Al Día!');
       navigate('/Dashboard');
     } catch (error) {
-      console.error(error); 
       alert('Error: Credenciales incorrectas o problema de conexión');
     }
   };

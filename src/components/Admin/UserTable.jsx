@@ -43,35 +43,37 @@ const UserTable = () => {
         </div>
       </div>
 
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>RUT</th>
-            <th>Nombre Completo</th>
-            <th>Email</th>
-            <th>Rol</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredUsers.length > 0 ? (
-            filteredUsers.map((user) => (
-              <UserRow 
-                key={user.id} 
-                user={user} 
-                onUpdate={fetchUsers} 
-              />
-            ))
-          ) : (
+      <div className="table-scroll-wrapper">
+        <table className="admin-table">
+          <thead>
             <tr>
-              <td colSpan="6" className="no-data-text">
-                {searchTerm ? `No se encontraron resultados para "${searchTerm}"` : "No hay usuarios registrados."}
-              </td>
+              <th>RUT</th>
+              <th>Nombre Completo</th>
+              <th>Email</th>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th>Acciones</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredUsers.length > 0 ? (
+              filteredUsers.map((user) => (
+                <UserRow 
+                  key={user.id} 
+                  user={user} 
+                  onUpdate={fetchUsers} 
+                />
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6" className="no-data-text">
+                  {searchTerm ? `No se encontraron resultados para "${searchTerm}"` : "No hay usuarios registrados."}
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

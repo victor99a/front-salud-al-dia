@@ -40,8 +40,8 @@ const UserRow = ({ user, onUpdate }) => {
       <td className="user-name">
         {user.first_names} {user.last_names}
         {user.status === 'delete_requested' && user.delete_requested_at && (
-          <div style={{ fontSize: '0.7rem', color: '#ef4444', marginTop: '4px', fontWeight: 'normal' }}>
-            📅 Solicitó borrar: {new Date(user.delete_requested_at).toLocaleDateString()}
+          <div className="deletion-timestamp-text">
+            Solicitó borrar: {new Date(user.delete_requested_at).toLocaleDateString()}
           </div>
         )}
       </td>
@@ -56,7 +56,7 @@ const UserRow = ({ user, onUpdate }) => {
 
       <td>
         <span className={`status-badge status-${user.status || 'active'}`}>
-          {user.status === 'delete_requested' ? '⚠️ Por Borrar' : 'Activo'}
+          {user.status === 'delete_requested' ? 'Por Borrar' : 'Activo'}
         </span>
       </td>
 

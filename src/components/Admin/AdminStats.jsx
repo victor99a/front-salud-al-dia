@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Users, Activity, ShieldAlert } from 'lucide-react';
-import { supabase } from '../../supabaseClient';
+import { getStats } from '../../services/AdminService';
 
 const AdminStats = () => {
   const [stats, setStats] = useState({
@@ -11,24 +11,22 @@ const AdminStats = () => {
   });
 
   useEffect(() => {
-    const fetchStats = async () => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('role, last_seen');
+    const loadStats = async () => {
+      const data = await getStats();
       
-      if (!error && data) {
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      if (data) {
+        const adminCount = data.roles.find(r => r.role === 'admin')?.count || 0;
+        const patientCount = data.roles.find(r => r.role === 'user' || r.role === 'patient')?.count || 0;
 
         setStats({
-          total: data.length,
-          admins: data.filter(u => u.role === 'admin').length,
-          patients: data.filter(u => u.role === 'user').length,
-          active: data.filter(u => u.last_seen && new Date(u.last_seen) > thirtyDaysAgo).length
+          total: data.total,
+          active: data.active,
+          admins: adminCount,
+          patients: patientCount
         });
       }
     };
-    fetchStats();
+    loadStats();
   }, []);
 
   return (
