@@ -18,9 +18,13 @@ export default function Dashboard() {
 
   useEffect(() => {
     const loadDashboard = async () => {
+
+      const API_URL = import.meta.env.VITE_API_REGISTRO_URL || "http://localhost:3001";
+
       try {
-        const res = await fetch(`http://localhost:3001/api/registros/dashboard/${userId}`);
-        const data = await res.json();
+        const res = await fetch(`${API_URL}/api/registros/dashboard/${userId}`);
+        
+        if (!res.ok) throw new Error("Error cargando dashboard");
 
         setReading({
           glucose: data.glucose?.value || 0,
@@ -35,7 +39,7 @@ export default function Dashboard() {
     };
 
     if (userId) loadDashboard();
-  }, []);
+  }, [userId]);
 
   return (
     <main className="dashboard-bg">

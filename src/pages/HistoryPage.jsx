@@ -9,9 +9,12 @@ export default function HistoryPage() {
     if (!userId) return;
 
     const fetchHistory = async () => {
+
+      const API_URL = import.meta.env.VITE_API_REGISTRO_URL || "http://localhost:3001";
+
       try {
         const response = await fetch(
-          `http://localhost:3001/api/registros/historial/${userId}`
+          `${API_URL}/api/registros/historial/${userId}`
         );
 
         const data = await response.json();
