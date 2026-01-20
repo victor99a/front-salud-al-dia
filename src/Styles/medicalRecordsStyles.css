@@ -64,3 +64,41 @@
 .btn-medical:hover {
   background-color: #1e3a8a;
 }
+
+/* --- ARREGLO DEL TELÉFONO --- */
+
+/* 1. El contenedor: Flexbox para ponerlos lado a lado */
+.phone-input-group {
+  display: flex;
+  flex-direction: row; /* Asegura dirección horizontal */
+  gap: 10px;
+  width: 100%;
+}
+
+/* 2. El selector de país: PEQUEÑO y FIJO */
+/* Usamos !important por si tienes estilos globales peleando */
+.country-select {
+  width: 110px !important;  
+  min-width: 110px !important;
+  max-width: 110px !important;
+  flex: 0 0 110px; /* No crecer, no encoger, base 110px */
+  padding: 10px 5px !important; /* Padding lateral pequeño */
+  text-overflow: ellipsis; /* Si el texto es muy largo, pone ... */
+}
+
+/* 3. El input del número: EL RESTO DEL ESPACIO */
+.phone-input-group input {
+  flex-grow: 1 !important; /* Crece para ocupar el espacio vacío */
+  width: auto !important;  /* Quita el 100% forzado */
+  min-width: 0; /* Truco de CSS para evitar desbordes en flex */
+}
+
+@media (max-width: 400px) {
+  .phone-input-group {
+    flex-direction: column;
+  }
+  .country-select {
+    width: 100% !important;
+    max-width: none !important;
+  }
+}
