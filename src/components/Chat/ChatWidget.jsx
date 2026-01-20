@@ -15,7 +15,7 @@ const ChatWidget = ({ userId }) => {
   useEffect(() => {
     setMessages([{ 
       role: 'assistant', 
-      content: 'Hola. Soy su asistente de salud. ¿En qué puedo ayudarle hoy?' 
+      content: 'Hola. Soy Alerta-Me, tu asistente de salud. ¿En qué puedo ayudarte hoy?' 
     }]);
     setIsOpen(false);
   }, [userId]);
@@ -54,17 +54,18 @@ const ChatWidget = ({ userId }) => {
       <button 
         className={`chat-button ${isOpen ? 'open' : ''}`} 
         onClick={() => setIsOpen(!isOpen)}
-        aria-label="Alternar asistente"
+        aria-label="Abrir asistente"
       >
-        {isOpen ? '✕' : 'A'}
+        {isOpen ? '✕' : '🩺'}
       </button>
 
       {isOpen && (
         <div className="chat-window">
           <div className="chat-header">
             <div className="header-info">
+              <span className="bot-avatar">👨‍⚕️</span>
               <div>
-                <p className="bot-name">Asistente AI</p>
+                <p className="bot-name">Alerta-Me AI</p>
                 <span className="online-indicator">En línea</span>
               </div>
             </div>
@@ -92,7 +93,7 @@ const ChatWidget = ({ userId }) => {
               className="chat-input"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={loading ? "Procesando..." : "Escriba su consulta..."}
+              placeholder={loading ? "Procesando..." : "Escribe tu consulta aquí..."}
               disabled={loading}
               autoFocus
             />
@@ -101,7 +102,7 @@ const ChatWidget = ({ userId }) => {
               type="submit" 
               disabled={loading || !input.trim()}
             >
-              Enviar
+              ➤
             </button>
           </form>
         </div>
