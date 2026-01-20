@@ -11,15 +11,16 @@ const Navbar = () => {
     const [isUserAdmin, setIsUserAdmin] = useState(false);
     const [token, setToken] = useState(localStorage.getItem('token'));
 
-    const checkStatus = async () => {
-        const currentToken = localStorage.getItem('token');
-        setToken(currentToken);
-
-        if (currentToken) {
-            try {
-                const adminStatus = await isAdmin();
-                setIsUserAdmin(adminStatus);
-            } catch (error) {
+    useEffect(() => {
+        const verifyAdmin = async () => {
+            if (token) {
+                try {
+                    const adminStatus = await isAdmin();
+                    setIsUserAdmin(adminStatus);
+                } catch (error) {
+                    setIsUserAdmin(false);
+                }
+            } else {
                 setIsUserAdmin(false);
             }
         } else {
@@ -37,7 +38,25 @@ const Navbar = () => {
             window.removeEventListener('storage', checkStatus);
             clearInterval(interval);
         };
-    }, []);
+        verifyAdmin();
+    }, [token]);
+
+    useEffect(() => {
+        const checkTokenChange = () => {
+            const currentToken = localStorage.getItem('token');
+            if (currentToken !== token) {
+                setToken(currentToken);
+            }
+        };
+
+        window.addEventListener('storage', checkTokenChange);
+        const interval = setInterval(checkTokenChange, 1000);
+
+        return () => {
+            window.removeEventListener('storage', checkTokenChange);
+            clearInterval(interval);
+        };
+    }, [token]);
 
     const handleLogout = () => {
         localStorage.clear();
