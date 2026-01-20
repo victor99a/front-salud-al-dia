@@ -14,7 +14,7 @@ const ProtectedRoute = ({ children }) => {
   }, []);
 
   if (authorized === null) {
-    return <div className="loading-screen">Verificando permisos de administrador...</div>;
+    return <div className="loading-screen">Verificando permisos...</div>;
   }
 
   return authorized ? children : <Navigate to="/" replace />;

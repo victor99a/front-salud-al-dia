@@ -2,6 +2,7 @@
   padding: 40px;
   max-width: 1200px;
   margin: 0 auto;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 .admin-header {
@@ -55,11 +56,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.3s ease;
-}
-
-.health-card-admin:hover .stat-icon {
-  transform: scale(1.1);
+  min-width: 50px;
 }
 
 .icon-blue { background: #eef2ff; color: #1e40af; }
@@ -67,11 +64,14 @@
 .icon-orange { background: #fff7ed; color: #f97316; }
 .icon-purple { background: #f5f3ff; color: #7c3aed; }
 
+.stat-info, .stat-info-mixed {
+  flex: 1;
+}
+
 .stat-info-mixed {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  flex: 1;
 }
 
 .role-item {
@@ -79,6 +79,7 @@
   justify-content: space-between;
   align-items: center;
 }
+
 
 .role-label-group {
   display: flex;
@@ -118,6 +119,16 @@
   font-size: 1.1rem;
 }
 
+.admin-table-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  border-top: 6px solid #1e40af;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
 .table-controls {
   padding: 20px;
   background-color: #ffffff;
@@ -129,6 +140,7 @@
   display: flex;
   align-items: center;
   max-width: 400px;
+  width: 100%;
 }
 
 .search-icon {
@@ -155,17 +167,17 @@
   box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.1);
 }
 
-.admin-table-container {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-  border-top: 6px solid #1e40af;
-  overflow: hidden;
+.table-scroll-wrapper {
+  max-height: 500px; 
+  overflow-y: auto;
+  overflow-x: auto; 
+  -webkit-overflow-scrolling: touch; 
 }
 
 .admin-table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 800px;
 }
 
 .admin-table th {
@@ -176,6 +188,10 @@
   border-bottom: 3px solid #cbd5e1;
   text-transform: uppercase;
   font-size: 0.8rem;
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .admin-table td {
@@ -183,6 +199,7 @@
   border-bottom: 1px solid #cbd5e1;
   color: #334155;
   font-size: 0.95rem;
+  vertical-align: middle;
 }
 
 .admin-row:nth-child(even) {
@@ -204,6 +221,8 @@
   font-size: 0.75rem;
   font-weight: 800;
   text-transform: uppercase;
+  display: inline-block;
+  white-space: nowrap;
 }
 
 .status-active { background: #dcfce7; color: #166534; }
@@ -224,7 +243,7 @@
 
 .actions-container {
   display: flex;
-  gap: 12px;
+  gap: 8px;
 }
 
 .btn-icon {
@@ -235,8 +254,11 @@
   border-radius: 6px;
   display: flex;
   align-items: center;
+  justify-content: center;
   transition: all 0.2s;
   color: #64748b;
+  min-width: 36px;
+  min-height: 36px;
 }
 
 .btn-icon:hover {
@@ -252,4 +274,79 @@
   padding: 60px;
   color: #94a3b8;
   font-style: italic;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+@media (max-width: 768px) {
+  .admin-page-wrapper {
+    padding: 15px;
+  }
+  
+  .admin-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .admin-table-container {
+    max-width: 100%; 
+  }
+  
+  .search-input {
+    font-size: 1rem;
+    padding: 14px 16px 14px 45px;
+  }
+
+  .admin-table th {
+    font-size: 0.9rem;
+    padding: 14px;
+    white-space: nowrap;
+  }
+
+  .admin-table td {
+    font-size: 1rem;
+    padding: 14px;
+  }
+
+  .status-badge {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+
+  .btn-icon {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  
+  .actions-container {
+    gap: 12px;
+  }
+
+  .table-scroll-wrapper {
+    max-height: 60vh;
+  }
+}
+
+.deletion-timestamp-text {
+  font-size: 0.75rem;
+  color: #ef4444;
+  margin-top: 4px;
+  font-weight: 500;
+  display: block;
 }

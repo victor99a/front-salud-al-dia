@@ -1,0 +1,305 @@
+/* =========================================
+   ARCHIVO: src/Styles/DrChapatinSection.css
+   ========================================= */
+
+/* CONTENEDOR PRINCIPAL */
+.chapatin-section {
+  padding: 80px 10%; /* Alineado con tu clase .features */
+  background-color: #f8fafc; /* Un gris muy suave para diferenciarlo del blanco */
+  overflow: hidden;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.chapatin-container {
+  max-width: 1400px; /* Tope máximo para pantallas muy anchas */
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 60px;
+  position: relative;
+}
+
+/* =========================================
+   LADO IZQUIERDO: TEXTO
+   ========================================= */
+.chapatin-content {
+  flex: 1;
+  z-index: 2;
+}
+
+/* Badges Nuevas (No chocan con tu .badge anterior) */
+.badge-wrapper {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.badge-ia {
+  background-color: #1e293b; /* Tu color oscuro de texto */
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.badge-humor {
+  background-color: #fee2e2;
+  color: #dc2626; /* Tu color rojo del icono */
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  border: 1px solid #fecaca;
+}
+
+/* Tipografía */
+.chapatin-content h2 {
+  font-size: 2.8rem;
+  color: #1e293b;
+  margin-bottom: 20px;
+  line-height: 1.1;
+  font-weight: 800;
+}
+
+.main-description {
+  font-size: 1.1rem;
+  color: #334155;
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.main-description strong {
+  color: #2563eb; /* Tu color primario azul */
+  font-weight: 700;
+}
+
+.sub-description {
+  font-size: 1rem;
+  color: #64748b;
+  font-style: italic;
+  margin-bottom: 35px;
+  border-left: 4px solid #ef4444; /* Borde rojo decorativo */
+  padding-left: 15px;
+}
+
+/* =========================================
+   GRID DE CONFIANZA (CUADRÍCULA BLANCA)
+   ========================================= */
+.trust-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.1); /* Sombra azulada sutil */
+  border: 1px solid #e0ecff;
+}
+
+.trust-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.trust-icon {
+  font-size: 1.5rem;
+  background-color: #f0f9ff;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.trust-item div {
+  display: flex;
+  flex-direction: column;
+}
+
+.trust-item h4 {
+  margin: 0 0 4px 0;
+  font-size: 0.95rem;
+  color: #1e293b;
+  font-weight: 700;
+}
+
+.trust-item p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #64748b;
+  line-height: 1.3;
+}
+
+/* =========================================
+   BOTÓN NUEVO
+   ========================================= */
+.cta-button-chapatin {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); /* Rojo degradado */
+  color: white;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 8px; /* Coincide con tus otros botones */
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cta-button-chapatin:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 15px -3px rgba(220, 38, 38, 0.4);
+}
+
+.disclaimer-text {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-top: 15px;
+  max-width: 90%;
+}
+
+/* =========================================
+   LADO DERECHO: IMAGEN
+   ========================================= */
+.chapatin-image-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+/* Fondo orgánico animado */
+.blob-bg {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background-color: #dbeafe; /* Azul muy claro */
+  border-radius: 46% 54% 50% 50% / 35% 44% 56% 65%;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: blob-pulse 8s infinite alternate;
+}
+
+@keyframes blob-pulse {
+  0% { border-radius: 46% 54% 50% 50% / 35% 44% 56% 65%; transform: translate(-50%, -50%) scale(1); }
+  100% { border-radius: 54% 46% 38% 62% / 63% 58% 42% 37%; transform: translate(-50%, -50%) scale(1.05); }
+}
+
+.chapatin-img {
+  width: 100%;
+  max-width: 450px;
+  height: auto;
+  z-index: 2;
+  filter: drop-shadow(0 20px 25px rgba(37, 99, 235, 0.15));
+  transition: transform 0.3s ease;
+}
+
+.chapatin-img:hover {
+  transform: scale(1.02) rotate(1deg);
+}
+
+/* Tarjeta Flotante (98% Precisión) */
+.floating-card {
+  position: absolute;
+  bottom: 30px;
+  left: -20px;
+  background: white;
+  padding: 12px 20px;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  z-index: 3;
+  border-left: 4px solid #10b981; /* Verde éxito */
+  animation: float 4s ease-in-out infinite;
+}
+
+.check-icon {
+  background-color: #d1fae5;
+  color: #059669;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 0.9rem;
+}
+
+.floating-text strong {
+  display: block;
+  font-size: 0.9rem;
+  color: #1e293b;
+}
+
+.floating-text span {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+/* =========================================
+   RESPONSIVE (COINCIDE CON TUS PUNTOS DE QUIEBRE)
+   ========================================= */
+@media (max-width: 1024px) {
+  .chapatin-section {
+    padding: 60px 5%; /* Ajuste igual que tu hero */
+  }
+}
+
+@media (max-width: 768px) {
+  .chapatin-container {
+    flex-direction: column-reverse; /* Imagen arriba en móvil */
+    gap: 40px;
+    text-align: center;
+  }
+
+  .badge-wrapper {
+    justify-content: center;
+  }
+
+  .sub-description {
+    border-left: none; /* Quitamos borde lateral en móvil */
+    border-top: 3px solid #ef4444; /* Ponemos borde superior */
+    padding-left: 0;
+    padding-top: 15px;
+  }
+
+  .trust-grid {
+    grid-template-columns: 1fr; /* Una columna */
+    text-align: left;
+  }
+
+  .blob-bg {
+    width: 280px;
+    height: 280px;
+  }
+
+  .floating-card {
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -20px;
+    width: max-content;
+    animation: none; /* Mejor rendimiento */
+  }
+}

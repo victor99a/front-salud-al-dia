@@ -1,268 +1,189 @@
-/* ===== CONTENEDOR GENERAL ===== */
-.dashboard {
-  padding: 1.5rem;
-  max-width: 1100px;
-  margin: auto;
+/* FONDO GENERAL */
+.dashboard-bg {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #eef2ff, #e0e7ff);
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem;
 }
 
-/* ===== TÍTULOS ===== */
-.dashboard-title {
-  font-size: 2.4rem;
-  margin-bottom: 0.3rem;
-  font-weight: 700;
-}
-
-.dashboard-subtitle {
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
-  color: #4b5563;
-}
-
-/* ===== GRID DE TARJETAS ===== */
-.cards-container {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.6rem;
-}
-
-/* ===== TARJETAS BASE ===== */
-.card {
-  background: #ffffff;
-  border-radius: 22px;
-  padding: 2rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-/* Hover elegante */
-.card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.15);
-}
-
-/* ===== TARJETAS DE ACCIÓN ===== */
-.action-card {
-  cursor: pointer;
-  color: white;
-  text-align: center;
-  padding: 2.3rem;
-  border-radius: 24px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* Hover animado */
-.action-card:hover {
-  transform: scale(1.03);
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
-}
-
-.action-card h2 {
-  font-size: 1.9rem;
-  margin-bottom: 0.6rem;
-}
-
-.action-card p {
-  font-size: 1.2rem;
-  opacity: 0.95;
-}
-
-/* ===== COLORES DE ACCIÓN ===== */
-.register-card {
-  background: linear-gradient(135deg, #22c55e, #16a34a);
-}
-
-.history-card {
-  background: linear-gradient(135deg, #2563eb, #1e40af);
-}
-
-/* ===== BOTÓN PRINCIPAL (si lo usas) ===== */
-.primary-button {
+/* CONTENEDOR PRINCIPAL */
+.dashboard-container {
   width: 100%;
-  font-size: 1.3rem;
-  padding: 1rem;
-  background: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 18px;
-  margin-bottom: 2rem;
-  transition: background 0.2s ease, transform 0.2s ease;
+  max-width: 1100px;
+  background: white;
+  border-radius: 28px;
+  padding: 2.5rem;
+  box-shadow: 0 30px 70px rgba(0,0,0,0.08);
 }
 
-.primary-button:hover {
-  background: #1e40af;
-  transform: scale(1.02);
-}
-
-/* ===== ACCESO A HISTORIAL (si aún lo usas) ===== */
-.history-access {
-  margin-top: 3rem;
-  padding: 2.2rem;
-  background: #eef2ff;
-  border-radius: 24px;
-  text-align: center;
-  border: 3px solid #2563eb;
-  transition: transform 0.25s ease;
-}
-
-.history-access:hover {
-  transform: translateY(-4px);
-}
-
-.history-access h2 {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-}
-
-.history-access p {
-  font-size: 1.2rem;
-  margin-bottom: 1.5rem;
-}
-
-.history-button {
-  font-size: 1.4rem;
-  padding: 1rem 2.5rem;
-  background: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  transition: transform 0.2s ease;
-}
-
-.history-button:hover {
-  transform: scale(1.05);
-}
-
-/* ===== RESPONSIVE ===== */
-@media (min-width: 768px) {
-  .cards-container {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .history-access {
-    max-width: 650px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-
-@media (min-width: 1024px) {
-  .dashboard {
-    padding: 2.5rem;
-  }
-}
-/* ===== TARJETAS DE DATOS (GLUCOSA / PRESIÓN) ===== */
-
-.glucose-card,
-.pressure-card {
-  background: linear-gradient(180deg, #f8fbff, #ffffff);
-  border-radius: 22px;
-  padding: 26px;
-  box-shadow: 0 10px 28px rgba(30, 64, 175, 0.12);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  position: relative;
-}
-
-/* ===== GLUCOSA ===== */
-.glucose-card {
-  border: 3px solid #3b82f6;
-}
-
-.glucose-card .value {
-  color: #2563eb;
-}
-
-/* ===== PRESIÓN ===== */
-.pressure-card {
-  border: 3px solid #60a5fa;
-}
-
-.pressure-card .value {
-  color: #1e40af;
-}
-
-/* ===== TITULOS ===== */
-.glucose-card h3,
-.pressure-card h3 {
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 0.4rem;
-}
-
-.glucose-card .subtitle,
-.pressure-card .subtitle {
-  font-size: 1rem;
-  color: #64748b;
-  margin-bottom: 1.5rem;
-}
-
-/* ===== VALOR PRINCIPAL ===== */
-.glucose-card .value,
-.pressure-card .value {
-  font-size: 3rem;
+/* HEADER */
+.dashboard-header h1 {
+  font-size: 2.2rem;
   font-weight: 700;
-  text-align: center;
 }
 
-.unit {
-  display: block;
-  text-align: center;
-  font-size: 1.2rem;
-  color: #475569;
+.dashboard-header p {
+  margin-top: 0.4rem;
+  color: #64748b;
 }
 
-/* ===== ALERTA (SUAVE, NO ROJA) ===== */
-.alert-badge {
-  margin: 18px auto 0;
-  width: fit-content;
-  padding: 10px 24px;
-  background: #e0ecff;
-  color: #1e40af;
-  border-radius: 999px;
-  font-size: 1rem;
-  font-weight: 600;
+/* GRID RESPONSIVE */
+.cards-container {
+  margin-top: 2.5rem;
+  padding: 2.5rem;
+
+  background: linear-gradient(180deg, #ffffff, #f4f7ff);
+  border-radius: 26px;
+
+  display: grid;
+
+  /* 👇 2 columnas fijas en desktop */
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+
+  box-shadow: inset 0 0 0 1px rgba(226, 232, 255, 0.8);
 }
 
-/* ===== FECHA ===== */
-.glucose-card .date,
-.pressure-card .date {
-  margin-top: 14px;
-  text-align: center;
+/* TARJETAS BASE */
+.card {
+  background: #fff;
+  border-radius: 22px;
+  padding: 1.8rem;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+/* HEADER TARJETA */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 1.7rem;
+}
+
+/* ICONOS */
+.glucose-icon {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.pressure-icon {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+/* VALORES */
+.value {
+  font-size: 2.4rem;
+  font-weight: 700;
+}
+
+.value span {
   font-size: 1rem;
   color: #64748b;
 }
 
-/* ===== HOVER MATERIAL ===== */
-.glucose-card:hover,
-.pressure-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 22px 45px rgba(30, 64, 175, 0.22);
+/* FECHA */
+.date {
+  font-size: 0.9rem;
+  color: #64748b;
 }
 
-/* ===== RESPONSIVE ===== */
+/* ESTADOS */
+.normal {
+  border-left: 6px solid #22c55e;
+}
+
+.warning {
+  border-left: 6px solid #f59e0b;
+}
+
+.danger {
+  border-left: 6px solid #ef4444;
+}
+
+
+
+
 @media (max-width: 768px) {
-  .glucose-card,
-  .pressure-card {
-    padding: 22px;
+  .cards-container {
+    grid-template-columns: 1fr;
+    padding: 1.5rem;
   }
 
-  .glucose-card .value,
-  .pressure-card .value {
-    font-size: 2.5rem;
+  .register-card,
+  .history-card {
+    grid-column: 1;
   }
 }
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid rgba(255,255,255,0.4);
-  border-top: 4px solid white;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: auto;
+/* ===== NIVELES ===== */
+
+.card.normal {
+  background: linear-gradient(135deg, #e0f2fe, #f0f9ff);
+  border-left: 6px solid #0284c7;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+.card.warning {
+  background: linear-gradient(135deg, #fff7ed, #ffedd5);
+  border-left: 6px solid #f97316;
+}
+
+.card.danger {
+  background: linear-gradient(135deg, #fee2e2, #fff1f2);
+  border-left: 6px solid #dc2626;
+}
+
+/* ===== TEXTO DE ESTADO ===== */
+
+.status {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.status.normal {
+  background: #0284c7;
+  color: white;
+}
+
+.status.warning {
+  background: #f97316;
+  color: white;
+}
+
+.status.danger {
+  background: #dc2626;
+  color: white;
+}
+/* TARJETAS ACCIÓN (Registrar / Historial) */
+.action-card {
+  background-color: #f5f8ff; /* azul neutro salud */
+  border-radius: 20px;
+  padding: 2rem;
+
+  border: 2px solid #c7d7fe;
+
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.05);
+
+  cursor: pointer;
+
+  /* SOLO movimiento */
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.action-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.18);
 }

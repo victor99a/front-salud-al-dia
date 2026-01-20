@@ -40,8 +40,8 @@ const UserRow = ({ user, onUpdate }) => {
       <td className="user-name">
         {user.first_names} {user.last_names}
         {user.status === 'delete_requested' && user.delete_requested_at && (
-          <div style={{ fontSize: '0.7rem', color: '#ef4444', marginTop: '4px', fontWeight: 'normal' }}>
-            📅 Solicitó borrar: {new Date(user.delete_requested_at).toLocaleDateString()}
+          <div className="deletion-timestamp-text">
+            Solicitó borrar: {new Date(user.delete_requested_at).toLocaleDateString()}
           </div>
         )}
       </td>
@@ -49,14 +49,15 @@ const UserRow = ({ user, onUpdate }) => {
       <td>{user.email}</td>
 
       <td>
-        <span className={`status-badge ${user.role === 'admin' ? 'status-admin' : 'status-user'}`}>
+        {/* Lógica corregida: convertimos a minúsculas antes de comparar el rol */}
+        <span className={`status-badge ${user.role?.toLowerCase() === 'admin' ? 'status-admin' : 'status-user'}`}>
           {user.role || 'user'}
         </span>
       </td>
 
       <td>
         <span className={`status-badge status-${user.status || 'active'}`}>
-          {user.status === 'delete_requested' ? '⚠️ Por Borrar' : 'Activo'}
+          {user.status === 'delete_requested' ? 'Por Borrar' : 'Activo'}
         </span>
       </td>
 

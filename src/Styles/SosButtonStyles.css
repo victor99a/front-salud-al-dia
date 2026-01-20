@@ -1,0 +1,174 @@
+.sos-button-final {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px; /* Misma altura que Login/Register */
+  box-sizing: border-box; /* Clave para que el padding no rompa la altura */
+  
+  /* Estilos Visuales */
+  background-color: #dc2626; /* Rojo emergencia */
+  color: white;
+  border: none;
+  border-radius: 50px; /* Redondo estilo píldora */
+  padding: 0 20px;     /* Padding lateral */
+  gap: 8px;            /* Espacio entre icono y texto */
+  
+  /* Tipografía */
+  font-weight: 800;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  
+  /* Interactividad */
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.4);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Animación opcional (si la quieres conservar) */
+  animation: pulse-emergency 2s infinite;
+}
+
+.sos-button-final:hover {
+  background-color: #b91c1c;
+  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(220, 38, 38, 0.5);
+}
+
+.sos-button-final:disabled {
+  background-color: #ef4444;
+  cursor: not-allowed;
+  animation: none;
+  opacity: 0.7;
+}
+
+/* Icono dentro del botón */
+.sos-button-final svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Texto del botón (Opcional: ocultar en pantallas muy pequeñas si prefieres) */
+.sos-button-final span {
+  display: inline; 
+}
+
+/* Animación de latido */
+@keyframes pulse-emergency {
+  0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+}
+
+
+/* =========================================
+   ESTILOS DEL MODAL DE EMERGENCIA
+   ========================================= */
+
+/* Fondo oscuro (Overlay) */
+.sos-modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.7); /* Oscuro para concentrar atención */
+  backdrop-filter: blur(5px);      /* Efecto borroso elegante */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* Contenido del Modal */
+.sos-modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border-top: 10px solid #dc2626; /* Línea roja superior */
+  animation: popIn 0.3s ease-out;
+}
+
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.sos-modal-icon {
+  font-size: 3rem;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.sos-info-text {
+  color: #4b5563;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+}
+
+/* Caja del número de teléfono */
+.phone-display-box {
+  background: #f3f4f6;
+  border: 2px dashed #9ca3af;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+}
+
+.phone-number {
+  font-family: monospace;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #b91c1c;
+  display: block;
+}
+
+/* Lista de botones del modal */
+.sos-modal-actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Botones de acción (WhatsApp, Llamar, Cancelar) */
+.btn-whatsapp-action,
+.btn-call-action,
+.btn-cancel-action {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: filter 0.2s;
+}
+
+.btn-whatsapp-action {
+  background-color: #25D366; /* Verde WhatsApp */
+  color: white;
+}
+
+.btn-call-action {
+  background-color: #2563eb; /* Azul */
+  color: white;
+}
+
+.btn-cancel-action {
+  background-color: transparent;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+}
+
+.btn-whatsapp-action:hover, 
+.btn-call-action:hover {
+  filter: brightness(0.9);
+}
+
+.btn-cancel-action:hover {
+  background-color: #f3f4f6;
+}

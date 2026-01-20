@@ -2,12 +2,13 @@
   width: 100%;
   background-color: #ffffff;
   border-bottom: 1px solid #f0f0f0;
-  position: sticky;
+  position: sticky; /* Se queda pegado arriba */
   top: 0;
   z-index: 1000;
   height: 75px;
   display: flex;
   align-items: center;
+  transition: box-shadow 0.3s ease;
 }
 
 .navbar-container {
@@ -19,17 +20,30 @@
   margin: 0 auto;
 }
 
+.nav-logo {
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s;
+  margin-right: auto;
+  z-index: 1002; /* Para que sobresalga en móvil si es necesario */
+}
+
+.nav-logo:hover {
+  transform: scale(1.05);
+}
+
 .logo-img {
   height: 45px;
   width: auto;
 }
 
+/* =========================================
+   2. MENÚ PRINCIPAL (ENLACES)
+   ========================================= */
 .nav-collapse {
   display: flex;
   align-items: center;
   gap: 30px;
-  width: 100%;
-  justify-content: flex-end;
 }
 
 .nav-menu {
@@ -42,44 +56,104 @@
   color: #4b5563;
   font-size: 0.95rem;
   font-weight: 500;
-  transition: color 0.2s;
+  position: relative; 
+  transition: color 0.3s ease;
 }
 
+.nav-item::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: #2563eb;
+  transition: width 0.3s ease-in-out;
+}
+
+.nav-item:hover { color: #2563eb; }
+.nav-item:hover::after { width: 100%; }
+
+
+/* =========================================
+   3. BOTONES DE LOGIN Y REGISTRO (CORREGIDOS)
+   ========================================= */
 .nav-auth {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 15px; /* Espacio entre botones */
 }
 
-/* Botones (Manteniendo tu simetría) */
+/* --- Estilos base compartidos (IMPORTANTE) --- */
 .btn-login, .btn-register {
-  display: inline-flex;
+  /* Dimensiones fijas para evitar desalineación */
+  height: 40px !important; 
+  width: 140px;
+  
+  /* Flexbox para centrar el texto perfectamente */
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 140px; 
-  height: 40px;
+  
+  /* Reset de estilos básicos */
+  margin: 0;
   padding: 0;
   border-radius: 8px;
   font-size: 0.9rem;
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
-  box-sizing: border-box;
+  transition: all 0.3s ease;
+  
+  /* EL SECRETO: box-sizing hace que el borde esté DENTRO de los 40px */
+  box-sizing: border-box !important; 
 }
 
+/* --- Botón Iniciar Sesión --- */
 .btn-login {
+  background-color: transparent;
   color: #2563eb;
-  background: transparent;
-  border: 1.5px solid #e5e7eb;
+  /* Borde visible de 2px */
+  border: 2px solid #e5e7eb; 
 }
 
+.btn-login:hover {
+  background-color: #f0f9ff;
+  border-color: #2563eb;
+}
+
+/* --- Botón Registrarse --- */
 .btn-register {
+  background-color: #2563eb;
   color: white;
-  background: #2563eb;
-  border: 1.5px solid transparent;
+  /* TRUCO: Le ponemos el mismo borde (2px) pero del color del fondo.
+     Así ocupa el mismo espacio físico que el botón de login. */
+  border: 2px solid #2563eb; 
 }
 
-/* Hamburger Icon (Oculto en PC) */
+.btn-register:hover {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+
+/* =========================================
+   4. LOGICA DEL BOTÓN SOS Y MÓVIL
+   ========================================= */
+
+/* SOS: En escritorio se ve el bloque normal */
+.sos-desktop-wrapper {
+  display: block; 
+}
+
+/* SOS: En escritorio ocultamos el contenedor móvil */
+.nav-mobile-actions {
+  display: none; 
+  align-items: center;
+  gap: 15px;
+}
+
+/* Hamburguesa: Oculta en escritorio */
 .hamburger {
   display: none;
   cursor: pointer;
@@ -91,98 +165,79 @@
   height: 3px;
   margin: 5px auto;
   transition: all 0.3s ease-in-out;
-  background-color: #2563eb; 
-  border-radius: 2px;
+  background-color: #333; 
 }
 
-/* --- ESTILOS MÓVILES (Responsivo) --- */
-@media (max-width: 768px) {
-  .hamburger {
-    display: block;
-    z-index: 1001;
-  }
+/* =========================================
+   5. REGLAS PARA MÓVIL (Max 768px)
+   ========================================= */
+@media screen and (max-width: 768px) {
+    
+    /* 1. Barra superior móvil: Mostramos SOS y Hamburguesa */
+    .nav-mobile-actions {
+        display: flex;
+        margin-left: auto; /* Empuja a la derecha */
+        z-index: 1002;
+    }
 
-  .hamburger.active .bar:nth-child(2) { opacity: 0; }
-  .hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-  .hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+    .hamburger {
+        display: block; 
+    }
 
-  .nav-collapse {
-    position: fixed;
-    left: -100%; 
-    top: 75px;   
-    flex-direction: column;
-    background-color: white;
-    width: 100%;
-    height: calc(100vh - 75px); 
-    padding: 30px 0;
-    transition: 0.3s ease-in-out;
-    justify-content: flex-start;
-    box-shadow: 0 10px 10px rgba(0,0,0,0.05);
-  }
+    /* 2. Ocultamos el SOS "duplicado" del menú */
+    .sos-desktop-wrapper {
+        display: none;
+    }
 
-  .nav-collapse.active {
-    left: 0;
-  }
+    /* 3. Menú Desplegable (Estilo Cajón) */
+    .nav-collapse {
+        position: fixed;
+        left: -100%; /* Oculto a la izquierda */
+        top: 75px; 
+        flex-direction: column;
+        background-color: #ffffff;
+        width: 100%;
+        height: calc(100vh - 75px); 
+        text-align: center;
+        transition: 0.3s ease-in-out;
+        box-shadow: 0 10px 10px rgba(0,0,0,0.1);
+        padding-top: 40px;
+        gap: 30px; 
+    }
 
-  .nav-menu {
-    flex-direction: column;
-    align-items: center;
-    gap: 30px;
-    margin-bottom: 30px;
-  }
+    .nav-collapse.active {
+        left: 0; /* Entra en escena */
+    }
 
-  .nav-item {
-    font-size: 1.2rem;
-  }
+    .nav-menu {
+        flex-direction: column;
+        gap: 25px;
+        width: 100%;
+    }
 
-  .nav-auth {
-    flex-direction: column;
-    width: 100%;
-  }
-}
+    .nav-auth {
+        flex-direction: column;
+        gap: 20px;
+        width: 100%;
+        margin-top: 20px;
+    }
+    
+    .nav-item {
+        font-size: 1.1rem;
+        display: block;
+        width: 100%;
+        padding: 10px 0;
+    }
 
-.nav-auth {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  height: 100%; 
-}
+    /* Animación de Hamburguesa a X */
+    .hamburger.active .bar:nth-child(2) { opacity: 0; }
+    .hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
-.btn-login, .btn-register {
-  display: flex;           
-  align-items: center;
-  justify-content: center;
-  width: 150px;              
-  height: 45px;             
-  padding: 0;                
-  margin: 0;                 
-  border-radius: 8px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  box-sizing: border-box; 
-  transition: all 0.2s ease;
-}
-
-.btn-login {
-  background-color: #ffffff;
-  color: #2563eb;
-  border: 2px solid #e5e7eb;
-}
-
-.btn-login:hover {
-  background-color: #f8fafc;
-  border-color: #2563eb;
-}
-
-.btn-register {
-  background-color: #2563eb;
-  color: #ffffff;
-  border: 2px solid transparent; 
-}
-
-.btn-register:hover {
-  background-color: #1d4ed8;
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+    /* Ajuste fino del botón SOS en la barra superior móvil */
+    .sos-mobile-wrapper .sos-button-final {
+        padding: 0 12px;
+        height: 36px;
+        font-size: 0.8rem;
+    }
 }
