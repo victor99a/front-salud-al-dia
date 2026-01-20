@@ -11,6 +11,7 @@ const Navbar = () => {
     const [isUserAdmin, setIsUserAdmin] = useState(false);
     const [token, setToken] = useState(localStorage.getItem('token'));
 
+    // 1. Verificación asíncrona: Solo ocurre si el token cambia (Evita bucle infinito al servidor)
     useEffect(() => {
         const verifyAdmin = async () => {
             if (token) {
@@ -41,6 +42,7 @@ const Navbar = () => {
         verifyAdmin();
     }, [token]);
 
+    // 2. Sincronización ligera: Solo lee localStorage (Sin costo de red)
     useEffect(() => {
         const checkTokenChange = () => {
             const currentToken = localStorage.getItem('token');
