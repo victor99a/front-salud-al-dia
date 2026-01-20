@@ -59,7 +59,7 @@
 
 .save-btn {
   margin-top: 20px;
-  background: linear-gradient(90deg, #1f4fd8, #d92c2c);
+  background: linear-gradient(135deg, #2563eb, #1e40af);
   color: white;
   border: none;
   padding: 20px;
@@ -67,6 +67,7 @@
   border-radius: 15px;
   cursor: pointer;
 }
+
 
 .save-btn:hover {
   opacity: 0.9;
