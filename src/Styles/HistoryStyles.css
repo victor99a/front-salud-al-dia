@@ -192,3 +192,29 @@
   transform: translateY(-8px);
   box-shadow: 0 22px 48px rgba(220, 38, 38, 0.35);
 }
+.download-buttons {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.download-btn {
+  padding: 14px 20px;
+  font-size: 1.1rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  color: white;
+}
+
+.download-btn.pdf {
+  background: #2563eb;
+}
+
+.download-btn.csv {
+  background: #16a34a;
+}
+
+.download-btn:hover {
+  opacity: 0.9;
+}
