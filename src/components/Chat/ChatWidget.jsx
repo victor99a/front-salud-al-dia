@@ -15,7 +15,7 @@ const ChatWidget = ({ userId }) => {
   useEffect(() => {
     setMessages([{ 
       role: 'assistant', 
-      content: 'Hola. Soy Alerta-Me, tu asistente de salud. ¿En qué puedo ayudarte hoy?' 
+      content: 'Hola. Soy el Dr. Chapatin, tu asistente de salud. ¿En qué puedo ayudarte hoy?' 
     }]);
     setIsOpen(false);
   }, [userId]);
@@ -65,7 +65,7 @@ const ChatWidget = ({ userId }) => {
             <div className="header-info">
               <span className="bot-avatar">👨‍⚕️</span>
               <div>
-                <p className="bot-name">Alerta-Me AI</p>
+                <p className="bot-name">Dr. Chapatin</p>
                 <span className="online-indicator">En línea</span>
               </div>
             </div>
