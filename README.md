@@ -41,8 +41,7 @@ VITE_API_URL=http://localhost:3000
 # Credenciales de Supabase (Si aplica)
 VITE_SUPABASE_URL=tu_supabase_url
 VITE_SUPABASE_ANON_KEY=tu_supabase_key
-
-📂 Estructura de RutasEl flujo de navegación está protegido y segmentado por roles:RutaDescripciónAcceso/Landing Page / HomePúblico/loginInicio de SesiónPúblico/signupRegistro de PacientesPúblico/ficha-medicaOnboarding clínico inicialPrivado (Nuevo Usuario)/dashboardPanel principal de controlPrivado (Paciente)/historialHistorial de medicionesPrivado (Paciente)/adminGestión de usuarios y KPIsPrivado (Admin)💻 Instalación y Uso LocalClonar el repositorio:Bashgit clone [https://github.com/victor99a/front-salud-al-dia.git](https://github.com/victor99a/front-salud-al-dia.git)
+2. Producción (Railway):Configura estas variables en el panel de "Variables" de tu servicio en Railway:VITE_API_URL: https://ms-users-service-salud-production.up.railway.app(Añade las de Supabase si tu autenticación es desde el front)📂 Estructura de RutasEl flujo de navegación está protegido y segmentado por roles:RutaDescripciónAcceso/Landing Page / HomePúblico/loginInicio de SesiónPúblico/signupRegistro de PacientesPúblico/ficha-medicaOnboarding clínico inicialPrivado (Nuevo Usuario)/dashboardPanel principal de controlPrivado (Paciente)/historialHistorial de medicionesPrivado (Paciente)/adminGestión de usuarios y KPIsPrivado (Admin)💻 Instalación y Uso LocalClonar el repositorio:Bashgit clone [https://github.com/victor99a/front-salud-al-dia.git](https://github.com/victor99a/front-salud-al-dia.git)
 cd front-salud-al-dia
 Instalar dependencias:Bashnpm install
 Ejecutar en modo desarrollo:Bashnpm run dev
