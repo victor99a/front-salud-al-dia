@@ -30,3 +30,23 @@ export const isAdmin = async () => {
     return false;
   }
 };
+
+export const requestPublicPasswordReset = async (email) => {
+  try {
+    const response = await fetch(`${API_ADMIN_URL}/send-reset-email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email })
+    });
+
+    const data = await response.json();
+    
+    if (!response.ok) throw new Error(data.error || 'Error al enviar correo');
+    
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
