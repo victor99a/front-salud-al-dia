@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { HeartPulse, X, Send, Stethoscope, Activity, Loader2 } from 'lucide-react';
 import '../../Styles/ChatWidgetStyles.css';
 
 const ChatWidget = ({ userId }) => {
@@ -15,7 +16,7 @@ const ChatWidget = ({ userId }) => {
   useEffect(() => {
     setMessages([{ 
       role: 'assistant', 
-      content: 'Hola. Soy el Dr. Chapatin, tu asistente de salud. ¿En qué puedo ayudarte hoy?' 
+      content: 'Hola. Soy el Dr. Chapatín, tu asistente médico virtual. ¿En qué puedo orientarte con tu salud hoy?' 
     }]);
     setIsOpen(false);
   }, [userId]);
@@ -43,7 +44,7 @@ const ChatWidget = ({ userId }) => {
       const data = await response.json();
       setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
     } catch (error) {
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Error de conexión con el servicio de salud.' }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: 'Lo siento, tengo dificultades técnicas. Intenta más tarde.' }]);
     } finally {
       setLoading(false);
     }
@@ -54,19 +55,25 @@ const ChatWidget = ({ userId }) => {
       <button 
         className={`chat-button ${isOpen ? 'open' : ''}`} 
         onClick={() => setIsOpen(!isOpen)}
-        aria-label="Abrir asistente"
+        aria-label={isOpen ? "Cerrar asistente" : "Abrir Asistente Médico Virtual"}
       >
-        {isOpen ? '✕' : '🩺'}
+        {isOpen ? <X size={28} /> : <HeartPulse size={32} />}
+        {!isOpen && <span className="notification-dot"></span>}
       </button>
 
       {isOpen && (
         <div className="chat-window">
           <div className="chat-header">
             <div className="header-info">
-              <span className="bot-avatar">👨‍⚕️</span>
+              <div className="bot-avatar-container">
+                <Stethoscope size={26} color="#fff" strokeWidth={2} />
+              </div>
               <div>
-                <p className="bot-name">Dr. Chapatin</p>
-                <span className="online-indicator">En línea</span>
+                <p className="bot-name">Dr. Chapatín</p>
+                <div className="online-indicator">
+                  <Activity size={12} style={{ marginRight: 4 }} />
+                  Asistente Médico IA
+                </div>
               </div>
             </div>
           </div>
@@ -79,10 +86,9 @@ const ChatWidget = ({ userId }) => {
             ))}
             
             {loading && (
-              <div className="message ai loading-dots">
-                <span className="dot"></span>
-                <span className="dot"></span>
-                <span className="dot"></span>
+              <div className="message ai loading-container">
+                <Loader2 className="animate-spin" size={18} />
+                <span>Analizando...</span>
               </div>
             )}
             <div ref={scrollRef} />
@@ -93,7 +99,7 @@ const ChatWidget = ({ userId }) => {
               className="chat-input"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={loading ? "Procesando..." : "Escribe tu consulta aquí..."}
+              placeholder="Describe tus síntomas..."
               disabled={loading}
               autoFocus
             />
@@ -102,7 +108,7 @@ const ChatWidget = ({ userId }) => {
               type="submit" 
               disabled={loading || !input.trim()}
             >
-              ➤
+              <Send size={18} />
             </button>
           </form>
         </div>
