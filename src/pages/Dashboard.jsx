@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { FaPlusCircle, FaChartBar } from "react-icons/fa";
 import GlucoseCard from "../components/Dashboard/GlucoseCard";
 import PressureCard from "../components/Dashboard/PressureCard";
 import "../Styles/DashboardStyles.css";
@@ -18,12 +19,14 @@ export default function Dashboard() {
 
   useEffect(() => {
     const loadDashboard = async () => {
-
-      const API_URL = import.meta.env.VITE_API_REGISTRO_URL || "http://localhost:3001";
+      const API_URL =
+        import.meta.env.VITE_API_REGISTRO_URL || "http://localhost:3001";
 
       try {
-        const res = await fetch(`${API_URL}/api/registros/dashboard/${userId}`);
-        
+        const res = await fetch(
+          `${API_URL}/api/registros/dashboard/${userId}`
+        );
+
         if (!res.ok) throw new Error("Error cargando dashboard");
 
         const data = await res.json();
@@ -34,7 +37,6 @@ export default function Dashboard() {
           diastolic: data.pressure?.diastolic || 0,
           date: data.glucose?.date || "",
         });
-
       } catch (error) {
         console.error("Error cargando datos del dashboard:", error);
       }
@@ -64,7 +66,10 @@ export default function Dashboard() {
             className="action-card register-card"
             onClick={() => navigate("/registro-salud")}
           >
-            <h2>➕ Registrar Información</h2>
+            <h2>
+              <FaPlusCircle className="card-icon" />
+              Registrar Información
+            </h2>
             <p>Ingresa nuevos datos de salud</p>
           </div>
 
@@ -72,7 +77,10 @@ export default function Dashboard() {
             className="action-card history-card"
             onClick={() => navigate("/historial")}
           >
-            <h2>📊 Ver Historial</h2>
+            <h2>
+              <FaChartBar className="card-icon" />
+              Ver Historial
+            </h2>
             <p>Consulta registros anteriores</p>
           </div>
         </section>
