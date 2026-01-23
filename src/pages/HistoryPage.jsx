@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "../Styles/HistoryStyles.css";
 import { descargarHistorial } from "../services/downloadService";
+import { formatDateLong } from "../utils/formatDate";
 
 export default function HistoryPage() {
   const [history, setHistory] = useState([]);
@@ -32,7 +33,6 @@ export default function HistoryPage() {
     <main className="history-page">
       <h1>Historial de Mediciones</h1>
 
-      {/* ===== BOTONES DE DESCARGA ===== */}
       <div className="download-buttons">
         <button
           className="download-btn pdf"
@@ -65,7 +65,7 @@ export default function HistoryPage() {
           >
             <div className="history-header">
               <span className="history-date">
-                {new Date(item.date).toLocaleString()}
+                {formatDateLong(item.date)}
               </span>
             </div>
 

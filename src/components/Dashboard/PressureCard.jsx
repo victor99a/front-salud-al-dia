@@ -1,3 +1,5 @@
+import { formatDateLong } from "../../utils/formatDate";
+
 export default function PressureCard({ systolic, diastolic, date }) {
   let level = "normal";
 
@@ -17,7 +19,9 @@ export default function PressureCard({ systolic, diastolic, date }) {
 
       <h3>Presión Arterial</h3>
       <p className="value">{systolic}/{diastolic} mmHg</p>
-      <span className="date">{date}</span>
+
+      {/* SOLO CAMBIO: formato de fecha y hora */}
+      <span className="date">{formatDateLong(date)}</span>
     </div>
   );
 }
