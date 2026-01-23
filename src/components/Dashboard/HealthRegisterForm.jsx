@@ -10,27 +10,30 @@ export default function HealthRegisterForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // ✅ VALIDACIÓN SALUD (sin romper lógica)
+    if (glucose <= 0 || systolic <= 0 || diastolic <= 0) {
+      alert("❌ Los valores de salud deben ser mayores a 0");
+      return;
+    }
+
     try {
-      const API_URL = import.meta.env.VITE_API_REGISTRO_URL || "http://localhost:3001";
+      const API_URL =
+        import.meta.env.VITE_API_REGISTRO_URL || "http://localhost:3001";
 
       const payload = {
-        patientId: localStorage.getItem("user_id"), // ✅ CORRECTO
+        patientId: localStorage.getItem("user_id"),
         glucosa: Number(glucose),
         sistolica: Number(systolic),
-        diastolica: Number(diastolic)
+        diastolica: Number(diastolic),
       };
 
       console.log("Enviando:", payload);
 
-      await axios.post(
-        `${API_URL}/api/registros`,
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }
-      );
+      await axios.post(`${API_URL}/api/registros`, payload, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       alert("✅ Registro guardado correctamente");
 
@@ -50,6 +53,7 @@ export default function HealthRegisterForm() {
         <h2>Glucosa (mg/dL)</h2>
         <input
           type="number"
+          min="1"                     
           placeholder="Ej: 120"
           value={glucose}
           onChange={(e) => setGlucose(e.target.value)}
@@ -62,6 +66,7 @@ export default function HealthRegisterForm() {
         <div className="pressure-inputs">
           <input
             type="number"
+            min="1"                  
             placeholder="Sistólica (Ej: 120)"
             value={systolic}
             onChange={(e) => setSystolic(e.target.value)}
@@ -70,6 +75,7 @@ export default function HealthRegisterForm() {
           <span>/</span>
           <input
             type="number"
+            min="1"                 
             placeholder="Diastólica (Ej: 80)"
             value={diastolic}
             onChange={(e) => setDiastolic(e.target.value)}

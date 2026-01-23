@@ -1,3 +1,4 @@
+import { FaHeartbeat } from "react-icons/fa";
 import { formatDateLong } from "../../utils/formatDate";
 
 export default function PressureCard({ systolic, diastolic, date }) {
@@ -9,7 +10,9 @@ export default function PressureCard({ systolic, diastolic, date }) {
   return (
     <div className={`card pressure-card ${level}`}>
       <div className="card-header">
-        <div className="icon-circle pressure-icon">🫀</div>
+        <div className="icon-circle pressure-icon">
+          <FaHeartbeat />
+        </div>
         <span className={`status ${level}`}>
           {level === "normal" && "Normal"}
           {level === "warning" && "Alerta"}
@@ -20,7 +23,6 @@ export default function PressureCard({ systolic, diastolic, date }) {
       <h3>Presión Arterial</h3>
       <p className="value">{systolic}/{diastolic} mmHg</p>
 
-      {/* SOLO CAMBIO: formato de fecha y hora */}
       <span className="date">{formatDateLong(date)}</span>
     </div>
   );
