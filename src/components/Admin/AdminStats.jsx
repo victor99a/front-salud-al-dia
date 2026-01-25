@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Users, Activity, ShieldAlert } from 'lucide-react';
+import { Users, Activity, PieChart } from 'lucide-react';
 import { getStats } from '../../services/AdminService';
 
 const AdminStats = () => {
@@ -7,6 +7,7 @@ const AdminStats = () => {
     total: 0,
     admins: 0,
     patients: 0,
+    specialists: 0,
     active: 0
   });
 
@@ -15,12 +16,8 @@ const AdminStats = () => {
       const data = await getStats();
       
       if (data && data.roles) {
-        // Buscamos el conteo de administradores ignorando mayúsculas/minúsculas
-        const adminCount = data.roles.find(r => 
-          r.role?.toLowerCase() === 'admin'
-        )?.count || 0;
-
-        // Buscamos pacientes o usuarios normales ignorando mayúsculas/minúsculas
+        const adminCount = data.roles.find(r => r.role?.toLowerCase() === 'admin')?.count || 0;
+        const specialistCount = data.roles.find(r => r.role?.toLowerCase() === 'specialist')?.count || 0;
         const patientCount = data.roles.find(r => 
           r.role?.toLowerCase() === 'user' || 
           r.role?.toLowerCase() === 'patient'
@@ -30,7 +27,8 @@ const AdminStats = () => {
           total: data.total || 0,
           active: data.active || 0,
           admins: adminCount,
-          patients: patientCount
+          patients: patientCount,
+          specialists: specialistCount
         });
       }
     };
@@ -41,7 +39,7 @@ const AdminStats = () => {
     <div className="stats-grid">
       <div className="health-card-admin">
         <div className="stat-icon icon-blue">
-          <Users size={24} />
+          <Users size={28} />
         </div>
         <div className="stat-info">
           <p className="stats-label">Total Usuarios</p>
@@ -50,33 +48,43 @@ const AdminStats = () => {
       </div>
 
       <div className="health-card-admin">
-        <div className="stat-icon icon-orange">
-          <Activity size={24} />
+        <div className="stat-icon icon-green">
+          <Activity size={28} />
         </div>
         <div className="stat-info">
-          <p className="stats-label">Usuarios Activos (30d)</p>
+          <p className="stats-label">Activos (30d)</p>
           <span className="stats-value">{stats.active}</span>
         </div>
       </div>
 
       <div className="health-card-admin">
         <div className="stat-icon icon-purple">
-          <ShieldAlert size={24} />
+          <PieChart size={28} />
         </div>
+        
         <div className="stat-info-mixed">
           <div className="role-item">
             <div className="role-label-group">
               <span className="role-dot dot-patient"></span>
-              <p className="stats-label">Pacientes</p>
+              <span className="mini-label">Pacientes</span>
             </div>
-            <span className="mixed-value">{stats.patients}</span>
+            <span className="mini-value">{stats.patients}</span>
           </div>
+
+          <div className="role-item">
+            <div className="role-label-group">
+              <span className="role-dot dot-specialist"></span>
+              <span className="mini-label">Especialistas</span>
+            </div>
+            <span className="mini-value">{stats.specialists}</span>
+          </div>
+
           <div className="role-item">
             <div className="role-label-group">
               <span className="role-dot dot-admin"></span>
-              <p className="stats-label">Admins</p>
+              <span className="mini-label">Admins</span>
             </div>
-            <span className="mixed-value">{stats.admins}</span>
+            <span className="mini-value">{stats.admins}</span>
           </div>
         </div>
       </div>

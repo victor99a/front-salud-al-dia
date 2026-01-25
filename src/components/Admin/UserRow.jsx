@@ -1,9 +1,25 @@
 import React from 'react';
-import { Key, Trash2 } from 'lucide-react';
+import { Key, Trash2, AlertTriangle } from 'lucide-react';
 import { resetUserPassword, deleteUser } from '../../services/AdminService';
 
 const UserRow = ({ user, onUpdate }) => {
   if (!user) return null;
+
+  const getRoleLabel = (role) => {
+    switch (role?.toLowerCase()) {
+      case 'admin': return 'Administrador';
+      case 'specialist': return 'Especialista';
+      case 'patient': return 'Paciente';
+      default: return 'Usuario';
+    }
+  };
+
+  const getRoleClass = (role) => {
+    const r = role?.toLowerCase();
+    if (r === 'admin') return 'status-admin';
+    if (r === 'specialist') return 'status-specialist';
+    return 'status-user';
+  };
 
   const handleReset = async () => {
     if (!user.email) return alert("Este usuario no tiene correo registrado.");
@@ -34,14 +50,16 @@ const UserRow = ({ user, onUpdate }) => {
   };
 
   return (
-    <tr className="admin-row">
+    <tr className={`admin-row ${user.status === 'delete_requested' ? 'row-delete-requested' : ''}`}>
       <td>{user.rut || '---'}</td>
 
       <td className="user-name">
         {user.first_names} {user.last_names}
+        
         {user.status === 'delete_requested' && user.delete_requested_at && (
-          <div className="deletion-timestamp-text">
-            Solicitó borrar: {new Date(user.delete_requested_at).toLocaleDateString()}
+          <div className="deletion-alert">
+             <AlertTriangle size={14} />
+             Solicitó borrar: {new Date(user.delete_requested_at).toLocaleDateString()}
           </div>
         )}
       </td>
@@ -49,9 +67,8 @@ const UserRow = ({ user, onUpdate }) => {
       <td>{user.email}</td>
 
       <td>
-        {/* Lógica corregida: convertimos a minúsculas antes de comparar el rol */}
-        <span className={`status-badge ${user.role?.toLowerCase() === 'admin' ? 'status-admin' : 'status-user'}`}>
-          {user.role || 'user'}
+        <span className={`status-badge ${getRoleClass(user.role)}`}>
+          {getRoleLabel(user.role)}
         </span>
       </td>
 
@@ -66,7 +83,7 @@ const UserRow = ({ user, onUpdate }) => {
           <button 
             onClick={handleReset} 
             className="btn-icon btn-key" 
-            title="Reset Password"
+            title="Restablecer Contraseña"
           >
             <Key size={18} />
           </button>

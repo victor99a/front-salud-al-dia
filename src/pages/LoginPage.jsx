@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { requestPublicPasswordReset } from '../services/AuthService';
+import { requestPublicPasswordReset, getUserProfile } from '../services/AuthService';
 import '../Styles/loginStyles.css';
 import logo from '../assets/logo.png'; 
 
@@ -49,11 +49,14 @@ const Login = () => {
     e.preventDefault();
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      
       const response = await axios.post(`${API_URL}/auth/login`, credentials);
       const data = response.data;
       const token = data.session?.access_token || data.token;
       
-      if (token) localStorage.setItem('token', token);
+      if (!token) throw new Error("No se recibió token");
+
+      localStorage.setItem('token', token);
       localStorage.setItem('user_email', credentials.email); 
 
       let userId = null;
@@ -69,16 +72,42 @@ const Login = () => {
 
       if (userId) {
           localStorage.setItem('user_id', userId);
+          
           if (userData) {
              const meta = userData.user_metadata || {};
              const firstName = meta.first_names || "Usuario";
              const lastName = meta.last_names || "";
              localStorage.setItem('user_name', `${firstName} ${lastName}`.trim());
           }
+
+          let finalRole = 'patient';
+          const profile = await getUserProfile(userId, token);
+          
+          if (profile && profile.role) {
+              finalRole = profile.role;
+          } else {
+              const meta = userData?.user_metadata || {};
+              finalRole = userData?.role || meta.role || 'patient';
+          }
+
+          if (finalRole === 'authenticated') finalRole = 'patient';
+
+          localStorage.setItem('user_role', finalRole);
+          
+          window.dispatchEvent(new Event("auth-change"));
           window.dispatchEvent(new Event("storage"));
+      
+          if (finalRole === 'specialist') {
+              navigate('/panel-medico');
+          } else if (finalRole === 'admin') {
+              navigate('/admin');
+          } else {
+              navigate('/dashboard');
+          }
       }
-      navigate('/Dashboard');
+
     } catch (error) {
+      console.error("Login Error:", error);
       alert('Error: Credenciales incorrectas o problema de conexión');
     }
   };

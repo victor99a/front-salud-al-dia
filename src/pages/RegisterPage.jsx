@@ -7,9 +7,7 @@ import { formatRut, isValidEmail } from "../utils/validations";
 
 const Signup = () => {
   const navigate = useNavigate();
-  
   const [error, setError] = useState(""); 
-  
   const [formData, setFormData] = useState({
     email: '', password: '', rut: '', first_names: '', last_names: ''
   });
@@ -21,9 +19,7 @@ const Signup = () => {
 
   const handleRutChange = (e) => {
     const inputValue = e.target.value;
-    
     if (inputValue.length > 12) return;
-
     setFormData({
       ...formData,
       rut: formatRut(inputValue) 
@@ -36,32 +32,43 @@ const Signup = () => {
     setError(""); 
 
     if (!isValidEmail(formData.email)) {
-      setError("❌ El correo electrónico no es válido.");
+      setError("El correo electrónico no es válido.");
       return;
     }
 
     if (formData.rut.length < 8) {
-      setError("❌ El RUT parece incompleto.");
+      setError("El RUT parece incompleto.");
       return;
     }
 
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
       const response = await axios.post(`${API_URL}/auth/signup`, formData);
-      
-      console.log("Respuesta exitosa:", response.data);
+      const data = response.data;
 
-      if (response.data.user || response.data.data?.user) {
-        const user = response.data.user || response.data.data.user;
+      if (data.user || data.session) {
+        const user = data.user;
+        const session = data.session;
         
-        localStorage.setItem('user_id', user.id);
-        localStorage.setItem('temp_access', 'true'); 
+        if (user && user.id) {
+            localStorage.setItem('user_id', user.id);
+        }
 
-        alert('¡Cuenta creada con éxito!'); 
+        if (session && session.access_token) {
+            localStorage.setItem('token', session.access_token);
+        }
+
+        localStorage.setItem('user_email', formData.email);
+        localStorage.setItem('user_name', `${formData.first_names} ${formData.last_names}`);
+        localStorage.setItem('user_role', 'patient');
+        localStorage.setItem('temp_access', 'true');
+
+        window.dispatchEvent(new Event("auth-change"));
+
+        alert('Cuenta creada con éxito.'); 
         navigate('/ficha-medica'); 
       }
     } catch (error) {
-      console.error("Detalle del error:", error.response?.data || error.message);
       setError(error.response?.data?.error || 'Error al crear la cuenta. Intenta nuevamente.');
     }
   };
@@ -105,6 +112,7 @@ const Signup = () => {
             <label>Contraseña</label>
             <input type="password" name="password" placeholder="••••••••" onChange={handleChange} required />
           </div>
+
           {error && (
             <div style={{ gridColumn: 'span 2', color: 'red', textAlign: 'center', marginBottom: '10px', fontSize: '0.9rem' }}>
               {error}

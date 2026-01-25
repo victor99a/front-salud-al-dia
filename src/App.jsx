@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 import ContactPage from "./pages/ContactPage";
 import HomePage from "./pages/HomePage";
@@ -13,46 +13,59 @@ import MedicalRecords from "./pages/MedicalRecords";
 import AdminPage from "./pages/AdminPage";
 import ProfilePage from "./pages/ProfilePage";
 import ResetPassword from "./pages/ResetPassword";
+import SpecialistDashboard from "./pages/SpecialistDashboard";
+import PatientFile from "./pages/PatientFile";
 
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/Admin/ProtectedRoute";
 import ChatWidget from "./components/Chat/ChatWidget";
 import { isAdmin } from "./services/AuthService";
 
+const SpecialistRoute = ({ children }) => {
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('user_role');
+    
+    if (!token) return <Navigate to="/login" />;
+    if (role !== 'specialist' && role !== 'admin') return <Navigate to="/dashboard" />;
+    
+    return children;
+};
+
 function App() {
   const [currentUserId, setCurrentUserId] = useState(localStorage.getItem('user_id'));
   const [isUserAdmin, setIsUserAdmin] = useState(false);
+  const [userRole, setUserRole] = useState(localStorage.getItem('user_role'));
 
-  useEffect(() => {
-    const verifyRole = async () => {
+  const refreshAppState = async () => {
       const token = localStorage.getItem('token');
-      if (token && currentUserId) {
-        const adminStatus = await isAdmin();
-        setIsUserAdmin(adminStatus);
+      const userId = localStorage.getItem('user_id');
+      const role = localStorage.getItem('user_role');
+
+      setCurrentUserId(userId);
+      setUserRole(role);
+
+      if (token && userId) {
+        try {
+            const adminStatus = await isAdmin();
+            setIsUserAdmin(adminStatus);
+        } catch {
+            setIsUserAdmin(false);
+        }
       } else {
         setIsUserAdmin(false);
       }
-    };
-    verifyRole();
-  }, [currentUserId]);
+  };
 
   useEffect(() => {
-    const checkLocalStorage = () => {
-      const savedId = localStorage.getItem('user_id');
-      if (savedId !== currentUserId) {
-        setCurrentUserId(savedId);
-      }
-    };
-
-    window.addEventListener('storage', checkLocalStorage);
-    
-    const interval = setInterval(checkLocalStorage, 1000);
+    refreshAppState();
+    window.addEventListener('auth-change', refreshAppState);
+    window.addEventListener('storage', refreshAppState);
 
     return () => {
-      window.removeEventListener('storage', checkLocalStorage);
-      clearInterval(interval);
+        window.removeEventListener('auth-change', refreshAppState);
+        window.removeEventListener('storage', refreshAppState);
     };
-  }, [currentUserId]);
+  }, []);
 
   return (
     <Router>
@@ -73,6 +86,23 @@ function App() {
         <Route path="/registro-salud" element={<HealthRegisterPage />} />
         <Route path="/ficha-medica" element={<MedicalRecords />} />
 
+        <Route 
+            path="/panel-medico" 
+            element={
+                <SpecialistRoute>
+                    <SpecialistDashboard />
+                </SpecialistRoute>
+            } 
+        />
+        <Route 
+            path="/paciente/:id" 
+            element={
+                <SpecialistRoute>
+                    <PatientFile />
+                </SpecialistRoute>
+            } 
+        />
+
         <Route
           path="/admin"
           element={
@@ -83,7 +113,9 @@ function App() {
         />
       </Routes>
 
-      {currentUserId && !isUserAdmin && <ChatWidget userId={currentUserId} />}
+      {currentUserId && !isUserAdmin && userRole !== 'specialist' && (
+        <ChatWidget userId={currentUserId} />
+      )}
       
     </Router>
   );
