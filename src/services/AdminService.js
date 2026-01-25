@@ -7,25 +7,38 @@ const getHeaders = () => ({
 
 export const getStats = async () => {
   try {
-    const response = await fetch(`${API_ADMIN_URL}/stats`, {
-      headers: getHeaders()
-    });
+    const response = await fetch(`${API_ADMIN_URL}/stats`, { headers: getHeaders() });
     if (!response.ok) throw new Error('Error al obtener estadísticas');
     return await response.json();
-  } catch (error) {
-    return null;
+  } catch (error) { 
+    return null; 
   }
 };
 
 export const getUsers = async () => {
   try {
-    const response = await fetch(`${API_ADMIN_URL}/users`, {
-      headers: getHeaders()
-    });
+    const response = await fetch(`${API_ADMIN_URL}/users`, { headers: getHeaders() });
     if (!response.ok) throw new Error('Error al cargar usuarios');
     return await response.json();
+  } catch (error) { 
+    return []; 
+  }
+};
+
+export const createSpecialist = async (userData) => {
+  try {
+    const response = await fetch(`${API_ADMIN_URL}/create-specialist`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(userData)
+    });
+    
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Error al crear especialista');
+    
+    return { success: true };
   } catch (error) {
-    return [];
+    return { success: false, error: error.message };
   }
 };
 
@@ -36,7 +49,7 @@ export const resetUserPassword = async (email) => {
       headers: getHeaders(),
       body: JSON.stringify({ email })
     });
-
+    
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'Error al enviar correo');
     
@@ -53,10 +66,10 @@ export const updatePasswordFinal = async (email, newPassword) => {
       headers: getHeaders(),
       body: JSON.stringify({ email, newPassword })
     });
-
+    
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'Error al actualizar contraseña');
-
+    
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
@@ -69,12 +82,12 @@ export const deleteUser = async (userId) => {
       method: 'DELETE',
       headers: getHeaders()
     });
-
+    
     if (!response.ok) {
       const data = await response.json();
       throw new Error(data.error || 'Error al eliminar usuario');
     }
-
+    
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
@@ -87,10 +100,10 @@ export const requestAccountDeletion = async (userId) => {
       method: 'PATCH',
       headers: getHeaders()
     });
-
+    
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'Error al solicitar eliminación');
-
+    
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
@@ -104,11 +117,11 @@ export const verifyAdminStatus = async (email) => {
       headers: getHeaders(),
       body: JSON.stringify({ email: email.toLowerCase() })
     });
-
+    
     if (!response.ok) return false;
     const data = await response.json();
     return data.isAdmin;
-  } catch (error) {
-    return false;
+  } catch (error) { 
+    return false; 
   }
 };
