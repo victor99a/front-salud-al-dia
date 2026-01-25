@@ -1,17 +1,19 @@
 import { useEffect, useState } from "react";
 import "../Styles/HistoryStyles.css";
+import { descargarHistorial } from "../services/downloadService";
+import { formatDateLong } from "../utils/formatDate";
 
 export default function HistoryPage() {
   const [history, setHistory] = useState([]);
-  const userId = localStorage.getItem('user_id');
+  const userId = localStorage.getItem("user_id");
+
+  const API_URL =
+    import.meta.env.VITE_API_REGISTRO_URL || "http://localhost:3001";
 
   useEffect(() => {
     if (!userId) return;
 
     const fetchHistory = async () => {
-
-      const API_URL = import.meta.env.VITE_API_REGISTRO_URL || "http://localhost:3001";
-
       try {
         const response = await fetch(
           `${API_URL}/api/registros/historial/${userId}`
@@ -19,7 +21,6 @@ export default function HistoryPage() {
 
         const data = await response.json();
         setHistory(data);
-
       } catch (error) {
         console.error("Error al obtener historial:", error);
       }
@@ -32,9 +33,23 @@ export default function HistoryPage() {
     <main className="history-page">
       <h1>Historial de Mediciones</h1>
 
-      {history.length === 0 && (
-        <p>No hay registros disponibles</p>
-      )}
+      <div className="download-buttons">
+        <button
+          className="download-btn pdf"
+          onClick={() => descargarHistorial(userId, "pdf")}
+        >
+          Descargar PDF
+        </button>
+
+        <button
+          className="download-btn csv"
+          onClick={() => descargarHistorial(userId, "csv")}
+        >
+          Descargar CSV
+        </button>
+      </div>
+
+      {history.length === 0 && <p>No hay registros disponibles</p>}
 
       {history.map((item, index) => {
         const glucoseAlert = item.glucose > 130;
@@ -50,7 +65,7 @@ export default function HistoryPage() {
           >
             <div className="history-header">
               <span className="history-date">
-                {new Date(item.date).toLocaleString()}
+                {formatDateLong(item.date)}
               </span>
             </div>
 
@@ -59,7 +74,11 @@ export default function HistoryPage() {
                 Glucosa: {item.glucose} mg/dL
               </span>
 
-              <span className={`badge pressure ${pressureAlert ? "danger" : ""}`}>
+              <span
+                className={`badge pressure ${
+                  pressureAlert ? "danger" : ""
+                }`}
+              >
                 Presión: {item.systolic}/{item.diastolic} mmHg
               </span>
             </div>

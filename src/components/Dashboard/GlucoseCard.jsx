@@ -1,3 +1,6 @@
+import { FaTint } from "react-icons/fa";
+import { formatDateLong } from "../../utils/formatDate";
+
 export default function GlucoseCard({ glucose, date }) {
   let level = "normal";
 
@@ -8,6 +11,7 @@ export default function GlucoseCard({ glucose, date }) {
     <div className={`card glucose-card ${level}`}>
       <div className="card-header">
         <div className="icon-circle glucose-icon">
+          <FaTint />
           <span className="droplet"></span>
         </div>
         <span className={`status ${level}`}>
@@ -19,7 +23,8 @@ export default function GlucoseCard({ glucose, date }) {
 
       <h3>Glucosa</h3>
       <p className="value">{glucose} mg/dL</p>
-      <span className="date">{date}</span>
+
+      <span className="date">{formatDateLong(date)}</span>
     </div>
   );
 }
