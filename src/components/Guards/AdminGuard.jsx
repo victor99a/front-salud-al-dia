@@ -1,22 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { isAdmin } from '../../services/AuthService'; 
+
 const AdminGuard = ({ children }) => {
-  const [authorized, setAuthorized] = useState(null);
+  const token = localStorage.getItem('token');
+  const role = localStorage.getItem('user_role');
 
-  useEffect(() => {
-    let mounted = true;
-    isAdmin().then(result => {
-      if (mounted) setAuthorized(result);
-    });
-    return () => mounted = false;
-  }, []);
-
-  if (authorized === null) {
-    return <div className="loading-screen">Verificando permisos...</div>;
+  if (!token) {
+    return <Navigate to="/login" replace />;
   }
 
-  return authorized ? children : <Navigate to="/" replace />;
+  if (role === 'patient') {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  if (role === 'specialist') {
+    return <Navigate to="/panel-medico" replace />;
+  }
+
+  if (role === 'admin') {
+    return children;
+  }
+
+  return <Navigate to="/" replace />;
 };
 
 export default AdminGuard;

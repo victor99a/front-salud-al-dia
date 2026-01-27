@@ -7,7 +7,7 @@
 body {
   font-family: Arial, sans-serif;
   background-color: #f4f8ff;
-  overflow-x: hidden; /* Evita scroll lateral */
+  overflow-x: hidden; 
 }
 
 .header {
@@ -32,7 +32,6 @@ body {
 
 .logo img { width: 36px; }
 
-/* 3. BOTONES GENERALES */
 button {
   border: none;
   border-radius: 6px;
@@ -53,12 +52,11 @@ button {
   width: fit-content; /* */
 }
 
-/* 4. CARRUSEL Y HERO (OPTIMIZADO) */
 .hero-modern-container {
   position: relative;
   background: #f4f8ff;
   width: 100%;
-  min-height: 500px; /* Quitamos max-height para evitar corte en móvil */
+  min-height: 500px; 
   display: flex;
   flex-direction: column;
 }
@@ -119,7 +117,6 @@ button {
   box-shadow: 0 20px 40px rgba(37, 99, 235, 0.15);
 }
 
-/* 5. CONTROLES DEL CARRUSEL */
 .carousel-arrow {
   position: absolute;
   top: 50%;
@@ -156,11 +153,10 @@ button {
 
 .dot.active {
   background: #2563eb;
-  width: 25px; /* Estilo píldora */
+  width: 25px; 
   border-radius: 10px;
 }
 
-/* 6. FEATURES */
 .features {
   background: white;
   padding: 80px 10%;
@@ -196,7 +192,6 @@ button {
 .icon.blue { background: #e0ecff; color: #2563eb; }
 .icon.red { background: #fde2e2; color: #dc2626; }
 
-/* 7. RESPONSIVE (CORRECCIONES) */
 @media (max-width: 1024px) {
   .hero-modern { gap: 20px; padding: 40px 5%; }
   .hero-text h1 { font-size: 2rem; }
@@ -204,31 +199,30 @@ button {
 
 @media (max-width: 768px) {
   .hero-modern {
-    flex-direction: column; /* Apila imagen y texto */
+    flex-direction: column; 
     text-align: center;
     padding-top: 30px;
   }
 
   .hero-text {
-    align-items: center; /* Centra badge y botón */
-    order: 1; /* Texto arriba */
+    align-items: center; 
+    order: 1; 
   }
 
   .hero-image { order: 2; width: 100%; }
   
-  .carousel-arrow { display: none; } /* Evita tapar contenido en móvil */
+  .carousel-arrow { display: none; } 
   
-  .hero-text .btn-primary.big { align-self: center; } /* Centra botón */
+  .hero-text .btn-primary.big { align-self: center; }
 }
 
 @media (max-width: 480px) {
   .hero-text h1 { font-size: 1.8rem; }
   .hero-text p { font-size: 1rem; }
   .header { padding: 10px 15px; }
-  .header-buttons { display: none; } /* Ocultar botones en móvil extremo para espacio */
+  .header-buttons { display: none; } 
 }
 
-/* ANIMACIONES */
 .fade-in { animation: fadeIn 0.8s ease-in-out; }
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }

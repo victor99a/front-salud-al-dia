@@ -13,7 +13,6 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  
   const [phoneEdit, setPhoneEdit] = useState("");
 
   const fetchProfile = async () => {
@@ -34,7 +33,6 @@ const ProfilePage = () => {
           const rawPhone = initialForm.emergency_contact_phone.toString();
           setPhoneEdit(rawPhone.replace(/^\+56/, ''));
       }
-
     } catch (error) {
       console.error(error);
     } finally {
@@ -46,18 +44,14 @@ const ProfilePage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
     if (name === 'height' && (value < 0 || value > 300)) return;
     if (name === 'initial_weight' && (value < 0 || value > 600)) return;
-
     setFormData({ ...formData, [name]: value });
   };
 
   const handlePhoneEditChange = (e) => {
       const val = e.target.value.replace(/[^0-9]/g, '');
-      if (val.length <= 9) {
-          setPhoneEdit(val);
-      }
+      if (val.length <= 9) setPhoneEdit(val);
   };
 
   const handleSave = async () => {
@@ -68,9 +62,7 @@ const ProfilePage = () => {
 
     try {
       const userId = localStorage.getItem('user_id');
-      
       const finalPhone = `+56${phoneEdit}`;
-
       const payload = {
         ...formData,
         emergency_contact_phone: finalPhone,
@@ -78,7 +70,6 @@ const ProfilePage = () => {
       };
 
       await updateMedicalRecord(userId, payload);
-      
       setProfile(payload);
       setFormData(payload);
       setIsEditing(false);  
@@ -91,9 +82,7 @@ const ProfilePage = () => {
   const confirmDeletion = async () => {
     const userId = localStorage.getItem('user_id');
     if (!userId) return;
-
     const { success, error } = await requestAccountDeletion(userId);
-
     if (success) {
       setShowDeleteModal(false);
       alert("Solicitud enviada correctamente.");
@@ -102,7 +91,7 @@ const ProfilePage = () => {
     }
   };
 
-  if (loading) return <div className="loading-container">Cargando...</div>;
+  if (loading) return <div className="loading-container">Cargando perfil...</div>;
   
   if (!profile) return (
     <div className="profile-container">
@@ -121,7 +110,7 @@ const ProfilePage = () => {
           <User size={40} />
         </div>
         <div className="profile-title">
-          <h1 style={{textTransform: 'capitalize'}}>{userName}</h1>
+          <h1>{userName}</h1>
           <p>Información Médica Personal</p>
         </div>
         {!isEditing && (
@@ -132,7 +121,7 @@ const ProfilePage = () => {
       <div className="profile-grid">
         <div className="info-card">
           <div className="card-header">
-            <Ruler size={24} color="#2563eb" />
+            <Ruler size={24} className="icon-blue" />
             <h3>Datos Corporales</h3>
           </div>
           <div className="info-item">
@@ -143,9 +132,9 @@ const ProfilePage = () => {
             <span className="info-label">Peso (kg)</span>
             {isEditing ? <input type="number" name="initial_weight" value={formData.initial_weight} onChange={handleChange} className="form-input-edit" /> : <span className="info-value">{profile.initial_weight} kg</span>}
           </div>
-           <div className="info-item">
+          <div className="info-item">
             <span className="info-label">Grupo Sanguíneo</span>
-             {isEditing ? (
+            {isEditing ? (
               <select name="blood_type" value={formData.blood_type} onChange={handleChange} className="form-input-edit">
                   <option value="A+">A+</option>
                   <option value="O+">O+</option>
@@ -162,7 +151,7 @@ const ProfilePage = () => {
 
         <div className="info-card">
           <div className="card-header">
-            <AlertTriangle size={24} color="#2563eb" />
+            <AlertTriangle size={24} className="icon-blue" />
             <h3>Alertas Médicas</h3>
           </div>
           <div className="info-item">
@@ -171,22 +160,22 @@ const ProfilePage = () => {
           </div>
           <div className="info-item">
             <span className="info-label">Enf. Crónicas</span>
-             {isEditing ? <input type="text" name="chronic_diseases" value={formData.chronic_diseases} onChange={handleChange} className="form-input-edit" /> : <span className="info-value">{profile.chronic_diseases || 'Ninguna'}</span>}
+            {isEditing ? <input type="text" name="chronic_diseases" value={formData.chronic_diseases} onChange={handleChange} className="form-input-edit" /> : <span className="info-value">{profile.chronic_diseases || 'Ninguna'}</span>}
           </div>
         </div>
 
         <div className="info-card">
           <div className="card-header">
-            <Phone size={24} color="#2563eb" />
+            <Phone size={24} className="icon-blue" />
             <h3>Emergencia</h3>
           </div>
           <div className="info-item">
             <span className="info-label">Nombre Contacto</span>
-             {isEditing ? <input type="text" name="emergency_contact_name" value={formData.emergency_contact_name} onChange={handleChange} className="form-input-edit" /> : <span className="info-value">{profile.emergency_contact_name}</span>}
+            {isEditing ? <input type="text" name="emergency_contact_name" value={formData.emergency_contact_name} onChange={handleChange} className="form-input-edit" /> : <span className="info-value">{profile.emergency_contact_name}</span>}
           </div>
           <div className="info-item">
             <span className="info-label">Teléfono (+56)</span>
-             {isEditing ? (
+            {isEditing ? (
                 <div className="phone-edit-wrapper">
                     <span className="prefix-span">+56</span>
                     <input 
@@ -197,9 +186,9 @@ const ProfilePage = () => {
                         placeholder="9XXXXXXXX"
                     />
                 </div>
-             ) : (
+            ) : (
                 <span className="info-value phone-display">{profile.emergency_contact_phone}</span>
-             )}
+            )}
           </div>
         </div>
       </div>
@@ -217,10 +206,10 @@ const ProfilePage = () => {
       {isEditing && (
         <div className="edit-actions">
           <button onClick={handleSave} className="btn-create-record">
-              <Save size={18} style={{marginRight: '5px'}}/> Guardar Cambios
+              <Save size={18} className="btn-icon"/> Guardar Cambios
           </button>
           <button onClick={() => { setIsEditing(false); setFormData(profile); setPhoneEdit(profile.emergency_contact_phone?.replace(/^\+56/, '')); }} className="btn-cancel-edit">
-              <X size={18} style={{marginRight: '5px'}}/> Cancelar
+              <X size={18} className="btn-icon"/> Cancelar
           </button>
         </div>
       )}
@@ -229,7 +218,7 @@ const ProfilePage = () => {
         <div className="custom-modal-overlay">
           <div className="custom-modal-content">
             <div className="modal-icon-warning">
-              <AlertCircle size={32} color="#dc2626" />
+              <AlertCircle size={32} className="icon-red" />
             </div>
             <h3>¿Confirmar solicitud?</h3>
             <p>Un administrador revisará la solicitud para borrar tus datos permanentemente.</p>

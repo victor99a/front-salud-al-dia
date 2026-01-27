@@ -105,6 +105,11 @@
   border: 2px solid rgba(255,255,255,0.3);
 }
 
+.bot-avatar-icon {
+  color: #ffffff;
+  stroke-width: 2px;
+}
+
 .bot-name {
   margin: 0;
   font-size: 1.05rem;
@@ -116,6 +121,10 @@
   color: #bfdbfe;
   display: flex;
   align-items: center;
+}
+
+.status-icon {
+  margin-right: 4px;
 }
 
 .chat-messages {

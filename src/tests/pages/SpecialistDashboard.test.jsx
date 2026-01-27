@@ -1,138 +1,137 @@
-// Renderiza el panel del especialista
-// Muestra pacientes desde el servicio
-// Filtra pacientes por estado
-// Navega a la ficha del paciente
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import SpecialistDashboard from '../../pages/SpecialistDashboard';
+import { getPatients, getPatientDashboardData } from '../../services/SpecialistService';
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
-import SpecialistDashboard from '../../pages/SpecialistDashboard'
-import * as SpecialistService from '../../services/SpecialistService'
-
-// mock navigate
-const mockNavigate = vi.fn()
+const mockNavigate = vi.fn();
 
 vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom')
+  const actual = await vi.importActual('react-router-dom');
   return {
     ...actual,
     useNavigate: () => mockNavigate,
-  }
-})
+  };
+});
 
-// mock servicios
-vi.spyOn(SpecialistService, 'getPatients')
-vi.spyOn(SpecialistService, 'getPatientDashboardData')
+vi.mock('../../services/SpecialistService', () => ({
+  getPatients: vi.fn(),
+  getPatientDashboardData: vi.fn(),
+}));
+
+vi.mock('lucide-react', () => ({
+  Search: () => <span data-testid="search-icon">Search</span>,
+  FileText: () => <span>File</span>,
+  User: () => <span>User</span>,
+}));
 
 describe('SpecialistDashboard', () => {
-
+  
   beforeEach(() => {
-    vi.clearAllMocks()
-  })
+    vi.clearAllMocks();
+  });
 
   const mockPatients = [
-    {
-      id: 1,
-      first_names: 'Juan',
-      last_names: 'Pérez',
-      rut: '11.111.111-1',
-    },
-    {
-      id: 2,
-      first_names: 'Ana',
-      last_names: 'Gómez',
-      rut: '22.222.222-2',
-    },
-  ]
+    { id: 1, first_names: 'Juan', last_names: 'Pérez', rut: '11.111.111-1' },
+    { id: 2, first_names: 'Ana', last_names: 'Gómez', rut: '22.222.222-2' },
+  ];
 
-  it('renderiza el panel del especialista', async () => {
-    SpecialistService.getPatients.mockResolvedValue([])
+  it('renderiza el panel y muestra el título', async () => {
+    getPatients.mockResolvedValue([]);
     
     render(
       <MemoryRouter>
         <SpecialistDashboard />
       </MemoryRouter>
-    )
+    );
 
-    expect(
-      screen.getByText(/panel de control medico/i)
-    ).toBeInTheDocument()
-  })
+    expect(screen.getByText(/Panel de Control Medico/i)).toBeInTheDocument();
+    expect(screen.getByText(/Monitoreo de pacientes/i)).toBeInTheDocument();
+  });
 
-  it('muestra pacientes cargados desde el servicio', async () => {
-    SpecialistService.getPatients.mockResolvedValue(mockPatients)
-
-    SpecialistService.getPatientDashboardData.mockResolvedValue({
+  it('carga y muestra la lista de pacientes', async () => {
+    getPatients.mockResolvedValue(mockPatients);
+    
+    getPatientDashboardData.mockResolvedValue({
       glucose: { value: 100, date: '2024-01-01' },
       pressure: { systolic: 120, diastolic: 80, date: '2024-01-01' },
-    })
+    });
 
     render(
       <MemoryRouter>
         <SpecialistDashboard />
       </MemoryRouter>
-    )
+    );
 
     await waitFor(() => {
-      expect(screen.getByText(/juan pérez/i)).toBeInTheDocument()
-      expect(screen.getByText(/ana gómez/i)).toBeInTheDocument()
-    })
-  })
+      expect(screen.getByText(/Juan Pérez/i)).toBeInTheDocument();
+      expect(screen.getByText(/Ana Gómez/i)).toBeInTheDocument();
+    });
+  });
 
-  it('filtra pacientes en estado crítico', async () => {
-    SpecialistService.getPatients.mockResolvedValue(mockPatients)
+  it('filtra pacientes en estado crítico (Alertas)', async () => {
+    getPatients.mockResolvedValue(mockPatients);
 
-    SpecialistService.getPatientDashboardData
-      .mockResolvedValueOnce({
-        glucose: { value: 180, date: '2024-01-01' },
-        pressure: { systolic: 150, diastolic: 95, date: '2024-01-01' },
-      })
-      .mockResolvedValueOnce({
-        glucose: { value: 95, date: '2024-01-01' },
-        pressure: { systolic: 120, diastolic: 80, date: '2024-01-01' },
-      })
+    getPatientDashboardData.mockImplementation(async (id) => {
+      if (id === 1) {
+        return { 
+            glucose: { value: 180, date: '2024-01-01' }, // Crítico
+            pressure: { systolic: 150, diastolic: 95 } 
+        };
+      }
+      return { 
+          glucose: { value: 90, date: '2024-01-01' }, // Estable
+          pressure: { systolic: 120, diastolic: 80 } 
+      };
+    });
 
     render(
       <MemoryRouter>
         <SpecialistDashboard />
       </MemoryRouter>
-    )
+    );
 
-    await waitFor(() => {
-      expect(screen.getByText(/juan pérez/i)).toBeInTheDocument()
-      expect(screen.getByText(/ana gómez/i)).toBeInTheDocument()
-    })
+    await waitFor(() => expect(screen.getByText(/Juan Pérez/i)).toBeInTheDocument());
 
-    fireEvent.click(
-      screen.getByRole('button', { name: /alertas/i })
-    )
+    fireEvent.click(screen.getByRole('button', { name: /Alertas/i }));
 
-    expect(screen.getByText(/juan pérez/i)).toBeInTheDocument()
-    expect(screen.queryByText(/ana gómez/i)).not.toBeInTheDocument()
-  })
+    expect(screen.getByText(/Juan Pérez/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Ana Gómez/i)).not.toBeInTheDocument();
+  });
 
-  it('navega a la ficha del paciente al hacer click', async () => {
-    SpecialistService.getPatients.mockResolvedValue([mockPatients[0]])
-
-    SpecialistService.getPatientDashboardData.mockResolvedValue({
-      glucose: { value: 100, date: '2024-01-01' },
-      pressure: { systolic: 120, diastolic: 80, date: '2024-01-01' },
-    })
+  it('filtra pacientes por nombre en el buscador', async () => {
+    getPatients.mockResolvedValue(mockPatients);
+    getPatientDashboardData.mockResolvedValue({ glucose: {}, pressure: {} });
 
     render(
       <MemoryRouter>
         <SpecialistDashboard />
       </MemoryRouter>
-    )
+    );
 
-    await waitFor(() => {
-      expect(screen.getByText(/juan pérez/i)).toBeInTheDocument()
-    })
+    await waitFor(() => expect(screen.getByText(/Juan Pérez/i)).toBeInTheDocument());
 
-    fireEvent.click(
-      screen.getByRole('button', { name: /ver ficha/i })
-    )
+    const searchInput = screen.getByPlaceholderText(/Buscar paciente/i);
+    fireEvent.change(searchInput, { target: { value: 'Ana' } });
 
-    expect(mockNavigate).toHaveBeenCalledWith('/paciente/1')
-  })
-})
+    expect(screen.getByText(/Ana Gómez/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Juan Pérez/i)).not.toBeInTheDocument();
+  });
+
+  it('navega a la ficha del paciente al hacer click en "Ver Ficha"', async () => {
+    getPatients.mockResolvedValue([mockPatients[0]]); // Solo Juan
+    getPatientDashboardData.mockResolvedValue({});
+
+    render(
+      <MemoryRouter>
+        <SpecialistDashboard />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => expect(screen.getByText(/Juan Pérez/i)).toBeInTheDocument());
+
+    fireEvent.click(screen.getByRole('button', { name: /Ver Ficha/i }));
+
+    expect(mockNavigate).toHaveBeenCalledWith('/paciente/1');
+  });
+});

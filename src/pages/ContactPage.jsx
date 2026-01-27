@@ -41,7 +41,7 @@ const ContactPage = () => {
       <div className="contact-grid-equal">
         <div className="contact-card-equal">
           <h2> Reportar un Problema</h2>
-          <p style={{fontSize:'0.9rem', marginBottom:'20px', color:'#666'}}>
+          <p className="report-description">
             ¿Encontraste un error en la web? Cuéntanos para arreglarlo.
           </p>
           <form onSubmit={(e) => { e.preventDefault(); alert('¡Gracias! Mensaje enviado al equipo técnico.'); }}>
@@ -69,7 +69,7 @@ const ContactPage = () => {
                 <a href="mailto:bajas@saludaldia.com?subject=Solicitud de Baja de Cuenta" className="email-link-large">
                  bajas@saludaldia.com
                 </a>
-                <p style={{fontSize:'0.85rem', marginTop:'20px', color:'#991b1b', fontStyle:'italic'}}>
+                <p className="delete-warning">
                 *El proceso es irreversible y puede tardar hasta 48 horas hábiles.
                 </p>
             </div>

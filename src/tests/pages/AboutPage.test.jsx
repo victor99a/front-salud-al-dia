@@ -1,11 +1,7 @@
-// Renderiza el contenido principal//
- //Navega correctamente al hacer clic en el botón//
-
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import AboutPage from '../../pages/AboutPage'
 
-// Mock de react-router-dom
 const mockNavigate = vi.fn()
 
 vi.mock('react-router-dom', () => ({

@@ -94,6 +94,10 @@
   justify-content: center;
 }
 
+.sos-alert-icon {
+  color: #dc2626;
+}
+
 .sos-modal-content h3 {
     margin: 10px 0;
     color: #111827;

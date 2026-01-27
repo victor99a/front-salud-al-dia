@@ -502,6 +502,10 @@
     vertical-align: top;
 }
 
+.icon-white {
+    color: #ffffff;
+}
+
 @media (max-width: 900px) {
     .file-grid { grid-template-columns: 1fr; }
     .vitals-cards-grid { grid-template-columns: 1fr; }

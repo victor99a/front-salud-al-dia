@@ -13,7 +13,7 @@
 .container-images {
   width: 100%;
   height: 100%;
-  overflow: hidden; /* Esconde el scroll */
+  overflow: hidden; 
   border-radius: 22px;
 }
 
@@ -25,7 +25,7 @@
 }
 
 .slide-item {
-  min-width: 100%; /* Cada slide ocupa todo el ancho */
+  min-width: 100%; 
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -40,7 +40,6 @@
   box-shadow: 0 20px 40px rgba(0,0,0,0.1);
 }
 
-/* Flechas */
 .leftArrow, .rightArrow {
   position: absolute;
   top: 50%;
@@ -55,7 +54,6 @@
 .leftArrow { left: -60px; }
 .rightArrow { right: -60px; }
 
-/* Puntos */
 .dots-container {
   display: flex;
   justify-content: center;

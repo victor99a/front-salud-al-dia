@@ -73,7 +73,6 @@
   opacity: 0.9;
 }
 
-/* Responsive para celulares */
 @media (max-width: 600px) {
   .health-page h1 {
     font-size: 1.8rem;
@@ -109,7 +108,6 @@
   min-width: 0;
 }
 
-/* MODO MÓVIL */
 @media (max-width: 480px) {
   .bp-inputs {
     flex-direction: column;

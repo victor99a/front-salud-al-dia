@@ -1,11 +1,9 @@
-// renderiza el titulo y la seccion usuarios//
-// muestra el modal al hacer click en nuevo especialista//
-
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import AdminPage from '../../pages/AdminPage'
 
-// Mocks de componentes hijos
+// Mockeamos los componentes hijos para probar solo la estructura de la página
+// y no la lógica interna de las tablas o estadísticas.
 vi.mock('../../components/Admin/AdminStats', () => ({
   default: () => <div>AdminStats Mock</div>,
 }))
@@ -23,7 +21,6 @@ vi.mock('../../components/Admin/RegisterSpecialistModal', () => ({
   ),
 }))
 
-// Mock del icono
 vi.mock('lucide-react', () => ({
   UserPlus: () => <span>Icon</span>,
 }))

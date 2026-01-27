@@ -55,7 +55,7 @@ const ResetPassword = () => {
     return (
       <div className="reset-container">
         <div className="reset-box success-box">
-          <CheckCircle size={60} color="#16a34a" />
+          <CheckCircle size={60} className="icon-success" />
           <h2>Contraseña Actualizada</h2>
           <p>Tu contraseña ha sido cambiada exitosamente.</p>
           <p className="redirect-text">Redirigiendo al Login...</p>
@@ -69,7 +69,7 @@ const ResetPassword = () => {
       <div className="reset-box">
         <div className="reset-header">
           <div className="icon-wrapper">
-            <Lock size={30} color="#2563eb" />
+            <Lock size={30} className="icon-lock" />
           </div>
           <h2>Restablecer Contraseña</h2>
           <p className="email-display">Cuenta: {emailFromUrl}</p>

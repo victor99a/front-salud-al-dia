@@ -18,8 +18,8 @@
   margin-bottom: 1.4rem;
   box-shadow: 0 10px 30px rgba(30, 64, 175, 0.15);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-left: 6px solid #2563eb;   /* AZUL IDENTIDAD */
-  border-right: 6px solid #93c5fd; /* AZUL SUAVE */
+  border-left: 6px solid #2563eb;   
+  border-right: 6px solid #93c5fd; 
 }
 
 
@@ -28,7 +28,6 @@
   box-shadow: 0 16px 40px rgba(30, 64, 175, 0.25);
 }
 
-/* CABECERA */
 .history-header {
   display: flex;
   justify-content: flex-end;
@@ -40,14 +39,12 @@
   color: #475569;
 }
 
-/* VALORES */
 .history-values {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
 }
 
-/* BADGES */
 .badge {
   padding: 0.7rem 1.2rem;
   border-radius: 999px;
@@ -55,29 +52,28 @@
   font-size: 1.05rem;
 }
 
-/* GLUCOSA */
+
 .badge.glucose {
   background: #dbeafe;
   color: #1e40af;
 }
 
-/* PRESIÓN */
 .badge.pressure {
   background: #fee2e2;
   color: #b91c1c;
 }
 
-/* ALERTAS */
+
 .badge.danger {
   background: linear-gradient(135deg, #ef4444, #dc2626);
   color: #ffffff;
 }
 
-/* BORDE DE ALERTA */
+
 .history-item.alert {
   border-left: 6px solid #dc2626;
 }
-/* ===== RESPONSIVE – HISTORIAL ===== */
+
 
 @media (max-width: 768px) {
   .history-page {
@@ -180,7 +176,7 @@
 }
 
 .history-card h2 {
-  color: #1e40af; /* azul más serio */
+  color: #1e40af; 
 }
 
 .history-card:hover {

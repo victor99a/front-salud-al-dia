@@ -1,6 +1,14 @@
 import React, { useState } from "react";
-import axios from 'axios';
-import { AlertTriangle, Phone, MessageCircle, X, Copy, Check, Siren } from "lucide-react";
+import axios from "axios";
+import {
+  AlertTriangle,
+  Phone,
+  MessageCircle,
+  X,
+  Copy,
+  Check,
+  Siren,
+} from "lucide-react";
 import "../Styles/SosButtonStyles.css";
 
 const SosButton = () => {
@@ -13,7 +21,7 @@ const SosButton = () => {
 
   const handleSOSClick = async () => {
     if (!USER_ID) {
-      alert("Error: Debe iniciar sesión para utilizar el servicio de emergencia.");
+      console.warn("Usuario no autenticado para SOS");
       return;
     }
 
@@ -23,7 +31,9 @@ const SosButton = () => {
 
       const response = await axios.get(
         `${API_SOS_URL}/api/sos/emergency-contact/${USER_ID}`,
-        { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
       );
 
       const data = response.data;
@@ -33,11 +43,10 @@ const SosButton = () => {
         setShowModal(true);
         setCopied(false);
       } else {
-        alert(data.message || "No se encontró un contacto de emergencia asociado.");
+        console.warn(data.message || "Sin contacto de emergencia");
       }
     } catch (err) {
-      console.error("Error conectando al servicio SOS:", err);
-      alert("Error de conexión: No se pudo contactar con el servicio de emergencia.");
+      console.error("Error servicio SOS:", err);
     } finally {
       setLoading(false);
     }
@@ -49,7 +58,7 @@ const SosButton = () => {
 
   const handleWhatsApp = () => {
     if (contactPhone) {
-      const cleanNum = contactPhone.replace(/\D/g, '');
+      const cleanNum = contactPhone.replace(/\D/g, "");
       const message = encodeURIComponent("¡EMERGENCIA! Necesito ayuda urgente.");
       window.open(`https://wa.me/${cleanNum}?text=${message}`, "_blank");
     }
@@ -66,7 +75,7 @@ const SosButton = () => {
   return (
     <>
       <button
-        className={`sos-button-final ${loading ? 'loading' : ''}`}
+        className={`sos-button-final ${loading ? "loading" : ""}`}
         onClick={handleSOSClick}
         disabled={loading}
         aria-label="Emergencia SOS"
@@ -78,27 +87,26 @@ const SosButton = () => {
       {showModal && (
         <div className="sos-modal-overlay">
           <div className="sos-modal-content">
-            
-            <button 
-                className="sos-modal-close-icon"
-                onClick={() => setShowModal(false)}
+            <button
+              className="sos-modal-close-icon"
+              onClick={() => setShowModal(false)}
             >
-                <X size={24} />
+              <X size={24} />
             </button>
 
             <div className="sos-modal-header-icon">
-                <AlertTriangle size={48} color="#dc2626" />
+              <AlertTriangle size={48} className="sos-alert-icon" />
             </div>
-            
+
             <h3>Ayuda de Emergencia</h3>
             <p className="sos-info-text">
               Selecciona una opción para contactar a tu enlace de confianza:
             </p>
 
-            <div 
-                className="phone-display-box" 
-                onClick={handleCopyNumber}
-                title="Haz clic para copiar"
+            <div
+              className="phone-display-box"
+              onClick={handleCopyNumber}
+              title="Haz clic para copiar"
             >
               <span className="phone-number">{contactPhone}</span>
               <div className="copy-indicator">

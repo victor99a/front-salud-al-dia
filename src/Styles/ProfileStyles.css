@@ -40,6 +40,7 @@
 .profile-title h1 {
   margin: 0;
   font-size: 2rem;
+  text-transform: capitalize;
 }
 
 .profile-title p {
@@ -136,6 +137,9 @@
   margin-top: 20px;
   cursor: pointer;
   border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .form-input-edit {
@@ -163,6 +167,9 @@
   border-radius: 8px; 
   font-weight: bold; 
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .danger-zone {
@@ -347,4 +354,16 @@
   .btn-modal-cancel, .btn-modal-confirm {
     width: 100%;
   }
+}
+
+.icon-blue {
+  color: #2563eb;
+}
+
+.icon-red {
+  color: #dc2626;
+}
+
+.btn-icon {
+  margin-right: 5px;
 }

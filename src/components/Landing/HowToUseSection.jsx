@@ -13,7 +13,6 @@ export default function HowToUseSection() {
         </div>
 
         <div className="steps-grid">
-          {/* PASO 1 */}
           <div className="step-card">
             <div className="step-number">1</div>
             <div className="step-icon-bg purple">
@@ -23,7 +22,6 @@ export default function HowToUseSection() {
             <p>Desde tu Panel Principal, busca la tarjeta que dice <strong>"Registrar Información"</strong> con el signo más (+).</p>
           </div>
 
-          {/* PASO 2 */}
           <div className="step-card">
             <div className="step-number">2</div>
             <div className="step-icon-bg blue">
@@ -33,7 +31,6 @@ export default function HowToUseSection() {
             <p>Escribe tus niveles de <strong>Glucosa</strong> o <strong>Presión Arterial</strong>. El formulario es inteligente y validará los números por ti.</p>
           </div>
 
-          {/* PASO 3 */}
           <div className="step-card">
             <div className="step-number">3</div>
             <div className="step-icon-bg green">

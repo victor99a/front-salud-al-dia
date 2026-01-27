@@ -1,28 +1,27 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import ResetPassword from '../../pages/ResetPassword'
-import * as AdminService from '../../services/AdminService'
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import ResetPassword from '../../pages/ResetPassword';
+import * as AdminService from '../../services/AdminService';
 
-// mock navigate
-const mockNavigate = vi.fn()
+const mockNavigate = vi.fn();
 
 vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom')
+  const actual = await vi.importActual('react-router-dom');
   return {
     ...actual,
     useNavigate: () => mockNavigate,
-  }
-})
+  };
+});
 
-// mock servicio
-vi.spyOn(AdminService, 'updatePasswordFinal')
+vi.spyOn(AdminService, 'updatePasswordFinal');
 
 describe('ResetPassword Page', () => {
 
   beforeEach(() => {
-    vi.clearAllMocks()
-  })
+    vi.clearAllMocks();
+    vi.spyOn(window, 'alert').mockImplementation(() => {});
+  });
 
   const renderWithEmail = () => {
     render(
@@ -31,74 +30,57 @@ describe('ResetPassword Page', () => {
           <Route path="/reset" element={<ResetPassword />} />
         </Routes>
       </MemoryRouter>
-    )
-  }
+    );
+  };
 
-  it('renderiza el formulario con el email', () => {
-    renderWithEmail()
+  it('renderiza el formulario con el email obtenido de la URL', () => {
+    renderWithEmail();
 
-    expect(
-      screen.getByText(/restablecer contraseña/i)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/Restablecer Contraseña/i)).toBeInTheDocument();
+    expect(screen.getByText(/cuenta: test@mail.com/i)).toBeInTheDocument();
+    
+    expect(screen.getByPlaceholderText(/Mínimo 6 caracteres/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Repite la contraseña/i)).toBeInTheDocument();
+  });
 
-    expect(
-      screen.getByText(/cuenta: test@mail.com/i)
-    ).toBeInTheDocument()
+  it('redirige al login si no hay email en la URL', () => {
+    render(
+      <MemoryRouter initialEntries={['/reset']}>
+         <Routes>
+          <Route path="/reset" element={<ResetPassword />} />
+        </Routes>
+      </MemoryRouter>
+    );
+    
+    expect(mockNavigate).toHaveBeenCalledWith('/login');
+  });
 
-    expect(
-      screen.getByPlaceholderText(/mínimo 6 caracteres/i)
-    ).toBeInTheDocument()
+  it('no envía datos si las contraseñas no coinciden', () => {
+    renderWithEmail();
 
-    expect(
-      screen.getByPlaceholderText(/repite la contraseña/i)
-    ).toBeInTheDocument()
-  })
+    fireEvent.change(screen.getByPlaceholderText(/Mínimo 6 caracteres/i), { target: { value: '123456' } });
+    fireEvent.change(screen.getByPlaceholderText(/Repite la contraseña/i), { target: { value: '654321' } });
 
-  it('no envía si las contraseñas no coinciden', () => {
-    renderWithEmail()
+    fireEvent.click(screen.getByRole('button', { name: /Cambiar Contraseña/i }));
 
-    fireEvent.change(
-      screen.getByPlaceholderText(/mínimo 6 caracteres/i),
-      { target: { value: '123456' } }
-    )
+    expect(AdminService.updatePasswordFinal).not.toHaveBeenCalled();
+    expect(window.alert).toHaveBeenCalledWith("Las contraseñas no coinciden");
+  });
 
-    fireEvent.change(
-      screen.getByPlaceholderText(/repite la contraseña/i),
-      { target: { value: '654321' } }
-    )
+  it('muestra mensaje de éxito y redirige cuando la contraseña se actualiza', async () => {
+    AdminService.updatePasswordFinal.mockResolvedValue({ success: true });
 
-    fireEvent.click(
-      screen.getByRole('button', { name: /cambiar contraseña/i })
-    )
+    renderWithEmail();
 
-    expect(AdminService.updatePasswordFinal).not.toHaveBeenCalled()
-  })
+    fireEvent.change(screen.getByPlaceholderText(/Mínimo 6 caracteres/i), { target: { value: '123456' } });
+    fireEvent.change(screen.getByPlaceholderText(/Repite la contraseña/i), { target: { value: '123456' } });
 
-  it('muestra mensaje de éxito cuando la contraseña se actualiza', async () => {
-    AdminService.updatePasswordFinal.mockResolvedValue({
-      success: true,
-    })
-
-    renderWithEmail()
-
-    fireEvent.change(
-      screen.getByPlaceholderText(/mínimo 6 caracteres/i),
-      { target: { value: '123456' } }
-    )
-
-    fireEvent.change(
-      screen.getByPlaceholderText(/repite la contraseña/i),
-      { target: { value: '123456' } }
-    )
-
-    fireEvent.click(
-      screen.getByRole('button', { name: /cambiar contraseña/i })
-    )
+    fireEvent.click(screen.getByRole('button', { name: /Cambiar Contraseña/i }));
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/contraseña actualizada/i)
-      ).toBeInTheDocument()
-    })
-  })
-})
+      expect(screen.getByText(/Contraseña Actualizada/i)).toBeInTheDocument();
+    });
+
+    expect(AdminService.updatePasswordFinal).toHaveBeenCalledWith('test@mail.com', '123456');
+  });
+});

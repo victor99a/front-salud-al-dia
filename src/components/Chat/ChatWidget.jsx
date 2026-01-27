@@ -67,12 +67,12 @@ const ChatWidget = ({ userId }) => {
           <div className="chat-header">
             <div className="header-info">
               <div className="bot-avatar-container">
-                <Stethoscope size={26} color="#fff" strokeWidth={2} />
+                <Stethoscope size={26} className="bot-avatar-icon" />
               </div>
               <div>
                 <p className="bot-name">Dr. Chapatín</p>
                 <div className="online-indicator">
-                  <Activity size={12} style={{ marginRight: 4 }} />
+                  <Activity size={12} className="status-icon" />
                   Asistente Médico IA
                 </div>
               </div>

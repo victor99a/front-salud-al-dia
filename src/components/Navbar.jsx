@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import SosButton from './SosButton'; 
 import '../Styles/NavbarStyles.css';
 import logo1 from '../assets/logo1.png';
-import { Stethoscope, LogOut } from 'lucide-react';
+import { Stethoscope, LogOut, LayoutDashboard } from 'lucide-react';
 
 const Navbar = ({ isUserAdmin, userRole }) => {
     const navigate = useNavigate();
@@ -19,41 +19,19 @@ const Navbar = ({ isUserAdmin, userRole }) => {
         setIsOpen(false);
     };
 
-    if (userRole === 'specialist') {
-        return (
-            <nav className="navbar">
-                <div className="navbar-container">
-                    <div className="nav-logo">
-                        <img src={logo1} alt="Salud al Día" className="logo-img" />
-                    </div>
-                    <div className="nav-specialist-controls">
-                        <div className="specialist-info">
-                            <span className="specialist-name">
-                                {docName || 'Especialista'}
-                            </span>
-                            <span className="specialist-role">Profesional de Salud</span>
-                        </div>
-                        <div className="specialist-icon-box">
-                            <Stethoscope size={20} />
-                        </div>
-                        <button 
-                            onClick={handleLogout} 
-                            className="btn-logout-specialist"
-                        >
-                            <LogOut size={16} /> Salir
-                        </button>
-                    </div>
-                </div>
-            </nav>
-        );
-    }
-
-    const showSos = token && !isUserAdmin;
+    const isSpecialist = userRole === 'specialist';
+    // El SOS se muestra solo si hay token, NO es admin y NO es especialista
+    const showSos = token && !isUserAdmin && !isSpecialist;
 
     return (
         <nav className="navbar">
             <div className="navbar-container">
-                <Link to="/" className="nav-logo" onClick={() => setIsOpen(false)}>
+                {/* Lógica del Logo: Especialista -> Panel, Otros -> Home */}
+                <Link 
+                    to={isSpecialist ? "/panel-medico" : "/"} 
+                    className="nav-logo" 
+                    onClick={() => setIsOpen(false)}
+                >
                     <img src={logo1} alt="Salud al Día" className="logo-img" />
                 </Link>
 
@@ -61,16 +39,21 @@ const Navbar = ({ isUserAdmin, userRole }) => {
                     <div className="nav-menu">
                         <Link to="/about" className="nav-item" onClick={() => setIsOpen(false)}>Sobre Nosotros</Link>
                         <Link to="/contact" className="nav-item" onClick={() => setIsOpen(false)}>Contáctanos</Link>
+                        
                         {token && (
                             <>
-                                {!isUserAdmin ? (
+                                {isSpecialist ? (
+                                    <Link to="/panel-medico" className="nav-item nav-special-link" onClick={() => setIsOpen(false)}>
+                                        <LayoutDashboard size={18} className="nav-icon-inline" /> Panel Médico
+                                    </Link>
+                                ) : isUserAdmin ? (
+                                    <Link to="/admin" className="nav-item" onClick={() => setIsOpen(false)}>Panel Admin</Link>
+                                ) : (
                                     <>
                                         <Link to="/dashboard" className="nav-item" onClick={() => setIsOpen(false)}>Mi Panel</Link>
                                         <Link to="/historial" className="nav-item" onClick={() => setIsOpen(false)}>Historial</Link>
                                         <Link to="/perfil" className="nav-item" onClick={() => setIsOpen(false)}>Mi Perfil</Link>
                                     </>
-                                ) : (
-                                    <Link to="/admin" className="nav-item" onClick={() => setIsOpen(false)}>Panel Admin</Link>
                                 )}
                             </>
                         )}
@@ -78,10 +61,31 @@ const Navbar = ({ isUserAdmin, userRole }) => {
 
                     <div className="nav-auth">
                         {token ? (
-                            <>
+                            <div className="nav-user-area">
+                                {isSpecialist && (
+                                    <div className="specialist-nav-badge">
+                                        <div className="specialist-info">
+                                            <span className="specialist-name">{docName}</span>
+                                            <span className="specialist-role">Profesional</span>
+                                        </div>
+                                        <div className="specialist-icon-box">
+                                            <Stethoscope size={18} />
+                                        </div>
+                                    </div>
+                                )}
+
                                 {showSos && <div className="sos-desktop-wrapper"><SosButton /></div>}
-                                <button onClick={handleLogout} className="btn-login">Cerrar Sesión</button>
-                            </>
+                                
+                                <button onClick={handleLogout} className={isSpecialist ? "btn-logout-specialist" : "btn-login btn-logout-general"}>
+                                    {isSpecialist ? (
+                                        <>
+                                            <LogOut size={16} /> Salir
+                                        </>
+                                    ) : (
+                                        "Cerrar Sesión"
+                                    )}
+                                </button>
+                            </div>
                         ) : (
                             <>
                                 <Link to="/login" className="btn-login" onClick={() => setIsOpen(false)}>Iniciar Sesión</Link>
