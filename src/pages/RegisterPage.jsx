@@ -112,13 +112,13 @@ const Signup = () => {
             <input type="email" name="email" placeholder="correo@ejemplo.com" onChange={handleChange} required />
           </div>
           
-          <div className="form-group" style={{ gridColumn: 'span 2' }}>
+          <div className="form-group full-width">
             <label>Contraseña</label>
             <input type="password" name="password" placeholder="••••••••" onChange={handleChange} required />
           </div>
 
           {error && (
-            <div style={{ gridColumn: 'span 2', color: 'red', textAlign: 'center', marginBottom: '10px', fontSize: '0.9rem' }}>
+            <div className="error-message-container">
               {error}
             </div>
           )}

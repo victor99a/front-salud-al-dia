@@ -5,15 +5,13 @@ import carrusel1 from '../assets/carrusel-1.png';
 import carrusel2 from '../assets/imagen2.png';
 import carrusel3 from '../assets/carrusel-3.png';
 
-// Importamos tus secciones
 import DrChapatinSection from "../components/Landing/DrChapatinSection"; 
-import HowToUseSection from "../components/Landing/HowToUseSection"; // <--- NUEVO IMPORT
+import HowToUseSection from "../components/Landing/HowToUseSection"; 
 
 function HomePage() {
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // ... (Toda tu lógica del carrusel y slides IGUAL que antes) ...
   const slides = [
     {
       badge: "Salud explicada por IA",
@@ -52,7 +50,6 @@ function HomePage() {
 
   return (
     <>
-      {/* 1. HERO SECTION (CARRUSEL) - SIN CAMBIOS */}
       <section className="hero-modern-container">
         <button className="carousel-arrow left" onClick={prevSlide}>&#10094;</button>
         <button className="carousel-arrow right" onClick={nextSlide}>&#10095;</button>
@@ -88,13 +85,10 @@ function HomePage() {
         </div>
       </section>
 
-      {/* 2. DR. CHAPATÍN */}
       <DrChapatinSection />
 
-      {/* 3. NUEVA SECCIÓN: TUTORIAL DE USO */}
       <HowToUseSection />
 
-      {/* 4. CTA FINAL */}
       <section className="cta">
         <h2>¿Listo para mejorar tu salud?</h2>
         <p>Únete a miles de personas que ya confían en Salud al Día.</p>

@@ -1,93 +1,88 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
-import { BrowserRouter } from 'react-router-dom'
-import RegisterPage from '../../pages/RegisterPage'
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import axios from 'axios';
+import RegisterPage from '../../pages/RegisterPage';
 
-// mock navegación
-const mockNavigate = vi.fn()
+const mockNavigate = vi.fn();
 
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom')
-  return {
-    ...actual,
-    useNavigate: () => mockNavigate,
-  }
-})
+vi.mock('react-router-dom', () => ({
+  useNavigate: () => mockNavigate,
+  Link: ({ children, to }) => <a href={to}>{children}</a>,
+}));
 
-// mock axios
 vi.mock('axios', () => ({
   default: {
     post: vi.fn(),
   },
-}))
+}));
 
-// mock logo
 vi.mock('../../assets/logo.png', () => ({
   default: 'logo-mock',
-}))
+}));
+
+// Mockeamos las validaciones para tener control total en el test
+vi.mock('../../utils/validations', () => ({
+  formatRut: (val) => val, 
+  isValidEmail: (email) => email === 'test@mail.com', // Solo este email pasará
+}));
 
 describe('RegisterPage', () => {
-
   beforeEach(() => {
-    vi.clearAllMocks()
-  })
+    vi.clearAllMocks();
+    vi.spyOn(window, 'alert').mockImplementation(() => {});
+  });
 
-  it('renderiza el formulario de registro', () => {
-    render(
-      <BrowserRouter>
-        <RegisterPage />
-      </BrowserRouter>
-    )
+  it('renderiza el formulario de registro correctamente', () => {
+    render(<RegisterPage />);
 
-    expect(screen.getByPlaceholderText(/12\.345\.678-9/i)).toBeInTheDocument()
-    expect(screen.getByPlaceholderText(/juan ignacio/i)).toBeInTheDocument()
-    expect(screen.getByPlaceholderText(/pérez soto/i)).toBeInTheDocument()
-    expect(screen.getByPlaceholderText(/correo@ejemplo.com/i)).toBeInTheDocument()
-    expect(screen.getByPlaceholderText(/••••••••/i)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /crear cuenta/i })).toBeInTheDocument()
-  })
+    expect(screen.getByPlaceholderText(/12\.345\.678-9/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/juan ignacio/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Crear Cuenta/i })).toBeInTheDocument();
+  });
 
-  it('no permite enviar el formulario si el email es inválido', () => {
-    render(
-      <BrowserRouter>
-        <RegisterPage />
-      </BrowserRouter>
-    )
+  it('muestra error y no envía datos si el email es inválido', async () => {
+    render(<RegisterPage />);
 
-    fireEvent.change(
-      screen.getByPlaceholderText(/12\.345\.678-9/i),
-      { target: { value: '12.345.678-9' } }
-    )
+    fireEvent.change(screen.getByPlaceholderText(/12\.345\.678-9/i), { target: { value: '12345678-9' } });
+    fireEvent.change(screen.getByPlaceholderText(/juan ignacio/i), { target: { value: 'Juan' } });
+    fireEvent.change(screen.getByPlaceholderText(/pérez soto/i), { target: { value: 'Perez' } });
+    fireEvent.change(screen.getByPlaceholderText(/••••••••/i), { target: { value: '123456' } });
+    
+    // Probamos con un email que nuestro mock rechazará
+    const emailInput = screen.getByPlaceholderText(/correo@ejemplo.com/i);
+    fireEvent.change(emailInput, { target: { value: 'malo@prueba.com' } });
 
-    fireEvent.change(
-      screen.getByPlaceholderText(/juan ignacio/i),
-      { target: { value: 'Juan' } }
-    )
+    fireEvent.click(screen.getByRole('button', { name: /Crear Cuenta/i }));
 
-    fireEvent.change(
-      screen.getByPlaceholderText(/pérez soto/i),
-      { target: { value: 'Perez' } }
-    )
+    expect(await screen.findByText(/El correo electrónico no es válido/i)).toBeInTheDocument();
+    
+    expect(axios.post).not.toHaveBeenCalled();
+  });
 
-    const emailInput = screen.getByPlaceholderText(/correo@ejemplo.com/i)
+  it('envía el formulario y redirige si todo es correcto', async () => {
+    axios.post.mockResolvedValueOnce({
+      data: {
+        user: { id: '123' },
+        session: { access_token: 'fake-token' }
+      }
+    });
 
-    fireEvent.change(emailInput, {
-      target: { value: 'correo-malo' }
-    })
+    render(<RegisterPage />);
 
-    fireEvent.change(
-      screen.getByPlaceholderText(/••••••••/i),
-      { target: { value: '12345678' } }
-    )
+    fireEvent.change(screen.getByPlaceholderText(/12\.345\.678-9/i), { target: { value: '12.345.678-9' } });
+    fireEvent.change(screen.getByPlaceholderText(/juan ignacio/i), { target: { value: 'Juan' } });
+    fireEvent.change(screen.getByPlaceholderText(/pérez soto/i), { target: { value: 'Perez' } });
+    fireEvent.change(screen.getByPlaceholderText(/••••••••/i), { target: { value: '123456' } });
+    
+    // Usamos el email válido definido en el mock
+    fireEvent.change(screen.getByPlaceholderText(/correo@ejemplo.com/i), { target: { value: 'test@mail.com' } });
 
-    fireEvent.click(
-      screen.getByRole('button', { name: /crear cuenta/i })
-    )
+    fireEvent.click(screen.getByRole('button', { name: /Crear Cuenta/i }));
 
-    //  validación HTML5
-    expect(emailInput.checkValidity()).toBe(false)
+    await waitFor(() => {
+        expect(axios.post).toHaveBeenCalled();
+    });
 
-    //  no debe navegar
-    expect(mockNavigate).not.toHaveBeenCalled()
-  })
-})
+    expect(mockNavigate).toHaveBeenCalledWith('/ficha-medica');
+  });
+});

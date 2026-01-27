@@ -50,9 +50,8 @@
   margin-bottom: 15px;
 }
 
-/* Sección de Valores (Grid) */
 .about-values {
-  background-color: #f0f9ff; /* Azul muy suave de fondo */
+  background-color: #f0f9ff; 
   padding: 60px 5%;
   text-align: center;
 }
@@ -82,14 +81,14 @@
   display: block;
 }
 
-/* Responsivo */
+
 @media (max-width: 768px) {
   .about-hero h1 { font-size: 2rem; }
   .about-mission { flex-direction: column; }
 }
 
 .cta-footer {
-  background: #2563eb; /* Tu azul corporativo */
+  background: #2563eb; 
   color: white;
   text-align: center;
   padding: 60px 20px;

@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">66.66% </span>
+                <span class="strong">88.88% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>12/18</span>
+                <span class='fraction'>16/18</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">25% </span>
+                <span class="strong">68.75% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>4/16</span>
+                <span class='fraction'>11/16</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">83.33% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>5/6</span>
+                <span class='fraction'>6/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">70.58% </span>
+                <span class="strong">94.11% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>12/17</span>
+                <span class='fraction'>16/17</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -158,30 +158,30 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -204,11 +204,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -260,7 +260,7 @@ export default function HistoryPage() {
           `${API_URL}/api/registros/historial/${userId}`,
           { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }
         );
-<span class="cstat-no" title="statement not covered" >        setHistory(response.data);</span>
+        setHistory(response.data);
       } catch (error) {
 <span class="cstat-no" title="statement not covered" >        console.error("Error al obtener historial:", error);</span>
       }
@@ -291,16 +291,16 @@ export default function HistoryPage() {
 &nbsp;
       {history.length === 0 &amp;&amp; &lt;p&gt;No hay registros disponibles&lt;/p&gt;}
 &nbsp;
-      {history.map(<span class="fstat-no" title="function not covered" >(i</span>tem, index) =&gt; {
-        const glucoseAlert = <span class="cstat-no" title="statement not covered" >item.glucose &gt; 130;</span>
+      {history.map((item, index) =&gt; {
+        const glucoseAlert = item.glucose &gt; 130;
         const pressureAlert =
-<span class="cstat-no" title="statement not covered" >          item.systolic &gt; 130 || item.diastolic &gt; 85;</span>
+          item.systolic &gt; 130 || item.diastolic &gt; 85;
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        return (</span>
+        return (
           &lt;div
             key={index}
             className={`history-item ${
-              glucoseAlert || pressureAlert ? "alert" : ""
+              glucoseAlert || pressureAlert ? <span class="branch-0 cbranch-no" title="branch not covered" >"alert" : "</span>"
             }`}
           &gt;
             &lt;div className="history-header"&gt;
@@ -310,13 +310,13 @@ export default function HistoryPage() {
             &lt;/div&gt;
 &nbsp;
             &lt;div className="history-values"&gt;
-              &lt;span className={`badge glucose ${glucoseAlert ? "danger" : ""}`}&gt;
+              &lt;span className={`badge glucose ${glucoseAlert ? <span class="branch-0 cbranch-no" title="branch not covered" >"danger" : "</span>"}`}&gt;
                 Glucosa: {item.glucose} mg/dL
               &lt;/span&gt;
 &nbsp;
               &lt;span
                 className={`badge pressure ${
-                  pressureAlert ? "danger" : ""
+                  pressureAlert ? <span class="branch-0 cbranch-no" title="branch not covered" >"danger" : "</span>"
                 }`}
               &gt;
                 Presión: {item.systolic}/{item.diastolic} mmHg
@@ -334,7 +334,7 @@ export default function HistoryPage() {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-01-27T17:26:18.811Z
+                at 2026-01-27T21:18:52.202Z
             </div>
         <script src="../prettify.js"></script>
         <script>

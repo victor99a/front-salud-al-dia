@@ -14,7 +14,7 @@
   box-shadow: 0 10px 25px rgba(0,0,0,0.08);
   width: 100%;
   max-width: 450px;
-  border-top: 6px solid #1e40af; /* Azul médico */
+  border-top: 6px solid #1e40af; 
 }
 
 .health-card h3 {
@@ -67,7 +67,6 @@
   background-color: #1d4ed8;
 }
 
-/* Responsive para celulares pequeños */
 @media (max-width: 480px) {
   .health-card {
     padding: 1.5rem;

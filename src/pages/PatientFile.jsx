@@ -106,7 +106,7 @@ const PatientFile = () => {
     );
   };
 
-  if (loading) return <div className="loading-screen">Verificando datos en la base de datos...</div>;
+  if (loading) return <div className="loading-screen">Cargando información clínica del paciente...</div>;
 
   return (
     <div className="file-bg">

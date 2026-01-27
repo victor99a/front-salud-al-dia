@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">56.86% </span>
+                <span class="strong">76.47% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>29/51</span>
+                <span class='fraction'>39/51</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">41.09% </span>
+                <span class="strong">65.75% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>30/73</span>
+                <span class='fraction'>48/73</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">44.44% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>4/9</span>
+                <span class='fraction'>6/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">56.25% </span>
+                <span class="strong">77.08% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>27/48</span>
+                <span class='fraction'>37/48</span>
             </div>
         
             
@@ -384,15 +384,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
@@ -405,26 +405,26 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -573,7 +573,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -671,27 +671,27 @@ const PatientFile = () =&gt; {
     return (weight / (heightInMeters * heightInMeters)).toFixed(1);
   };
 &nbsp;
-  const renderStatusBadges = <span class="fstat-no" title="function not covered" >(r</span>ecord) =&gt; {
-    const alerts = <span class="cstat-no" title="statement not covered" >[];</span>
+  const renderStatusBadges = (record) =&gt; {
+    const alerts = [];
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    if (record.glucose) {</span>
-<span class="cstat-no" title="statement not covered" >        if (record.glucose &gt; 140) {</span>
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (record.glucose) {
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (record.glucose &gt; 140) {
 <span class="cstat-no" title="statement not covered" >            alerts.push({ text: 'Glucosa Alta', className: 'badge-warning' });</span>
-<span class="cstat-no" title="statement not covered" >        } else if (record.glucose &lt; 70) {</span>
+        <span class="missing-if-branch" title="if path not taken" >I</span>} else if (record.glucose &lt; 70) {
 <span class="cstat-no" title="statement not covered" >            alerts.push({ text: 'Hipoglucemia', className: 'badge-danger' });</span>
         }
     }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    if (record.systolic &amp;&amp; record.diastolic) {</span>
-<span class="cstat-no" title="statement not covered" >        if (record.systolic &gt;= 140 || record.diastolic &gt;= 90) {</span>
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (record.systolic &amp;&amp; record.diastolic) {
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (record.systolic &gt;= 140 || record.diastolic &gt;= 90) {
 <span class="cstat-no" title="statement not covered" >            alerts.push({ text: 'Hipertensión', className: 'badge-danger' });</span>
-<span class="cstat-no" title="statement not covered" >        } else if (record.systolic &gt;= 130 || record.diastolic &gt;= 85) {</span>
+        <span class="missing-if-branch" title="if path not taken" >I</span>} else if (record.systolic &gt;= 130 || record.diastolic &gt;= 85) {
 <span class="cstat-no" title="statement not covered" >            alerts.push({ text: 'Presión Elevada', className: 'badge-warning' });</span>
         }
     }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    if (alerts.length === 0) {</span>
-<span class="cstat-no" title="statement not covered" >        return &lt;span className="status-dot green"&gt;Estable&lt;/span&gt;;</span>
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (alerts.length === 0) {
+        return &lt;span className="status-dot green"&gt;Estable&lt;/span&gt;;
     }
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    return (</span>
@@ -705,7 +705,7 @@ const PatientFile = () =&gt; {
     );
   };
 &nbsp;
-  if (loading) return &lt;div className="loading-screen"&gt;Verificando datos en la base de datos...&lt;/div&gt;;
+  if (loading) return &lt;div className="loading-screen"&gt;Cargando información clínica del paciente...&lt;/div&gt;;
 &nbsp;
   return (
     &lt;div className="file-bg"&gt;
@@ -737,7 +737,7 @@ const PatientFile = () =&gt; {
 &nbsp;
                 &lt;div className="info-group"&gt;
                     &lt;label&gt;&lt;CreditCard size={14}/&gt; RUT&lt;/label&gt;
-                    &lt;span className="value-text"&gt;{userProfile?.rut || 'No disponible'}&lt;/span&gt;
+                    &lt;span className="value-text"&gt;{userProfile?.rut || <span class="branch-1 cbranch-no" title="branch not covered" >'No disponible'}&lt;</span>/span&gt;
                 &lt;/div&gt;
 &nbsp;
                 &lt;div className="divider"&gt;&lt;/div&gt;
@@ -797,11 +797,11 @@ const PatientFile = () =&gt; {
                         &lt;/div&gt;
                         &lt;div className="sos-data-row"&gt;
                             &lt;strong&gt;Nombre:&lt;/strong&gt;
-                            &lt;span&gt;{medicalRecord.emergency_contact_name || 'No registrado'}&lt;/span&gt;
+                            &lt;span&gt;{medicalRecord.emergency_contact_name || <span class="branch-1 cbranch-no" title="branch not covered" >'No registrado'}&lt;</span>/span&gt;
                         &lt;/div&gt;
                         &lt;div className="sos-data-row"&gt;
                             &lt;strong&gt;Número:&lt;/strong&gt;
-                            &lt;span className="sos-phone-black"&gt;{medicalRecord.emergency_contact_phone || '---'}&lt;/span&gt;
+                            &lt;span className="sos-phone-black"&gt;{medicalRecord.emergency_contact_phone || <span class="branch-1 cbranch-no" title="branch not covered" >'---'}&lt;</span>/span&gt;
                         &lt;/div&gt;
                     &lt;/div&gt;
                   &lt;/&gt;
@@ -839,14 +839,14 @@ const PatientFile = () =&gt; {
                                 &lt;/tr&gt;
                             &lt;/thead&gt;
                             &lt;tbody&gt;
-                                {history.length &gt; 0 ? <span class="branch-0 cbranch-no" title="branch not covered" >history.map(<span class="fstat-no" title="function not covered" >(h</span>, i) =&gt; (</span>
-<span class="cstat-no" title="statement not covered" >                                    &lt;tr key={i}&gt;</span>
+                                {history.length &gt; 0 ? history.map((h, i) =&gt; (
+                                    &lt;tr key={i}&gt;
                                         &lt;td&gt;{new Date(h.date).toLocaleDateString()}&lt;/td&gt;
                                         &lt;td&gt;
-                                            {h.glucose ? &lt;span className={`value-box ${h.glucose &gt; 140 ? 'val-high' : h.glucose &lt; 70 ? 'val-low' : 'val-normal'}`}&gt;{h.glucose} mg/dL&lt;/span&gt; : '--'}
+                                            {h.glucose ? &lt;span className={`value-box ${h.glucose &gt; 140 ? <span class="branch-0 cbranch-no" title="branch not covered" >'val-high' : h</span>.glucose &lt; 70 ? <span class="branch-0 cbranch-no" title="branch not covered" >'val-low' : '</span>val-normal'}`}&gt;{h.glucose} mg/dL&lt;/span&gt; : <span class="branch-1 cbranch-no" title="branch not covered" >'--'}</span>
                                         &lt;/td&gt;
                                         &lt;td&gt;
-                                            {h.systolic ? &lt;span className={`value-box ${h.systolic &gt;= 140 || h.diastolic &gt;= 90 ? 'val-high' : 'val-normal'}`}&gt;{h.systolic}/{h.diastolic} mmHg&lt;/span&gt; : '--'}
+                                            {h.systolic ? &lt;span className={`value-box ${h.systolic &gt;= 140 || h.diastolic &gt;= 90 ? <span class="branch-0 cbranch-no" title="branch not covered" >'val-high' : '</span>val-normal'}`}&gt;{h.systolic}/{h.diastolic} mmHg&lt;/span&gt; : <span class="branch-1 cbranch-no" title="branch not covered" >'--'}</span>
                                         &lt;/td&gt;
                                         &lt;td className="status-cell"&gt;
                                             {renderStatusBadges(h)}
@@ -871,7 +871,7 @@ export default PatientFile;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-01-27T17:26:18.811Z
+                at 2026-01-27T21:18:52.202Z
             </div>
         <script src="../prettify.js"></script>
         <script>

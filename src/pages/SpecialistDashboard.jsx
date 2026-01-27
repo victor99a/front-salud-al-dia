@@ -147,7 +147,7 @@ const SpecialistDashboard = () => {
                             <tr key={patient.id}>
                                 <td className="patient-cell">
                                     <div className="avatar-circle">
-                                        <User size={18} color="white" />
+                                        <User size={18} className="icon-white" />
                                     </div>
                                     <div className="patient-info">
                                         <span className="patient-name">{patient.first_names} {patient.last_names}</span>

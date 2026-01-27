@@ -1,9 +1,10 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom'; // 1. Importamos el hook
+import { useNavigate } from 'react-router-dom'; 
+import { FcPrivacy, FcMindMap, FcLike } from 'react-icons/fc'; 
 import '../Styles/AboutStyles.css';
 
 const AboutPage = () => {
-  const navigate = useNavigate(); // 2. Inicializamos el hook
+  const navigate = useNavigate(); 
 
   return (
     <div className="about-container">
@@ -38,22 +39,23 @@ const AboutPage = () => {
         <h2>¿Por qué elegirnos?</h2>
         <div className="values-grid">
           <div className="value-item">
-            <span className="value-icon">🔒</span>
+            <span className="value-icon"><FcPrivacy size={45} /></span>
             <h3>Seguridad Total</h3>
             <p>Tus datos médicos están encriptados y protegidos con los más altos estándares.</p>
           </div>
           <div className="value-item">
-            <span className="value-icon">🤖</span>
+            <span className="value-icon"><FcMindMap size={45} /></span>
             <h3>Innovación IA</h3>
             <p>Integramos inteligencia artificial para ayudarte a interpretar tus resultados.</p>
           </div>
           <div className="value-item">
-            <span className="value-icon">💙</span>
+            <span className="value-icon"><FcLike size={45} /></span>
             <h3>Centrado en Ti</h3>
             <p>Diseñamos cada pantalla pensando en tu facilidad de uso y tranquilidad.</p>
           </div>
         </div>
       </div> 
+
       <section className="cta-footer">
         <h2>¿Listo para mejorar tu salud?</h2>
         <p>Únete a miles de personas que ya confían en Salud al Día.</p>
@@ -61,7 +63,6 @@ const AboutPage = () => {
           Crear Cuenta Ahora
         </button>
       </section>
-
     </div>
   );
 };

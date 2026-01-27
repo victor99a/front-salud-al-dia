@@ -1,60 +1,58 @@
-// Renderiza el título y muestra mensaje cuando no hay historial
-// Ejecuta la descarga de historial en PDF y CSV al hacer clic en los botones
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import HistoryPage from '../../pages/HistoryPage';
+import axios from 'axios';
+import { descargarHistorial } from '../../services/downloadService';
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
-import HistoryPage from '../../pages/HistoryPage'
-
-// Mock del servicio de descarga
+vi.mock('axios');
 vi.mock('../../services/downloadService', () => ({
   descargarHistorial: vi.fn(),
-}))
+}));
 
-// Mock del formateador de fechas
 vi.mock('../../utils/formatDate', () => ({
-  formatDateLong: (date) => `Fecha: ${date}`,
-}))
+  formatDateLong: () => '01 de Enero 2024',
+}));
 
 describe('HistoryPage', () => {
   beforeEach(() => {
-    localStorage.setItem('user_id', '123')
+    localStorage.setItem('user_id', '123');
+    vi.clearAllMocks(); 
+  });
 
-    // Mock global de fetch
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        json: () => Promise.resolve([]),
-      })
-    )
-  })
+  it('renderiza el título y mensaje cuando no hay registros', async () => {
+    axios.get.mockResolvedValueOnce({ data: [] });
 
-  it('renderiza el título y muestra mensaje si no hay registros', async () => {
-    render(<HistoryPage />)
+    render(<HistoryPage />);
 
-    expect(
-      await screen.findByText(/Historial de Mediciones/i)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/Historial de Mediciones/i)).toBeInTheDocument();
 
-    expect(
-      await screen.findByText(/No hay registros disponibles/i)
-    ).toBeInTheDocument()
-  })
+    await waitFor(() => {
+      expect(screen.getByText(/No hay registros disponibles/i)).toBeInTheDocument();
+    });
+  });
+
+  it('renderiza registros cuando la API devuelve datos', async () => {
+    const mockData = [
+      { date: '2024-01-01', glucose: 100, systolic: 120, diastolic: 80 }
+    ];
+    axios.get.mockResolvedValueOnce({ data: mockData });
+
+    render(<HistoryPage />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Glucosa: 100 mg\/dL/i)).toBeInTheDocument();
+    });
+  });
 
   it('llama a descargarHistorial al hacer click en los botones', async () => {
-    const { descargarHistorial } = await import(
-      '../../services/downloadService'
-    )
+    axios.get.mockResolvedValueOnce({ data: [] });
 
-    render(<HistoryPage />)
+    render(<HistoryPage />);
 
-    fireEvent.click(
-      screen.getByRole('button', { name: /Descargar PDF/i })
-    )
+    fireEvent.click(screen.getByRole('button', { name: /Descargar PDF/i }));
+    expect(descargarHistorial).toHaveBeenCalledWith('123', 'pdf');
 
-    fireEvent.click(
-      screen.getByRole('button', { name: /Descargar CSV/i })
-    )
-
-    expect(descargarHistorial).toHaveBeenCalledWith('123', 'pdf')
-    expect(descargarHistorial).toHaveBeenCalledWith('123', 'csv')
-  })
-})
+    fireEvent.click(screen.getByRole('button', { name: /Descargar CSV/i }));
+    expect(descargarHistorial).toHaveBeenCalledWith('123', 'csv');
+  });
+});

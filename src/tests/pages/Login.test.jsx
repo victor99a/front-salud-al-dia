@@ -1,67 +1,60 @@
-// Renderiza el formulario de inicio de sesión
-// Muestra el modal de recuperación de contraseña al hacer clic
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import Login from '../../pages/LoginPage'; 
 
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
-import Login from '../../pages/LoginPage'
-
-// Mock navegación
-const mockNavigate = vi.fn()
+const mockNavigate = vi.fn();
 
 vi.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
-  Link: ({ children }) => <span>{children}</span>,
-}))
+  Link: ({ children }) => <a href="#">{children}</a>, 
+}));
 
-// Mock servicios
 vi.mock('../../services/AuthService', () => ({
   requestPublicPasswordReset: vi.fn(),
   getUserProfile: vi.fn(),
-}))
+}));
 
-// Mock axios
 vi.mock('axios', () => ({
   default: {
     post: vi.fn(),
   },
-}))
+}));
 
-// Mock logo
 vi.mock('../../assets/logo.png', () => ({
-  default: 'logo-mock',
-}))
+  default: 'logo.png',
+}));
 
-describe('Login', () => {
-  it('renderiza el formulario de login', () => {
-    render(<Login />)
+describe('Login Page', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear(); 
+  });
 
-    // Inputs por placeholder (forma correcta en tu caso)
-    expect(
-      screen.getByPlaceholderText(/ejemplo@correo.com/i)
-    ).toBeInTheDocument()
+  it('renderiza el formulario de login correctamente', () => {
+    render(<Login />);
 
-    expect(
-      screen.getByPlaceholderText(/••••••••/i)
-    ).toBeInTheDocument()
+    const logo = screen.getByRole('img', { name: /Salud Al Día/i });
+    expect(logo).toBeInTheDocument();
 
-    expect(
-      screen.getByRole('button', { name: /Entrar al Panel/i })
-    ).toBeInTheDocument()
-  })
+    expect(screen.getByPlaceholderText(/ejemplo@correo.com/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/••••••••/i)).toBeInTheDocument();
+
+    expect(screen.getByRole('button', { name: /Entrar al Panel/i })).toBeInTheDocument();
+  });
 
   it('muestra el modal de recuperación al hacer clic en "¿Olvidaste tu contraseña?"', () => {
-    render(<Login />)
+    render(<Login />);
+
+    // Nos aseguramos que al principio NO esté visible
+    expect(screen.queryByText(/Recuperar Contraseña/i)).not.toBeInTheDocument();
 
     fireEvent.click(
       screen.getByRole('button', { name: /¿Olvidaste tu contraseña\?/i })
-    )
+    );
 
-    expect(
-      screen.getByText(/Recuperar Contraseña/i)
-    ).toBeInTheDocument()
-
-    expect(
-      screen.getByPlaceholderText(/tu@correo.com/i)
-    ).toBeInTheDocument()
-  })
-})
+    // Ahora sí debería aparecer
+    expect(screen.getByText(/Recuperar Contraseña/i)).toBeInTheDocument();
+    
+    expect(screen.getByPlaceholderText(/tu@correo.com/i)).toBeInTheDocument();
+  });
+});

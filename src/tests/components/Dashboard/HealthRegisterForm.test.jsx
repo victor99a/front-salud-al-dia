@@ -1,21 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import HealthRegisterForm from "../../components/Dashboard/HealthRegisterForm";
+import HealthRegisterForm from "../../../components/Dashboard/HealthRegisterForm";
 import axios from "axios";
 
-// Mock axios
 vi.mock("axios");
 
 describe("HealthRegisterForm", () => {
   beforeEach(() => {
-    // Mock localStorage
+    // Seteamos un usuario falso en localStorage para que la petición incluya el token
     localStorage.setItem("user_id", "1");
     localStorage.setItem("token", "fake-token");
-
-    // Mock alert
+    
+    // Evitamos que el window.alert rompa el test ya que no hay ventana real
     vi.spyOn(window, "alert").mockImplementation(() => {});
-
-    // Reset mocks
     vi.clearAllMocks();
   });
 
@@ -29,48 +26,31 @@ describe("HealthRegisterForm", () => {
   });
 
   it("muestra alerta si los valores son menores o iguales a 0", async () => {
-  render(<HealthRegisterForm />);
+    render(<HealthRegisterForm />);
 
-  fireEvent.change(screen.getByPlaceholderText("Ej: 120"), {
-    target: { value: "0" },
+    // Probamos con valores inválidos (ceros)
+    fireEvent.change(screen.getByPlaceholderText("Ej: 120"), { target: { value: "0" } });
+    fireEvent.change(screen.getByPlaceholderText("Sistólica (Ej: 120)"), { target: { value: "120" } });
+    fireEvent.change(screen.getByPlaceholderText("Diastólica (Ej: 80)"), { target: { value: "80" } });
+
+    fireEvent.submit(screen.getByRole("button", { name: /guardar registro/i }));
+
+    // Verificamos que salte la alerta y no se llame al backend
+    await waitFor(() => {
+      expect(window.alert).toHaveBeenCalledWith("Los valores de salud deben ser mayores a 0");
+    });
+
+    expect(axios.post).not.toHaveBeenCalled();
   });
-
-  fireEvent.change(screen.getByPlaceholderText("Sistólica (Ej: 120)"), {
-    target: { value: "120" },
-  });
-
-  fireEvent.change(screen.getByPlaceholderText("Diastólica (Ej: 80)"), {
-    target: { value: "80" },
-  });
-
-  fireEvent.submit(screen.getByRole("button", { name: /guardar registro/i }));
-
-  await waitFor(() => {
-    expect(window.alert).toHaveBeenCalledWith(
-      "Los valores de salud deben ser mayores a 0"
-    );
-  });
-
-  expect(axios.post).not.toHaveBeenCalled();
-});
-
 
   it("envía los datos correctamente y limpia el formulario", async () => {
     axios.post.mockResolvedValueOnce({ data: {} });
 
     render(<HealthRegisterForm />);
 
-    fireEvent.change(screen.getByPlaceholderText("Ej: 120"), {
-      target: { value: "110" },
-    });
-
-    fireEvent.change(screen.getByPlaceholderText("Sistólica (Ej: 120)"), {
-      target: { value: "120" },
-    });
-
-    fireEvent.change(screen.getByPlaceholderText("Diastólica (Ej: 80)"), {
-      target: { value: "80" },
-    });
+    fireEvent.change(screen.getByPlaceholderText("Ej: 120"), { target: { value: "110" } });
+    fireEvent.change(screen.getByPlaceholderText("Sistólica (Ej: 120)"), { target: { value: "120" } });
+    fireEvent.change(screen.getByPlaceholderText("Diastólica (Ej: 80)"), { target: { value: "80" } });
 
     fireEvent.click(screen.getByText("Guardar Registro"));
 
@@ -78,6 +58,7 @@ describe("HealthRegisterForm", () => {
       expect(axios.post).toHaveBeenCalledTimes(1);
     });
 
+    // Validamos que se envíe el payload correcto y el token en los headers
     expect(axios.post).toHaveBeenCalledWith(
       expect.stringContaining("/api/registros"),
       {
@@ -95,28 +76,21 @@ describe("HealthRegisterForm", () => {
 
     expect(window.alert).toHaveBeenCalledWith("Registro guardado correctamente");
 
-    // Inputs limpios
+    // Revisamos que los inputs se limpien después de guardar
     expect(screen.getByPlaceholderText("Ej: 120").value).toBe("");
     expect(screen.getByPlaceholderText("Sistólica (Ej: 120)").value).toBe("");
     expect(screen.getByPlaceholderText("Diastólica (Ej: 80)").value).toBe("");
   });
 
   it("muestra alerta si ocurre un error al guardar", async () => {
+    // Simulamos fallo del backend
     axios.post.mockRejectedValueOnce(new Error("Error backend"));
 
     render(<HealthRegisterForm />);
 
-    fireEvent.change(screen.getByPlaceholderText("Ej: 120"), {
-      target: { value: "100" },
-    });
-
-    fireEvent.change(screen.getByPlaceholderText("Sistólica (Ej: 120)"), {
-      target: { value: "120" },
-    });
-
-    fireEvent.change(screen.getByPlaceholderText("Diastólica (Ej: 80)"), {
-      target: { value: "80" },
-    });
+    fireEvent.change(screen.getByPlaceholderText("Ej: 120"), { target: { value: "100" } });
+    fireEvent.change(screen.getByPlaceholderText("Sistólica (Ej: 120)"), { target: { value: "120" } });
+    fireEvent.change(screen.getByPlaceholderText("Diastólica (Ej: 80)"), { target: { value: "80" } });
 
     fireEvent.click(screen.getByText("Guardar Registro"));
 

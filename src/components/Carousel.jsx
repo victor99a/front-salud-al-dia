@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Styles/carouselStyles.css';
-import imagen1 from '../assets/imagen1.png'; // Asegúrate de tener estas imágenes
+import imagen1 from '../assets/imagen1.png'; 
 import carrusel1 from '../assets/carrusel-1.png';
 
 const Carousel = () => {
@@ -32,7 +32,6 @@ const Carousel = () => {
     }
   ];
 
-  // Lógica para mover el scroll suavemente
   useEffect(() => {
     const listNode = listRef.current;
     const imgNode = listNode.querySelectorAll("li > img")[currentIndex];
@@ -57,7 +56,6 @@ const Carousel = () => {
   return (
     <div className="main-container">
       <div className="slider-container">
-        {/* Flechas */}
         <div className="leftArrow" onClick={() => scrollToImage('prev')}>&#10094;</div>
         <div className="rightArrow" onClick={() => scrollToImage('next')}>&#10095;</div>
         
@@ -79,7 +77,6 @@ const Carousel = () => {
           </ul>
         </div>
 
-        {/* Puntos (Dots) */}
         <div className="dots-container">
           {slides.map((_, idx) => (
             <div 
