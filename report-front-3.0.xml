@@ -56,7 +56,6 @@ src/assets/logo.png
 src/assets/logo1.png
 src/assets/z.png
 src/components/Admin/AdminStats.jsx
-src/components/Admin/ProtectedRoute.jsx
 src/components/Admin/RegisterSpecialistModal.jsx
 src/components/Admin/UserRow.jsx
 src/components/Admin/UserTable.jsx
@@ -65,6 +64,9 @@ src/components/Chat/ChatWidget.jsx
 src/components/Dashboard/GlucoseCard.jsx
 src/components/Dashboard/HealthRegisterForm.jsx
 src/components/Dashboard/PressureCard.jsx
+src/components/Guards/AdminGuard.jsx
+src/components/Guards/PatientGuard.jsx
+src/components/Guards/SpecialistGuard.jsx
 src/components/Landing/DrChapatinSection.jsx
 src/components/Landing/HowToUseSection.jsx
 src/components/Navbar.jsx
@@ -111,7 +113,6 @@ src/Styles/ResetPasswordStyles.css
 src/Styles/signUpStyles.css
 src/Styles/SosButtonStyles.css
 src/Styles/SpecialistStyles.css
-src/supabaseClient.js
 src/utils/formatDate.js
 src/utils/formatDateDownload.js
 src/utils/validations.js
@@ -120,6 +121,66 @@ vite.config.js
 
 <files>
 This section contains the contents of the repository's files.
+
+<file path="src/components/Guards/AdminGuard.jsx">
+import React, { useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
+import { isAdmin } from '../../services/AuthService'; 
+const AdminGuard = ({ children }) => {
+  const [authorized, setAuthorized] = useState(null);
+
+  useEffect(() => {
+    let mounted = true;
+    isAdmin().then(result => {
+      if (mounted) setAuthorized(result);
+    });
+    return () => mounted = false;
+  }, []);
+
+  if (authorized === null) {
+    return <div className="loading-screen">Verificando permisos...</div>;
+  }
+
+  return authorized ? children : <Navigate to="/" replace />;
+};
+
+export default AdminGuard;
+</file>
+
+<file path="src/components/Guards/PatientGuard.jsx">
+import { Navigate } from "react-router-dom";
+
+const PatientGuard = ({ children }) => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+};
+
+export default PatientGuard;
+</file>
+
+<file path="src/components/Guards/SpecialistGuard.jsx">
+import { Navigate } from "react-router-dom";
+
+const SpecialistGuard = ({ children }) => {
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('user_role');
+    
+    if (!token) return <Navigate to="/login" replace />;
+    
+    if (role !== 'specialist' && role !== 'admin') {
+        return <Navigate to="/dashboard" replace />;
+    }
+    
+    return children;
+};
+
+export default SpecialistGuard;
+</file>
 
 <file path="eslint.config.js">
 import js from '@eslint/js'
@@ -794,221 +855,6 @@ export default function HealthRegisterPage() {
 }
 </file>
 
-<file path="src/pages/PatientFile.jsx">
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Phone, ArrowLeft, User, AlertTriangle, HeartPulse, ShieldCheck, Download, Activity, Droplets, CreditCard, Scale, Ruler, Heart as HeartIcon, FileWarning } from 'lucide-react';
-import { 
-    getMedicalRecord, 
-    getPatientDashboardData, 
-    getPatientHistory, 
-    getDownloadUrl 
-} from '../services/SpecialistService';
-import { getUserProfile } from '../services/AuthService';
-import GlucoseCard from '../components/Dashboard/GlucoseCard';
-import PressureCard from '../components/Dashboard/PressureCard';
-import '../Styles/SpecialistStyles.css';
-
-const PatientFile = () => {
-  const { id } = useParams(); 
-  const navigate = useNavigate();
-  const [medicalRecord, setMedicalRecord] = useState(null);
-  const [userProfile, setUserProfile] = useState(null);
-  const [dashboardData, setDashboardData] = useState({ glucose: null, pressure: null });
-  const [history, setHistory] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const [record, dash, hist, profile] = await Promise.all([
-            getMedicalRecord(id),
-            getPatientDashboardData(id),
-            getPatientHistory(id),
-            getUserProfile(id, token)
-        ]);
-
-        setMedicalRecord(record);
-        setDashboardData(dash);
-        setHistory(hist);
-        setUserProfile(profile);
-
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
-  }, [id]);
-
-  const calculateIMC = (weight, height) => {
-    if (!weight || !height || height === 0) return '-';
-    const heightInMeters = height / 100;
-    return (weight / (heightInMeters * heightInMeters)).toFixed(1);
-  };
-
-  if (loading) return <div className="loading-screen">Verificando datos en la base de datos...</div>;
-
-  return (
-    <div className="file-bg">
-      <div className="file-container">
-        <header className="file-top-bar">
-            <button className="btn-back" onClick={() => navigate(-1)}>
-                <ArrowLeft size={18} /> Volver al Panel
-            </button>
-            <div className="header-center-info">
-                <h1>Ficha Clínica Digital</h1>
-                <p className="patient-subtitle">ID Sistema: {id}</p>
-            </div>
-            <div className="placeholder-side"></div>
-        </header>
-
-        <div className="file-grid">
-            <aside className="patient-info-card">
-                <div className="profile-avatar-large"><User size={40} /></div>
-                <h3 className="card-title">Resumen Clínico</h3>
-                
-                <div className="info-group">
-                    <label><User size={14}/> Nombre Completo</label>
-                    <span className="value-text" style={{textTransform: 'capitalize'}}>
-                        {userProfile ? `${userProfile.first_names} ${userProfile.last_names}` : 'No encontrado'}
-                    </span>
-                </div>
-
-                <div className="info-group">
-                    <label><CreditCard size={14}/> RUT</label>
-                    <span className="value-text">{userProfile?.rut || 'No disponible'}</span>
-                </div>
-
-                <div className="divider"></div>
-
-                {!medicalRecord ? (
-                  <div className="sos-section-embedded" style={{borderColor: '#e2e8f0', borderLeftColor: '#94a3b8', borderRightColor: '#94a3b8', background: '#f8fafc'}}>
-                      <div className="sos-label" style={{color: '#64748b'}}>
-                          <FileWarning size={14} /> Ficha Médica Inexistente
-                      </div>
-                      <p style={{fontSize: '0.85rem', color: '#64748b', margin: 0}}>
-                          Este usuario no ha completado su registro inicial de salud o no ha otorgado consentimiento de datos.
-                      </p>
-                  </div>
-                ) : (
-                  <>
-                    <div className="info-group">
-                        <label><HeartPulse size={14}/> Sangre</label>
-                        <span className="badge-blood">{medicalRecord.blood_type || '---'}</span>
-                    </div>
-                    
-                    <div className="info-group">
-                        <label className="alert-label"><AlertTriangle size={14}/> Alergias</label>
-                        <p style={{fontSize: '0.9rem', color: '#334155', fontWeight: '700', margin: 0}}>
-                          {medicalRecord.allergies || 'Ninguna'}
-                        </p>
-                    </div>
-
-                    <div className="info-group">
-                        <label><ShieldCheck size={14}/> Enf. Crónicas</label>
-                        <p style={{fontSize: '0.9rem', color: '#334155', fontWeight: '700', margin: 0}}>
-                          {medicalRecord.chronic_diseases || 'Ninguna'}
-                        </p>
-                    </div>
-
-                    <div className="divider"></div>
-
-                    <div className="physical-data">
-                        <div className="phy-item">
-                            <small><Scale size={14}/> Peso</small>
-                            <strong>{medicalRecord.initial_weight || '---'} kg</strong>
-                        </div>
-                        <div className="phy-item">
-                            <small><Ruler size={14}/> Altura</small>
-                            <strong>{medicalRecord.height || '---'} cm</strong>
-                        </div>
-                        <div className="phy-item">
-                            <small><HeartIcon size={14}/> IMC</small>
-                            <strong style={{color: '#1e40af'}}>
-                                {calculateIMC(medicalRecord.initial_weight, medicalRecord.height)}
-                            </strong>
-                        </div>
-                    </div>
-
-                    <div className="sos-section-embedded">
-                        <div className="sos-label">
-                            <Phone size={14} /> Contacto Emergencia
-                        </div>
-                        <div className="sos-data-row">
-                            <strong>Nombre:</strong>
-                            <span>{medicalRecord.emergency_contact_name || 'No registrado'}</span>
-                        </div>
-                        <div className="sos-data-row">
-                            <strong>Número de Télefono:</strong>
-                            <span className="sos-phone-black">{medicalRecord.emergency_contact_phone || '---'}</span>
-                        </div>
-                    </div>
-                  </>
-                )}
-            </aside>
-
-            <section className="vitals-section">
-                <div className="vitals-cards-grid">
-                    <PressureCard 
-                        systolic={dashboardData.pressure?.systolic || 0}
-                        diastolic={dashboardData.pressure?.diastolic || 0}
-                        date={dashboardData.pressure?.date ? new Date(dashboardData.pressure.date).toLocaleString() : 'Sin datos'}
-                    />
-                    <GlucoseCard 
-                        glucose={dashboardData.glucose?.value || 0}
-                        date={dashboardData.glucose?.date ? new Date(dashboardData.glucose.date).toLocaleString() : 'Sin datos'}
-                    />
-                </div>
-
-                <div className="history-section-mini">
-                    <div className="section-header">
-                        <h3 style={{margin: 0, color: '#1e293b', fontWeight: 800}}>Historial de Controles</h3>
-                        <button className="btn-download" onClick={() => window.open(getDownloadUrl(id), '_blank')}>
-                            <Download size={16} /> Exportar PDF
-                        </button>
-                    </div>
-                    <div className="mini-table-container">
-                        <table className="mini-table">
-                            <thead>
-                                <tr>
-                                    <th>FECHA</th>
-                                    <th><Droplets size={14}/> GLUCOSA</th>
-                                    <th><Activity size={14}/> PRESION</th>
-                                    <th>ESTADO</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {history.length > 0 ? history.map((h, i) => (
-                                    <tr key={i}>
-                                        <td>{new Date(h.date).toLocaleDateString()}</td>
-                                        <td>
-                                            {h.glucose ? <span className={`value-box ${h.glucose > 140 ? 'val-high' : h.glucose < 70 ? 'val-low' : 'val-normal'}`}>{h.glucose} mg/dL</span> : '--'}
-                                        </td>
-                                        <td>
-                                            {h.systolic ? <span className={`value-box ${h.systolic >= 140 || h.diastolic >= 90 ? 'val-high' : 'val-normal'}`}>{h.systolic}/{h.diastolic} mmHg</span> : '--'}
-                                        </td>
-                                        <td>
-                                            {(h.glucose > 140 || h.systolic >= 140) ? <span className="status-dot red">Alerta</span> : <span className="status-dot green">Normal</span>}
-                                        </td>
-                                    </tr>
-                                )) : <tr><td colSpan="4" className="no-data">Sin registros historicos</td></tr>}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default PatientFile;
-</file>
-
 <file path="src/pages/ResetPassword.jsx">
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -1327,73 +1173,6 @@ export function getLastReading() {
     date: "13 de enero, 14:02",
   };
 }
-</file>
-
-<file path="src/services/SpecialistService.js">
-const API_USERS_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-const API_REGISTRO_URL = import.meta.env.VITE_API_REGISTRO_URL || 'http://localhost:3001';
-const API_DOWNLOAD_URL = import.meta.env.VITE_API_DESCARGA || 'http://localhost:3002';
-
-const getHeaders = () => ({
-  'Content-Type': 'application/json',
-  'Authorization': `Bearer ${localStorage.getItem('token')}`
-});
-
-export const getPatients = async () => {
-  try {
-    const response = await fetch(`${API_USERS_URL}/patients`, { 
-        headers: getHeaders() 
-    });
-    if (!response.ok) throw new Error('Error al cargar lista de pacientes');
-    return await response.json();
-  } catch (error) {
-    return [];
-  }
-};
-
-export const getMedicalRecord = async (userId) => {
-  try {
-    const response = await fetch(`${API_USERS_URL}/medical/records/${userId}`, { 
-        headers: getHeaders() 
-    });
-    
-    if (response.status === 404) return null;
-
-    if (!response.ok) return null;
-
-    return await response.json();
-  } catch (error) {
-    return null;
-  }
-};
-
-export const getPatientDashboardData = async (userId) => {
-  try {
-    const response = await fetch(`${API_REGISTRO_URL}/api/registros/dashboard/${userId}`, { 
-        headers: getHeaders() 
-    });
-    if (!response.ok) return { glucose: null, pressure: null };
-    return await response.json();
-  } catch (error) {
-    return { glucose: null, pressure: null };
-  }
-};
-
-export const getPatientHistory = async (userId) => {
-  try {
-    const response = await fetch(`${API_REGISTRO_URL}/api/registros/historial/${userId}`, { 
-        headers: getHeaders() 
-    });
-    if (!response.ok) return [];
-    return await response.json();
-  } catch (error) {
-    return [];
-  }
-};
-
-export const getDownloadUrl = (userId) => {
-    return `${API_DOWNLOAD_URL}/api/descargas/historial/pdf/${userId}`;
-};
 </file>
 
 <file path="src/Styles/AboutStyles.css">
@@ -2969,21 +2748,83 @@ export const getDownloadUrl = (userId) => {
     color: #64748b;
 }
 
+.capitalize-text {
+    text-transform: capitalize;
+}
+
+.sos-section-embedded.no-record {
+    border-color: #e2e8f0;
+    border-left-color: #94a3b8;
+    border-right-color: #94a3b8;
+    background: #f8fafc;
+}
+
+.sos-label.gray {
+    color: #64748b;
+}
+
+.no-record-text {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin: 0;
+}
+
+.condition-text {
+    font-size: 0.9rem;
+    color: #334155;
+    font-weight: 700;
+    margin: 0;
+}
+
+.imc-value {
+    color: #1e40af;
+}
+
+.section-header h3 {
+    margin: 0;
+    color: #1e293b;
+    font-weight: 800;
+}
+
+.badges-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+}
+
+.status-badge-mini {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.status-badge-mini.badge-danger {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.status-badge-mini.badge-warning {
+    background-color: #ffedd5;
+    color: #9a3412;
+    border: 1px solid #fed7aa;
+}
+
+.status-cell {
+    vertical-align: top;
+}
+
 @media (max-width: 900px) {
     .file-grid { grid-template-columns: 1fr; }
     .vitals-cards-grid { grid-template-columns: 1fr; }
     .toolbar-card { flex-direction: column; align-items: stretch; }
     .search-bar { max-width: 100%; }
 }
-</file>
-
-<file path="src/supabaseClient.js">
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 </file>
 
 <file path="src/utils/formatDate.js">
@@ -3103,32 +2944,6 @@ yarn-debug.log*
 yarn-error.log*
 </file>
 
-<file path="src/components/Admin/ProtectedRoute.jsx">
-import React, { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import { isAdmin } from '../../services/AuthService';
-
-const ProtectedRoute = ({ children }) => {
-  const [authorized, setAuthorized] = useState(null);
-
-  useEffect(() => {
-    let mounted = true;
-    isAdmin().then(result => {
-      if (mounted) setAuthorized(result);
-    });
-    return () => mounted = false;
-  }, []);
-
-  if (authorized === null) {
-    return <div className="loading-screen">Verificando permisos...</div>;
-  }
-
-  return authorized ? children : <Navigate to="/" replace />;
-};
-
-export default ProtectedRoute;
-</file>
-
 <file path="src/index.css">
 /* src/index.css */
 body {
@@ -3144,10 +2959,281 @@ body {
 }
 </file>
 
+<file path="src/pages/PatientFile.jsx">
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { 
+    Phone, 
+    ArrowLeft, 
+    User, 
+    AlertTriangle, 
+    HeartPulse, 
+    ShieldCheck, 
+    Download, 
+    Activity, 
+    Droplets, 
+    CreditCard, 
+    Scale, 
+    Ruler, 
+    Heart as HeartIcon, 
+    FileWarning 
+} from 'lucide-react';
+import { 
+    getMedicalRecord, 
+    getPatientDashboardData, 
+    getPatientHistory, 
+    getDownloadUrl,
+    getPatientById 
+} from '../services/SpecialistService';
+import GlucoseCard from '../components/Dashboard/GlucoseCard';
+import PressureCard from '../components/Dashboard/PressureCard';
+import '../Styles/SpecialistStyles.css';
+
+const PatientFile = () => {
+  const { id: userId } = useParams(); 
+  const navigate = useNavigate();
+  const [medicalRecord, setMedicalRecord] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
+  const [dashboardData, setDashboardData] = useState({ glucose: null, pressure: null });
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        
+        const [record, dash, hist, profile] = await Promise.all([
+            getMedicalRecord(userId),
+            getPatientDashboardData(userId),
+            getPatientHistory(userId),
+            getPatientById(userId)
+        ]);
+
+        setMedicalRecord(record);
+        setDashboardData(dash);
+        setHistory(hist);
+        setUserProfile(profile);
+
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (userId) loadData();
+  }, [userId, navigate]);
+
+  const calculateIMC = (weight, height) => {
+    if (!weight || !height || height === 0) return '-';
+    const heightInMeters = height / 100;
+    return (weight / (heightInMeters * heightInMeters)).toFixed(1);
+  };
+
+  const renderStatusBadges = (record) => {
+    const alerts = [];
+
+    if (record.glucose) {
+        if (record.glucose > 140) {
+            alerts.push({ text: 'Glucosa Alta', className: 'badge-warning' });
+        } else if (record.glucose < 70) {
+            alerts.push({ text: 'Hipoglucemia', className: 'badge-danger' });
+        }
+    }
+
+    if (record.systolic && record.diastolic) {
+        if (record.systolic >= 140 || record.diastolic >= 90) {
+            alerts.push({ text: 'Hipertensión', className: 'badge-danger' });
+        } else if (record.systolic >= 130 || record.diastolic >= 85) {
+            alerts.push({ text: 'Presión Elevada', className: 'badge-warning' });
+        }
+    }
+
+    if (alerts.length === 0) {
+        return <span className="status-dot green">Estable</span>;
+    }
+
+    return (
+        <div className="badges-container">
+            {alerts.map((alert, index) => (
+                <span key={index} className={`status-badge-mini ${alert.className}`}>
+                    {alert.text}
+                </span>
+            ))}
+        </div>
+    );
+  };
+
+  if (loading) return <div className="loading-screen">Verificando datos en la base de datos...</div>;
+
+  return (
+    <div className="file-bg">
+      <div className="file-container">
+        <header className="file-top-bar">
+            <button className="btn-back" onClick={() => navigate(-1)}>
+                <ArrowLeft size={18} /> Volver al Panel
+            </button>
+            <div className="header-center-info">
+                <h1>Ficha Clínica Digital</h1>
+                <p className="patient-subtitle">
+                    Paciente: {userProfile ? `${userProfile.first_names} ${userProfile.last_names}` : userId}
+                </p>
+            </div>
+            <div className="placeholder-side"></div>
+        </header>
+
+        <div className="file-grid">
+            <aside className="patient-info-card">
+                <div className="profile-avatar-large"><User size={40} /></div>
+                <h3 className="card-title">Resumen Clínico</h3>
+                
+                <div className="info-group">
+                    <label><User size={14}/> Nombre Completo</label>
+                    <span className="value-text capitalize-text">
+                        {userProfile ? `${userProfile.first_names} ${userProfile.last_names}` : 'No disponible'}
+                    </span>
+                </div>
+
+                <div className="info-group">
+                    <label><CreditCard size={14}/> RUT</label>
+                    <span className="value-text">{userProfile?.rut || 'No disponible'}</span>
+                </div>
+
+                <div className="divider"></div>
+
+                {!medicalRecord ? (
+                  <div className="sos-section-embedded no-record">
+                      <div className="sos-label gray">
+                          <FileWarning size={14} /> Ficha Médica Inexistente
+                      </div>
+                      <p className="no-record-text">
+                          Este usuario no ha completado su registro inicial de salud.
+                      </p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="info-group">
+                        <label><HeartPulse size={14}/> Sangre</label>
+                        <span className="badge-blood">{medicalRecord.blood_type || '---'}</span>
+                    </div>
+                    
+                    <div className="info-group">
+                        <label className="alert-label"><AlertTriangle size={14}/> Alergias</label>
+                        <p className="condition-text">
+                          {medicalRecord.allergies || 'Ninguna'}
+                        </p>
+                    </div>
+
+                    <div className="info-group">
+                        <label><ShieldCheck size={14}/> Enf. Crónicas</label>
+                        <p className="condition-text">
+                          {medicalRecord.chronic_diseases || 'Ninguna'}
+                        </p>
+                    </div>
+
+                    <div className="divider"></div>
+
+                    <div className="physical-data">
+                        <div className="phy-item">
+                            <small><Scale size={14}/> Peso</small>
+                            <strong>{medicalRecord.initial_weight || '---'} kg</strong>
+                        </div>
+                        <div className="phy-item">
+                            <small><Ruler size={14}/> Altura</small>
+                            <strong>{medicalRecord.height || '---'} cm</strong>
+                        </div>
+                        <div className="phy-item">
+                            <small><HeartIcon size={14}/> IMC</small>
+                            <strong className="imc-value">
+                                {calculateIMC(medicalRecord.initial_weight, medicalRecord.height)}
+                            </strong>
+                        </div>
+                    </div>
+
+                    <div className="sos-section-embedded">
+                        <div className="sos-label">
+                            <Phone size={14} /> Contacto Emergencia
+                        </div>
+                        <div className="sos-data-row">
+                            <strong>Nombre:</strong>
+                            <span>{medicalRecord.emergency_contact_name || 'No registrado'}</span>
+                        </div>
+                        <div className="sos-data-row">
+                            <strong>Número:</strong>
+                            <span className="sos-phone-black">{medicalRecord.emergency_contact_phone || '---'}</span>
+                        </div>
+                    </div>
+                  </>
+                )}
+            </aside>
+
+            <section className="vitals-section">
+                <div className="vitals-cards-grid">
+                    <GlucoseCard 
+                        glucose={dashboardData.glucose?.value || 0}
+                        date={dashboardData.glucose?.date}
+                    />
+                    <PressureCard 
+                        systolic={dashboardData.pressure?.systolic || 0}
+                        diastolic={dashboardData.pressure?.diastolic || 0}
+                        date={dashboardData.pressure?.date} 
+                    />
+                </div>
+
+                <div className="history-section-mini">
+                    <div className="section-header">
+                        <h3>Historial de Controles</h3>
+                        <button className="btn-download" onClick={() => window.open(getDownloadUrl(userId), '_blank')}>
+                            <Download size={16} /> Exportar PDF
+                        </button>
+                    </div>
+                    <div className="mini-table-container">
+                        <table className="mini-table">
+                            <thead>
+                                <tr>
+                                    <th>FECHA</th>
+                                    <th><Droplets size={14}/> GLUCOSA</th>
+                                    <th><Activity size={14}/> PRESION</th>
+                                    <th>ESTADO</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {history.length > 0 ? history.map((h, i) => (
+                                    <tr key={i}>
+                                        <td>{new Date(h.date).toLocaleDateString()}</td>
+                                        <td>
+                                            {h.glucose ? <span className={`value-box ${h.glucose > 140 ? 'val-high' : h.glucose < 70 ? 'val-low' : 'val-normal'}`}>{h.glucose} mg/dL</span> : '--'}
+                                        </td>
+                                        <td>
+                                            {h.systolic ? <span className={`value-box ${h.systolic >= 140 || h.diastolic >= 90 ? 'val-high' : 'val-normal'}`}>{h.systolic}/{h.diastolic} mmHg</span> : '--'}
+                                        </td>
+                                        <td className="status-cell">
+                                            {renderStatusBadges(h)}
+                                        </td>
+                                    </tr>
+                                )) : <tr><td colSpan="4" className="no-data">Sin registros históricos</td></tr>}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default PatientFile;
+</file>
+
 <file path="src/pages/ProfilePage.jsx">
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { User, Ruler, AlertTriangle, Phone, AlertCircle } from 'lucide-react';
+import { User, Ruler, AlertTriangle, Phone, AlertCircle, Save, X } from 'lucide-react';
 import { getMedicalRecord, updateMedicalRecord } from '../services/MedicalService'; 
 import { requestAccountDeletion } from '../services/AdminService';
 import '../Styles/ProfileStyles.css';
@@ -3160,6 +3246,8 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  
+  const [phoneEdit, setPhoneEdit] = useState("");
 
   const fetchProfile = async () => {
     const userId = localStorage.getItem('user_id');
@@ -3171,7 +3259,15 @@ const ProfilePage = () => {
     try {
       const data = await getMedicalRecord(userId);
       setProfile(data);
-      setFormData(data || {}); 
+      
+      const initialForm = data || {};
+      setFormData(initialForm);
+
+      if (initialForm.emergency_contact_phone) {
+          const rawPhone = initialForm.emergency_contact_phone.toString();
+          setPhoneEdit(rawPhone.replace(/^\+56/, ''));
+      }
+
     } catch (error) {
       console.error(error);
     } finally {
@@ -3182,21 +3278,46 @@ const ProfilePage = () => {
   useEffect(() => { fetchProfile(); }, [navigate]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    
+    if (name === 'height' && (value < 0 || value > 300)) return;
+    if (name === 'initial_weight' && (value < 0 || value > 600)) return;
+
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handlePhoneEditChange = (e) => {
+      const val = e.target.value.replace(/[^0-9]/g, '');
+      if (val.length <= 9) {
+          setPhoneEdit(val);
+      }
   };
 
   const handleSave = async () => {
+    if (phoneEdit.length !== 9 || !phoneEdit.startsWith('9')) {
+        alert("El teléfono de emergencia debe tener 9 dígitos y comenzar con 9.");
+        return;
+    }
+
     try {
       const userId = localStorage.getItem('user_id');
-      await updateMedicalRecord(userId, {
+      
+      const finalPhone = `+56${phoneEdit}`;
+
+      const payload = {
         ...formData,
+        emergency_contact_phone: finalPhone,
         current_weight: formData.initial_weight 
-      });
-      setProfile(formData); 
+      };
+
+      await updateMedicalRecord(userId, payload);
+      
+      setProfile(payload);
+      setFormData(payload);
       setIsEditing(false);  
       alert("¡Perfil actualizado!");
     } catch (error) {
-      alert("Error al guardar cambios");
+      alert("Error al guardar cambios: " + error.message);
     }
   };
 
@@ -3265,6 +3386,8 @@ const ProfilePage = () => {
                   <option value="AB+">AB+</option>
                   <option value="A-">A-</option>
                   <option value="O-">O-</option>
+                  <option value="B-">B-</option>
+                  <option value="AB-">AB-</option>
               </select>
             ) : <span className="info-value">{profile.blood_type}</span>}
           </div>
@@ -3295,8 +3418,21 @@ const ProfilePage = () => {
              {isEditing ? <input type="text" name="emergency_contact_name" value={formData.emergency_contact_name} onChange={handleChange} className="form-input-edit" /> : <span className="info-value">{profile.emergency_contact_name}</span>}
           </div>
           <div className="info-item">
-            <span className="info-label">Teléfono</span>
-             {isEditing ? <input type="tel" name="emergency_contact_phone" value={formData.emergency_contact_phone} onChange={handleChange} className="form-input-edit" /> : <span className="info-value">{profile.emergency_contact_phone}</span>}
+            <span className="info-label">Teléfono (+56)</span>
+             {isEditing ? (
+                <div className="phone-edit-wrapper">
+                    <span className="prefix-span">+56</span>
+                    <input 
+                        type="tel" 
+                        value={phoneEdit} 
+                        onChange={handlePhoneEditChange} 
+                        className="form-input-edit phone-input" 
+                        placeholder="9XXXXXXXX"
+                    />
+                </div>
+             ) : (
+                <span className="info-value phone-display">{profile.emergency_contact_phone}</span>
+             )}
           </div>
         </div>
       </div>
@@ -3313,8 +3449,12 @@ const ProfilePage = () => {
 
       {isEditing && (
         <div className="edit-actions">
-          <button onClick={handleSave} className="btn-create-record">Guardar Cambios</button>
-          <button onClick={() => { setIsEditing(false); setFormData(profile); }} className="btn-cancel-edit">Cancelar</button>
+          <button onClick={handleSave} className="btn-create-record">
+              <Save size={18} style={{marginRight: '5px'}}/> Guardar Cambios
+          </button>
+          <button onClick={() => { setIsEditing(false); setFormData(profile); setPhoneEdit(profile.emergency_contact_phone?.replace(/^\+56/, '')); }} className="btn-cancel-edit">
+              <X size={18} style={{marginRight: '5px'}}/> Cancelar
+          </button>
         </div>
       )}
 
@@ -3341,24 +3481,21 @@ export default ProfilePage;
 </file>
 
 <file path="src/services/downloadService.js">
+import axios from 'axios';
 import { formatDateDownload } from "../utils/formatDateDownload";
 
 const API_DESCARGA = import.meta.env.VITE_API_DESCARGA;
 
 export async function descargarHistorial(userId, formato) {
   try {
-    const response = await fetch(
-      `${API_DESCARGA}/api/descargas/historial/${formato}/${userId}`
+    const response = await axios.get(
+      `${API_DESCARGA}/api/descargas/historial/${formato}/${userId}`,
+      { responseType: 'blob' } 
     );
 
-    if (!response.ok) {
-      throw new Error("Error en la descarga");
-    }
-
-    const blob = await response.blob();
+    const blob = new Blob([response.data]);
     const url = window.URL.createObjectURL(blob);
 
-    // 👉 Fecha actual con formato amigable + año
     const fecha = formatDateDownload(new Date())
       .replace(/ /g, "_")
       .replace(/·/g, "")
@@ -3381,65 +3518,119 @@ export async function descargarHistorial(userId, formato) {
 </file>
 
 <file path="src/services/MedicalService.js">
+import axios from 'axios';
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-const getHeaders = () => {
-  const token = localStorage.getItem('token');
-  return {
+const getConfig = () => ({
+  headers: {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
-  };
-};
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  }
+});
 
 export const createMedicalRecord = async (data) => {
   try {
-    const response = await fetch(`${API_URL}/medical/records`, {
-      method: 'POST',
-      headers: getHeaders(),
-      body: JSON.stringify(data)
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'Error al crear ficha');
-    }
-    
-    return await response.json();
+    const response = await axios.post(`${API_URL}/medical/records`, data, getConfig());
+    return response.data;
   } catch (error) {
-    throw error;
+    console.error("Error en createMedicalRecord:", error);
+    throw new Error(error.response?.data?.error || 'Error al crear ficha');
   }
 };
 
 export const getMedicalRecord = async (userId) => {
   try {
-    const response = await fetch(`${API_URL}/medical/records/${userId}`, {
-        headers: getHeaders()
-    });
-    
-    if (!response.ok) {
-        if(response.status === 404) return null;
-        throw new Error('Error al cargar datos');
-    }
-    
-    return await response.json();
+    const response = await axios.get(`${API_URL}/medical/records/${userId}`, getConfig());
+    return response.data;
   } catch (error) {
+    if (error.response && error.response.status === 404) {
+        console.warn("Ficha médica no encontrada (404) para usuario:", userId);
+        return null;
+    }
+    console.error("Error de red en getMedicalRecord:", error.message);
     return null;
   }
 };
 
 export const updateMedicalRecord = async (userId, updatedData) => {
   try {
-    const response = await fetch(`${API_URL}/medical/records/${userId}`, {
-      method: 'PUT',
-      headers: getHeaders(),
-      body: JSON.stringify(updatedData),
-    });
-
-    if (!response.ok) throw new Error('Error al actualizar datos');
-    return await response.json();
+    const response = await axios.put(`${API_URL}/medical/records/${userId}`, updatedData, getConfig());
+    return response.data;
   } catch (error) {
-    throw error;
+    console.error("Error en updateMedicalRecord:", error);
+    throw new Error(error.response?.data?.error || 'Error al actualizar datos');
   }
+};
+</file>
+
+<file path="src/services/SpecialistService.js">
+import axios from 'axios';
+
+const API_USERS_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_REGISTRO_URL = import.meta.env.VITE_API_REGISTRO_URL || 'http://localhost:3001';
+const API_DOWNLOAD_URL = import.meta.env.VITE_API_DESCARGA || 'http://localhost:3002';
+
+const getConfig = () => ({
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+    }
+});
+
+export const getPatientById = async (id) => {
+  try {
+    const response = await axios.get(`${API_USERS_URL}/users/${id}`, getConfig());
+    return response.data;
+  } catch (error) {
+    console.error(`Error getPatientById (${id}):`, error.message);
+    return null;
+  }
+};
+
+export const getPatients = async () => {
+  try {
+    const response = await axios.get(`${API_USERS_URL}/patients`, getConfig());
+    return response.data;
+  } catch (error) {
+    console.error("Error getPatients:", error.message);
+    return [];
+  }
+};
+
+export const getMedicalRecord = async (userId) => {
+  try {
+    const response = await axios.get(`${API_USERS_URL}/medical/records/${userId}`, getConfig());
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+        return null;
+    }
+    console.error("Error getMedicalRecord:", error.message);
+    return null;
+  }
+};
+
+export const getPatientDashboardData = async (userId) => {
+  try {
+    const response = await axios.get(`${API_REGISTRO_URL}/api/registros/dashboard/${userId}`, getConfig());
+    return response.data;
+  } catch (error) {
+    return { glucose: null, pressure: null };
+  }
+};
+
+export const getPatientHistory = async (userId) => {
+  try {
+    const response = await axios.get(`${API_REGISTRO_URL}/api/registros/historial/${userId}`, getConfig());
+    return response.data;
+  } catch (error) {
+    return [];
+  }
+};
+
+export const getDownloadUrl = (userId) => {
+    return `${API_DOWNLOAD_URL}/api/descargas/historial/pdf/${userId}`;
 };
 </file>
 
@@ -3976,6 +4167,13 @@ export const updateMedicalRecord = async (userId, updatedData) => {
 }
 .status-msg.success { color: #16a34a; }
 .status-msg.error { color: #dc2626; }
+
+.cooldown-text {
+  color: #d97706;
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
 </file>
 
 <file path="src/Styles/ProfileStyles.css">
@@ -4277,6 +4475,41 @@ export const updateMedicalRecord = async (userId, updatedData) => {
 .btn-modal-confirm:hover {
   background-color: #b91c1c;
   box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.phone-edit-wrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: white;
+}
+
+.prefix-span {
+    padding: 8px 10px;
+    background: #f3f4f6;
+    color: #6b7280;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-right: 1px solid #e5e7eb;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+
+.form-input-edit.phone-input {
+    border: none;
+    padding: 8px;
+    width: 100%;
+    outline: none;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+.phone-display {
+    font-family: monospace;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    color: #1f2937;
 }
 
 @media (max-width: 600px) {
@@ -4821,6 +5054,9 @@ Importante: Se debe respetar estrictamente el uso de mayúsculas en las rutas de
   padding: 10px;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: #333;
 }
 
 .btn-medical {
@@ -4833,42 +5069,20 @@ Importante: Se debe respetar estrictamente el uso de mayúsculas en las rutas de
   font-weight: bold;
   cursor: pointer;
   font-size: 1rem;
+  transition: all 0.3s ease;
 }
 
-.btn-medical:hover {
+.btn-medical:disabled {
+  background-color: #93c5fd;
+  color: #e0f2fe; 
+  cursor: not-allowed; 
+  opacity: 0.8;
+  box-shadow: none;
+}
+
+.btn-medical:not(:disabled):hover {
   background-color: #1e3a8a;
-}
-
-.phone-input-group {
-  display: flex;
-  flex-direction: row; 
-  gap: 10px;
-  width: 100%;
-}
-
-.country-select {
-  width: 110px !important;  
-  min-width: 110px !important;
-  max-width: 110px !important;
-  flex: 0 0 110px; 
-  padding: 10px 5px !important; 
-  text-overflow: ellipsis;
-}
-
-.phone-input-group input {
-  flex-grow: 1 !important; 
-  width: auto !important;  
-  min-width: 0; 
-}
-
-@media (max-width: 400px) {
-  .phone-input-group {
-    flex-direction: column;
-  }
-  .country-select {
-    width: 100% !important;
-    max-width: none !important;
-  }
+  transform: translateY(-1px);
 }
 
 .checkbox-container {
@@ -4901,7 +5115,6 @@ Importante: Se debe respetar estrictamente el uso de mayúsculas en las rutas de
   height: 20px;
   margin-top: 5px; 
   margin-right: 8px; 
-  
   accent-color: #1e40af;
   flex-shrink: 0; 
   cursor: pointer;
@@ -4913,38 +5126,56 @@ Importante: Se debe respetar estrictamente el uso de mayúsculas en las rutas de
   color: #334155;
 }
 
-.checkbox-text strong {
-  color: #1e40af;
-  font-weight: 600;
+.phone-input-group {
+    display: flex;
+    align-items: center;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: white;
+    overflow: hidden;
+    transition: border-color 0.2s;
+    width: 100%;
 }
 
-.btn-medical {
-  transition: all 0.3s ease; 
+.phone-input-group:focus-within {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
 }
 
-.btn-medical:disabled {
-  background-color: #93c5fd;
-  color: #e0f2fe; 
-  cursor: not-allowed; 
-  opacity: 0.8;
-  box-shadow: none;
+.phone-input-group.input-error {
+    border-color: #dc2626;
 }
 
-.btn-medical:not(:disabled):hover {
-  background-color: #1e3a8a; 
-  transform: translateY(-1px); 
+.country-prefix {
+    background: #f3f4f6;
+    padding: 10px 15px;
+    color: #4b5563;
+    font-weight: 600;
+    font-size: 1rem;
+    border-right: 1px solid #e5e7eb;
+    white-space: nowrap;
 }
 
-.form-group input, 
-.form-group select, 
-.form-group textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  font-family: inherit; 
-  font-size: 1rem;      
-  color: #333;          
+.phone-field {
+    border: none !important;
+    flex: 1;
+    padding: 10px !important;
+    outline: none;
+    border-radius: 0 !important;
+}
+
+.error-text {
+    color: #dc2626;
+    font-size: 0.8rem;
+    margin-top: 4px;
+    display: block;
+}
+
+.hint-text {
+    color: #6b7280;
+    font-size: 0.8rem;
+    margin-top: 4px;
+    display: block;
 }
 </file>
 
@@ -5199,29 +5430,22 @@ Importante: Se debe respetar estrictamente el uso de mayúsculas en las rutas de
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 40px; /* Misma altura que Login/Register */
-  box-sizing: border-box; /* Clave para que el padding no rompa la altura */
-  
-  /* Estilos Visuales */
-  background-color: #dc2626; /* Rojo emergencia */
+  height: 40px; 
+  box-sizing: border-box;
+  background-color: #dc2626;
   color: white;
   border: none;
-  border-radius: 50px; /* Redondo estilo píldora */
-  padding: 0 20px;     /* Padding lateral */
-  gap: 8px;            /* Espacio entre icono y texto */
-  
-  /* Tipografía */
+  border-radius: 50px;
+  padding: 0 20px;
+  gap: 8px;
   font-weight: 800;
   font-size: 0.9rem;
   letter-spacing: 0.5px;
-  
-  /* Interactividad */
   cursor: pointer;
   box-shadow: 0 4px 10px rgba(220, 38, 38, 0.4);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  /* Animación opcional (si la quieres conservar) */
   animation: pulse-emergency 2s infinite;
+  z-index: 1000;
 }
 
 .sos-button-final:hover {
@@ -5237,44 +5461,26 @@ Importante: Se debe respetar estrictamente el uso de mayúsculas en las rutas de
   opacity: 0.7;
 }
 
-/* Icono dentro del botón */
-.sos-button-final svg {
-  width: 20px;
-  height: 20px;
-}
-
-/* Texto del botón (Opcional: ocultar en pantallas muy pequeñas si prefieres) */
-.sos-button-final span {
-  display: inline; 
-}
-
-/* Animación de latido */
 @keyframes pulse-emergency {
   0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
   70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
   100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
 }
 
-
-/* =========================================
-   ESTILOS DEL MODAL DE EMERGENCIA
-   ========================================= */
-
-/* Fondo oscuro (Overlay) */
 .sos-modal-overlay {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.7); /* Oscuro para concentrar atención */
-  backdrop-filter: blur(5px);      /* Efecto borroso elegante */
+  background: rgba(0, 0, 0, 0.75); 
+  backdrop-filter: blur(5px);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9999;
 }
 
-/* Contenido del Modal */
 .sos-modal-content {
+  position: relative;
   background: white;
   padding: 30px;
   border-radius: 20px;
@@ -5282,8 +5488,8 @@ Importante: Se debe respetar estrictamente el uso de mayúsculas en las rutas de
   max-width: 400px;
   text-align: center;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  border-top: 10px solid #dc2626; /* Línea roja superior */
-  animation: popIn 0.3s ease-out;
+  border-top: 10px solid #dc2626;
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 @keyframes popIn {
@@ -5291,25 +5497,67 @@ Importante: Se debe respetar estrictamente el uso de mayúsculas en las rutas de
   to { transform: scale(1); opacity: 1; }
 }
 
-.sos-modal-icon {
-  font-size: 3rem;
+.sos-modal-close-icon {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+}
+
+.sos-modal-close-icon:hover {
+    color: #111827;
+}
+
+.sos-modal-header-icon {
   margin-bottom: 10px;
-  display: block;
+  display: flex;
+  justify-content: center;
+}
+
+.sos-modal-content h3 {
+    margin: 10px 0;
+    color: #111827;
+    font-weight: 800;
 }
 
 .sos-info-text {
   color: #4b5563;
   margin-bottom: 20px;
   font-size: 0.95rem;
+  line-height: 1.5;
 }
 
-/* Caja del número de teléfono */
 .phone-display-box {
   background: #f3f4f6;
-  border: 2px dashed #9ca3af;
+  border: 2px dashed #d1d5db;
   padding: 15px;
   border-radius: 12px;
   margin-bottom: 25px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.phone-display-box:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+    transform: translateY(-2px);
+}
+
+.phone-display-box:active {
+    transform: translateY(0);
 }
 
 .phone-number {
@@ -5320,14 +5568,24 @@ Importante: Se debe respetar estrictamente el uso de mayúsculas en las rutas de
   display: block;
 }
 
-/* Lista de botones del modal */
+.copy-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
 .sos-modal-actions-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-/* Botones de acción (WhatsApp, Llamar, Cancelar) */
 .btn-whatsapp-action,
 .btn-call-action,
 .btn-cancel-action {
@@ -5341,18 +5599,20 @@ Importante: Se debe respetar estrictamente el uso de mayúsculas en las rutas de
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  transition: filter 0.2s;
+  gap: 10px;
+  transition: filter 0.2s, transform 0.1s;
 }
 
 .btn-whatsapp-action {
-  background-color: #25D366; /* Verde WhatsApp */
+  background-color: #25D366; 
   color: white;
+  box-shadow: 0 4px 6px -1px rgba(37, 211, 102, 0.3);
 }
 
 .btn-call-action {
-  background-color: #2563eb; /* Azul */
+  background-color: #2563eb; 
   color: white;
+  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);
 }
 
 .btn-cancel-action {
@@ -5364,10 +5624,12 @@ Importante: Se debe respetar estrictamente el uso de mayúsculas en las rutas de
 .btn-whatsapp-action:hover, 
 .btn-call-action:hover {
   filter: brightness(0.9);
+  transform: translateY(-1px);
 }
 
 .btn-cancel-action:hover {
   background-color: #f3f4f6;
+  color: #374151;
 }
 </file>
 
@@ -5384,8 +5646,7 @@ Importante: Se debe respetar estrictamente el uso de mayúsculas en las rutas de
     "preview": "vite preview"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.90.1",
-    "axios": "^1.13.2",
+    "axios": "^1.13.3",
     "lucide-react": "^0.562.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -5743,6 +6004,7 @@ export default UserTable;
 <file path="src/components/Chat/ChatWidget.jsx">
 import React, { useState, useEffect, useRef } from 'react';
 import { HeartPulse, X, Send, Stethoscope, Activity, Loader2 } from 'lucide-react';
+import axios from 'axios'; 
 import '../../Styles/ChatWidgetStyles.css';
 
 const ChatWidget = ({ userId }) => {
@@ -5778,14 +6040,14 @@ const ChatWidget = ({ userId }) => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/api/ai/send`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, message: currentInput }),
+      const response = await axios.post(`${API_URL}/api/ai/send`, { 
+        userId, 
+        message: currentInput 
+      }, {
+        headers: { 'Content-Type': 'application/json' }
       });
 
-      const data = await response.json();
-      setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: response.data.response }]);
     } catch (error) {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Lo siento, tengo dificultades técnicas. Intenta más tarde.' }]);
     } finally {
@@ -5930,12 +6192,15 @@ export default function PressureCard({ systolic, diastolic, date }) {
 
 <file path="src/components/SosButton.jsx">
 import React, { useState } from "react";
+import axios from 'axios';
+import { AlertTriangle, Phone, MessageCircle, X, Copy, Check, Siren } from "lucide-react";
 import "../Styles/SosButtonStyles.css";
 
 const SosButton = () => {
   const [showModal, setShowModal] = useState(false);
   const [contactPhone, setContactPhone] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const USER_ID = localStorage.getItem("user_id");
 
@@ -5949,17 +6214,17 @@ const SosButton = () => {
     try {
       const API_SOS_URL = import.meta.env.VITE_API_SOS_URL || "http://localhost:3000";
 
-      const response = await fetch(
-        `${API_SOS_URL}/api/sos/emergency-contact/${USER_ID}`
+      const response = await axios.get(
+        `${API_SOS_URL}/api/sos/emergency-contact/${USER_ID}`,
+        { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }
       );
-      
-      if (!response.ok) throw new Error("Error en la petición al servidor");
 
-      const data = await response.json();
+      const data = response.data;
 
       if (data.success && data.phone) {
         setContactPhone(data.phone);
         setShowModal(true);
+        setCopied(false);
       } else {
         alert(data.message || "No se encontró un contacto de emergencia asociado.");
       }
@@ -5978,9 +6243,16 @@ const SosButton = () => {
   const handleWhatsApp = () => {
     if (contactPhone) {
       const cleanNum = contactPhone.replace(/\D/g, '');
-      const message = encodeURIComponent("🚨 ¡EMERGENCIA! Necesito ayuda urgente.");
-      
+      const message = encodeURIComponent("¡EMERGENCIA! Necesito ayuda urgente.");
       window.open(`https://wa.me/${cleanNum}?text=${message}`, "_blank");
+    }
+  };
+
+  const handleCopyNumber = () => {
+    if (contactPhone) {
+      navigator.clipboard.writeText(contactPhone);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
   };
 
@@ -5992,40 +6264,51 @@ const SosButton = () => {
         disabled={loading}
         aria-label="Emergencia SOS"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M18.6 2.5a2 2 0 0 1 2 2v15a2 2 0 0 1-2 2H5.4a2 2 0 0 1-2-2V4.5a2 2 0 0 1 2-2h13.2zM12 18h.01M12 21v1" /> 
-        </svg>
+        <Siren size={20} />
         <span>{loading ? "..." : "SOS"}</span>
       </button>
 
       {showModal && (
         <div className="sos-modal-overlay">
           <div className="sos-modal-content">
-            <div className="sos-modal-icon">🚨</div>
+            
+            <button 
+                className="sos-modal-close-icon"
+                onClick={() => setShowModal(false)}
+            >
+                <X size={24} />
+            </button>
+
+            <div className="sos-modal-header-icon">
+                <AlertTriangle size={48} color="#dc2626" />
+            </div>
+            
             <h3>Ayuda de Emergencia</h3>
             <p className="sos-info-text">
               Selecciona una opción para contactar a tu enlace de confianza:
             </p>
 
-            <div className="phone-display-box">
+            <div 
+                className="phone-display-box" 
+                onClick={handleCopyNumber}
+                title="Haz clic para copiar"
+            >
               <span className="phone-number">{contactPhone}</span>
+              <div className="copy-indicator">
+                {copied ? <Check size={14} /> : <Copy size={14} />}
+                <span>{copied ? "Copiado" : "Copiar"}</span>
+              </div>
             </div>
 
             <div className="sos-modal-actions-list">
               <button className="btn-whatsapp-action" onClick={handleWhatsApp}>
-                💬 Enviar WhatsApp
+                <MessageCircle size={20} />
+                Enviar WhatsApp
               </button>
 
               <button className="btn-call-action" onClick={handleCall}>
-                📞 Llamar por Teléfono
+                <Phone size={20} />
+                Llamar por Teléfono
               </button>
 
               <button
@@ -6100,131 +6383,86 @@ export default AdminPage;
 </file>
 
 <file path="src/services/AdminService.js">
+import axios from 'axios';
+
 const API_ADMIN_URL = import.meta.env.VITE_API_ADMIN_URL || 'http://localhost:4000/api/admin';
 
-const getHeaders = () => ({
-  'Content-Type': 'application/json',
-  'Authorization': `Bearer ${localStorage.getItem('token')}`
+const getConfig = () => ({
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  }
 });
 
 export const getStats = async () => {
   try {
-    const response = await fetch(`${API_ADMIN_URL}/stats`, { headers: getHeaders() });
-    if (!response.ok) throw new Error('Error al obtener estadísticas');
-    return await response.json();
-  } catch (error) { 
-    return null; 
+    const response = await axios.get(`${API_ADMIN_URL}/stats`, getConfig());
+    return response.data;
+  } catch (error) {
+    return null;
   }
 };
 
 export const getUsers = async () => {
   try {
-    const response = await fetch(`${API_ADMIN_URL}/users`, { headers: getHeaders() });
-    if (!response.ok) throw new Error('Error al cargar usuarios');
-    return await response.json();
-  } catch (error) { 
-    return []; 
+    const response = await axios.get(`${API_ADMIN_URL}/users`, getConfig());
+    return response.data;
+  } catch (error) {
+    return [];
   }
 };
 
 export const createSpecialist = async (userData) => {
   try {
-    const response = await fetch(`${API_ADMIN_URL}/create-specialist`, {
-      method: 'POST',
-      headers: getHeaders(),
-      body: JSON.stringify(userData)
-    });
-    
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Error al crear especialista');
-    
+    await axios.post(`${API_ADMIN_URL}/create-specialist`, userData, getConfig());
     return { success: true };
   } catch (error) {
-    return { success: false, error: error.message };
+    return { success: false, error: error.response?.data?.error || error.message };
   }
 };
 
 export const resetUserPassword = async (email) => {
   try {
-    const response = await fetch(`${API_ADMIN_URL}/send-reset-email`, {
-      method: 'POST',
-      headers: getHeaders(),
-      body: JSON.stringify({ email })
-    });
-    
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Error al enviar correo');
-    
+    await axios.post(`${API_ADMIN_URL}/send-reset-email`, { email }, getConfig());
     return { success: true };
   } catch (error) {
-    return { success: false, error: error.message };
+    return { success: false, error: error.response?.data?.error || error.message };
   }
 };
 
 export const updatePasswordFinal = async (email, newPassword) => {
   try {
-    const response = await fetch(`${API_ADMIN_URL}/update-password`, {
-      method: 'POST',
-      headers: getHeaders(),
-      body: JSON.stringify({ email, newPassword })
-    });
-    
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Error al actualizar contraseña');
-    
+    await axios.post(`${API_ADMIN_URL}/update-password`, { email, newPassword }, getConfig());
     return { success: true };
   } catch (error) {
-    return { success: false, error: error.message };
+    return { success: false, error: error.response?.data?.error || error.message };
   }
 };
 
 export const deleteUser = async (userId) => {
   try {
-    const response = await fetch(`${API_ADMIN_URL}/users/${userId}`, {
-      method: 'DELETE',
-      headers: getHeaders()
-    });
-    
-    if (!response.ok) {
-      const data = await response.json();
-      throw new Error(data.error || 'Error al eliminar usuario');
-    }
-    
+    await axios.delete(`${API_ADMIN_URL}/users/${userId}`, getConfig());
     return { success: true };
   } catch (error) {
-    return { success: false, error: error.message };
+    return { success: false, error: error.response?.data?.error || error.message };
   }
 };
 
 export const requestAccountDeletion = async (userId) => {
   try {
-    const response = await fetch(`${API_ADMIN_URL}/users/request-deletion/${userId}`, {
-      method: 'PATCH',
-      headers: getHeaders()
-    });
-    
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Error al solicitar eliminación');
-    
+    await axios.patch(`${API_ADMIN_URL}/users/request-deletion/${userId}`, {}, getConfig());
     return { success: true };
   } catch (error) {
-    return { success: false, error: error.message };
+    return { success: false, error: error.response?.data?.error || error.message };
   }
 };
 
 export const verifyAdminStatus = async (email) => {
   try {
-    const response = await fetch(`${API_ADMIN_URL}/verify-admin`, {
-      method: 'POST',
-      headers: getHeaders(),
-      body: JSON.stringify({ email: email.toLowerCase() })
-    });
-    
-    if (!response.ok) return false;
-    const data = await response.json();
-    return data.isAdmin;
-  } catch (error) { 
-    return false; 
+    const response = await axios.post(`${API_ADMIN_URL}/verify-admin`, { email: email.toLowerCase() }, getConfig());
+    return response.data.isAdmin;
+  } catch (error) {
+    return false;
   }
 };
 </file>
@@ -7069,7 +7307,7 @@ main, .hero-modern-container, .features {
 
 <file path="src/components/Dashboard/HealthRegisterForm.jsx">
 import { useState } from "react";
-import axios from "axios";
+import axios from "axios"; 
 import "../../Styles/healthRegister.css";
 
 export default function HealthRegisterForm() {
@@ -7080,15 +7318,13 @@ export default function HealthRegisterForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ✅ VALIDACIÓN SALUD (sin romper lógica)
     if (glucose <= 0 || systolic <= 0 || diastolic <= 0) {
-      alert("❌ Los valores de salud deben ser mayores a 0");
+      alert("Los valores de salud deben ser mayores a 0");
       return;
     }
 
     try {
-      const API_URL =
-        import.meta.env.VITE_API_REGISTRO_URL || "http://localhost:3001";
+      const API_URL = import.meta.env.VITE_API_REGISTRO_URL || "http://localhost:3001";
 
       const payload = {
         patientId: localStorage.getItem("user_id"),
@@ -7097,23 +7333,22 @@ export default function HealthRegisterForm() {
         diastolica: Number(diastolic),
       };
 
-      console.log("Enviando:", payload);
-
       await axios.post(`${API_URL}/api/registros`, payload, {
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem('token')}`
         },
       });
 
-      alert("✅ Registro guardado correctamente");
+      alert("Registro guardado correctamente");
 
       setGlucose("");
       setSystolic("");
       setDiastolic("");
 
     } catch (error) {
-      console.error("Error al guardar:", error.response?.data || error.message);
-      alert("❌ Error al guardar registro");
+      console.error("Error al guardar:", error);
+      alert("Error al guardar registro");
     }
   };
 
@@ -7123,7 +7358,7 @@ export default function HealthRegisterForm() {
         <h2>Glucosa (mg/dL)</h2>
         <input
           type="number"
-          min="1"                     
+          min="1"
           placeholder="Ej: 120"
           value={glucose}
           onChange={(e) => setGlucose(e.target.value)}
@@ -7136,7 +7371,7 @@ export default function HealthRegisterForm() {
         <div className="pressure-inputs">
           <input
             type="number"
-            min="1"                  
+            min="1"
             placeholder="Sistólica (Ej: 120)"
             value={systolic}
             onChange={(e) => setSystolic(e.target.value)}
@@ -7145,7 +7380,7 @@ export default function HealthRegisterForm() {
           <span>/</span>
           <input
             type="number"
-            min="1"                 
+            min="1"
             placeholder="Diastólica (Ej: 80)"
             value={diastolic}
             onChange={(e) => setDiastolic(e.target.value)}
@@ -7162,6 +7397,7 @@ export default function HealthRegisterForm() {
 
 <file path="src/pages/HistoryPage.jsx">
 import { useEffect, useState } from "react";
+import axios from 'axios'; 
 import "../Styles/HistoryStyles.css";
 import { descargarHistorial } from "../services/downloadService";
 import { formatDateLong } from "../utils/formatDate";
@@ -7170,20 +7406,18 @@ export default function HistoryPage() {
   const [history, setHistory] = useState([]);
   const userId = localStorage.getItem("user_id");
 
-  const API_URL =
-    import.meta.env.VITE_API_REGISTRO_URL || "http://localhost:3001";
+  const API_URL = import.meta.env.VITE_API_REGISTRO_URL || "http://localhost:3001";
 
   useEffect(() => {
     if (!userId) return;
 
     const fetchHistory = async () => {
       try {
-        const response = await fetch(
-          `${API_URL}/api/registros/historial/${userId}`
+        const response = await axios.get(
+          `${API_URL}/api/registros/historial/${userId}`,
+          { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }
         );
-
-        const data = await response.json();
-        setHistory(data);
+        setHistory(response.data);
       } catch (error) {
         console.error("Error al obtener historial:", error);
       }
@@ -7256,7 +7490,7 @@ export default function HistoryPage() {
 <file path="src/pages/RegisterPage.jsx">
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import axios from 'axios'; 
 import '../Styles/signUpStyles.css';
 import logo from '../assets/logo.png';
 import { formatRut, isValidEmail } from "../utils/validations";
@@ -7299,7 +7533,11 @@ const Signup = () => {
 
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      const response = await axios.post(`${API_URL}/auth/signup`, formData);
+      
+      const response = await axios.post(`${API_URL}/auth/signup`, formData, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+
       const data = response.data;
 
       if (data.user || data.session) {
@@ -7510,10 +7748,6 @@ import logo from '../assets/logo.png';
 const MedicalRecords = () => {
   const navigate = useNavigate();
 
-  const countryCodes = [
-    { code: "+56", country: "CL", max: 9 }, 
-  ];
-
   const [medicalData, setMedicalData] = useState({
     blood_type: '', 
     height: '', 
@@ -7524,8 +7758,8 @@ const MedicalRecords = () => {
     data_processing_consent: false 
   });
 
-  const [phoneCode, setPhoneCode] = useState("+56");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneError, setPhoneError] = useState("");
 
   useEffect(() => {
     const userId = localStorage.getItem('user_id');
@@ -7539,6 +7773,10 @@ const MedicalRecords = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    
+    if (name === 'height' && value > 300) return;
+    if (name === 'initial_weight' && value > 600) return;
+
     setMedicalData({ 
         ...medicalData, 
         [name]: type === 'checkbox' ? checked : value 
@@ -7548,8 +7786,19 @@ const MedicalRecords = () => {
   const handlePhoneChange = (e) => {
     const value = e.target.value;
     const onlyNums = value.replace(/[^0-9]/g, '');
+    
     if (onlyNums.length <= 9) {
       setPhoneNumber(onlyNums);
+      
+      if (onlyNums.length === 9) {
+          if (onlyNums.charAt(0) !== '9') {
+             setPhoneError("El número debe comenzar con 9");
+          } else {
+             setPhoneError("");
+          }
+      } else {
+          setPhoneError(""); 
+      }
     }
   };
 
@@ -7558,7 +7807,8 @@ const MedicalRecords = () => {
       medicalData.height !== '' &&
       medicalData.initial_weight !== '' &&
       medicalData.emergency_contact_name !== '' &&
-      phoneNumber.length >= 9 &&
+      phoneNumber.length === 9 &&
+      phoneNumber.startsWith('9') &&
       medicalData.data_processing_consent === true;
 
   const handleSubmit = async (e) => {
@@ -7569,8 +7819,13 @@ const MedicalRecords = () => {
         return;
     }
 
+    if (phoneNumber.length !== 9 || !phoneNumber.startsWith('9')) {
+        alert("El teléfono debe tener 9 dígitos y comenzar con 9.");
+        return;
+    }
+
     const userId = localStorage.getItem('user_id');
-    const fullPhone = `${phoneCode}${phoneNumber}`;
+    const fullPhone = `+56${phoneNumber}`;
 
     const { data_processing_consent, ...datosLimpios } = medicalData;
 
@@ -7615,12 +7870,12 @@ const MedicalRecords = () => {
 
           <div className="form-group">
              <label>Estatura (cm)</label>
-             <input type="number" name="height" value={medicalData.height} placeholder="Ej: 170" onChange={handleChange} required />
+             <input type="number" name="height" value={medicalData.height} placeholder="Ej: 170" onChange={handleChange} min="50" max="300" required />
           </div>
 
           <div className="form-group">
              <label>Peso Inicial (kg)</label>
-             <input type="number" name="initial_weight" value={medicalData.initial_weight} placeholder="Ej: 75" onChange={handleChange} required />
+             <input type="number" name="initial_weight" value={medicalData.initial_weight} placeholder="Ej: 75" onChange={handleChange} min="20" max="500" required />
           </div>
 
           <div className="form-group">
@@ -7630,17 +7885,10 @@ const MedicalRecords = () => {
 
           <div className="form-group full-width">
             <label>Teléfono de Emergencia</label>
-            <div className="phone-input-group">
-              <select 
-                className="country-select"
-                value={phoneCode}
-                disabled 
-                style={{ backgroundColor: '#e9ecef', cursor: 'not-allowed' }}
-              >
-                {countryCodes.map((c) => (
-                    <option key={c.code} value={c.code}>{c.country}</option>
-                ))}
-              </select>
+            <div className={`phone-input-group ${phoneError ? 'input-error' : ''}`}>
+              <div className="country-prefix">
+                 +56
+              </div>
 
               <input 
                 type="tel" 
@@ -7649,10 +7897,12 @@ const MedicalRecords = () => {
                 value={phoneNumber}
                 onChange={handlePhoneChange}
                 required 
+                className="phone-field"
               />
             </div>
-            <small style={{ color: '#666', fontSize: '0.8rem', marginTop: '5px' }}>
-                * Ingresa los 9 dígitos sin espacios.
+            {phoneError && <small className="error-text">{phoneError}</small>}
+            <small className="hint-text">
+                * Ingresa los 9 dígitos (ej: 987654321)
             </small>
           </div>
 
@@ -7698,8 +7948,20 @@ export default MedicalRecords;
 </file>
 
 <file path="src/services/AuthService.js">
+import axios from 'axios';
+
 const API_ADMIN_URL = import.meta.env.VITE_API_ADMIN_URL || "http://localhost:4000/api/admin";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
+const getAuthConfig = (tokenOverride) => {
+  const token = tokenOverride || localStorage.getItem('token');
+  return {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  };
+};
 
 export const isAdmin = async () => {
   try {
@@ -7708,19 +7970,13 @@ export const isAdmin = async () => {
 
     if (!userEmail || !token) return false;
 
-    const response = await fetch(`${API_ADMIN_URL}/verify-admin`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ email: userEmail.toLowerCase() }),
-    });
+    const response = await axios.post(
+      `${API_ADMIN_URL}/verify-admin`, 
+      { email: userEmail.toLowerCase() },
+      getAuthConfig(token)
+    );
 
-    if (!response.ok) return false;
-
-    const data = await response.json();
-    return data.isAdmin;
+    return response.data.isAdmin;
   } catch (error) {
     return false;
   }
@@ -7728,38 +7984,27 @@ export const isAdmin = async () => {
 
 export const getUserProfile = async (userId, token) => {
   try {
-    const response = await fetch(`${API_URL}/users/${userId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
-    });
-
-    if (!response.ok) return null;
-
-    return await response.json();
+    const response = await axios.get(
+      `${API_URL}/users/${userId}`, 
+      getAuthConfig(token)
+    );
+    return response.data;
   } catch (error) {
+    console.error(`Error Auth User ${userId}:`, error.message);
     return null;
   }
 };
 
 export const requestPublicPasswordReset = async (email) => {
   try {
-    const response = await fetch(`${API_ADMIN_URL}/send-reset-email`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email })
-    });
-
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Error al enviar correo');
-    
+    await axios.post(
+      `${API_ADMIN_URL}/send-reset-email`,
+      { email },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
     return { success: true };
   } catch (error) {
-    return { success: false, error: error.message };
+    return { success: false, error: error.response?.data?.error || error.message };
   }
 };
 </file>
@@ -7860,7 +8105,7 @@ export default function Dashboard() {
 <file path="src/pages/LoginPage.jsx">
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import axios from 'axios'; 
 import { requestPublicPasswordReset, getUserProfile } from '../services/AuthService';
 import '../Styles/loginStyles.css';
 import logo from '../assets/logo.png'; 
@@ -7910,7 +8155,12 @@ const Login = () => {
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
       
-      const response = await axios.post(`${API_URL}/auth/login`, credentials);
+      const response = await axios.post(`${API_URL}/auth/login`, credentials, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
       const data = response.data;
       const token = data.session?.access_token || data.token;
       
@@ -7968,7 +8218,7 @@ const Login = () => {
 
     } catch (error) {
       console.error("Login Error:", error);
-      alert('Error: Credenciales incorrectas o problema de conexión');
+      alert(`Error: ${error.response?.data?.error || error.message}`);
     }
   };
 
@@ -8050,7 +8300,7 @@ const Login = () => {
               )}
 
               {cooldownTime > 0 && (
-                <p style={{color: '#d97706', fontWeight: 'bold', fontSize: '0.9rem'}}>
+                <p className="cooldown-text">
                   Espera {formatTime(cooldownTime)} para intentar de nuevo.
                 </p>
               )}
@@ -8099,19 +8349,12 @@ import SpecialistDashboard from "./pages/SpecialistDashboard";
 import PatientFile from "./pages/PatientFile";
 
 import Navbar from "./components/Navbar";
-import ProtectedRoute from "./components/Admin/ProtectedRoute";
 import ChatWidget from "./components/Chat/ChatWidget";
 import { isAdmin } from "./services/AuthService";
 
-const SpecialistRoute = ({ children }) => {
-    const token = localStorage.getItem('token');
-    const role = localStorage.getItem('user_role');
-    
-    if (!token) return <Navigate to="/login" />;
-    if (role !== 'specialist' && role !== 'admin') return <Navigate to="/dashboard" />;
-    
-    return children;
-};
+import PatientGuard from "./components/Guards/PatientGuard";
+import SpecialistGuard from "./components/Guards/SpecialistGuard";
+import AdminGuard from "./components/Guards/AdminGuard";
 
 function App() {
   const [currentUserId, setCurrentUserId] = useState(localStorage.getItem('user_id'));
@@ -8162,35 +8405,70 @@ function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/historial" element={<HistoryPage />} />
-        <Route path="/perfil" element={<ProfilePage />} />
-        <Route path="/registro-salud" element={<HealthRegisterPage />} />
-        <Route path="/ficha-medica" element={<MedicalRecords />} />
+        <Route 
+          path="/dashboard" 
+          element={
+            <PatientGuard>
+              <Dashboard />
+            </PatientGuard>
+          } 
+        />
+        <Route 
+          path="/historial" 
+          element={
+            <PatientGuard>
+              <HistoryPage />
+            </PatientGuard>
+          } 
+        />
+        <Route 
+          path="/perfil" 
+          element={
+            <PatientGuard>
+              <ProfilePage />
+            </PatientGuard>
+          } 
+        />
+        <Route 
+          path="/registro-salud" 
+          element={
+            <PatientGuard>
+              <HealthRegisterPage />
+            </PatientGuard>
+          } 
+        />
+        <Route 
+          path="/ficha-medica" 
+          element={
+            <PatientGuard>
+              <MedicalRecords />
+            </PatientGuard>
+          } 
+        />
 
         <Route 
             path="/panel-medico" 
             element={
-                <SpecialistRoute>
+                <SpecialistGuard>
                     <SpecialistDashboard />
-                </SpecialistRoute>
+                </SpecialistGuard>
             } 
         />
         <Route 
             path="/paciente/:id" 
             element={
-                <SpecialistRoute>
+                <SpecialistGuard>
                     <PatientFile />
-                </SpecialistRoute>
+                </SpecialistGuard>
             } 
         />
 
         <Route
           path="/admin"
           element={
-            <ProtectedRoute>
+            <AdminGuard>
               <AdminPage />
-            </ProtectedRoute>
+            </AdminGuard>
           }
         />
       </Routes>

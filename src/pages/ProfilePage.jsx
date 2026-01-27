@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { User, Ruler, AlertTriangle, Phone, AlertCircle } from 'lucide-react';
+import { User, Ruler, AlertTriangle, Phone, AlertCircle, Save, X } from 'lucide-react';
 import { getMedicalRecord, updateMedicalRecord } from '../services/MedicalService'; 
 import { requestAccountDeletion } from '../services/AdminService';
 import '../Styles/ProfileStyles.css';
@@ -13,6 +13,8 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  
+  const [phoneEdit, setPhoneEdit] = useState("");
 
   const fetchProfile = async () => {
     const userId = localStorage.getItem('user_id');
@@ -24,7 +26,15 @@ const ProfilePage = () => {
     try {
       const data = await getMedicalRecord(userId);
       setProfile(data);
-      setFormData(data || {}); 
+      
+      const initialForm = data || {};
+      setFormData(initialForm);
+
+      if (initialForm.emergency_contact_phone) {
+          const rawPhone = initialForm.emergency_contact_phone.toString();
+          setPhoneEdit(rawPhone.replace(/^\+56/, ''));
+      }
+
     } catch (error) {
       console.error(error);
     } finally {
@@ -35,21 +45,46 @@ const ProfilePage = () => {
   useEffect(() => { fetchProfile(); }, [navigate]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    
+    if (name === 'height' && (value < 0 || value > 300)) return;
+    if (name === 'initial_weight' && (value < 0 || value > 600)) return;
+
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handlePhoneEditChange = (e) => {
+      const val = e.target.value.replace(/[^0-9]/g, '');
+      if (val.length <= 9) {
+          setPhoneEdit(val);
+      }
   };
 
   const handleSave = async () => {
+    if (phoneEdit.length !== 9 || !phoneEdit.startsWith('9')) {
+        alert("El teléfono de emergencia debe tener 9 dígitos y comenzar con 9.");
+        return;
+    }
+
     try {
       const userId = localStorage.getItem('user_id');
-      await updateMedicalRecord(userId, {
+      
+      const finalPhone = `+56${phoneEdit}`;
+
+      const payload = {
         ...formData,
+        emergency_contact_phone: finalPhone,
         current_weight: formData.initial_weight 
-      });
-      setProfile(formData); 
+      };
+
+      await updateMedicalRecord(userId, payload);
+      
+      setProfile(payload);
+      setFormData(payload);
       setIsEditing(false);  
       alert("¡Perfil actualizado!");
     } catch (error) {
-      alert("Error al guardar cambios");
+      alert("Error al guardar cambios: " + error.message);
     }
   };
 
@@ -118,6 +153,8 @@ const ProfilePage = () => {
                   <option value="AB+">AB+</option>
                   <option value="A-">A-</option>
                   <option value="O-">O-</option>
+                  <option value="B-">B-</option>
+                  <option value="AB-">AB-</option>
               </select>
             ) : <span className="info-value">{profile.blood_type}</span>}
           </div>
@@ -148,8 +185,21 @@ const ProfilePage = () => {
              {isEditing ? <input type="text" name="emergency_contact_name" value={formData.emergency_contact_name} onChange={handleChange} className="form-input-edit" /> : <span className="info-value">{profile.emergency_contact_name}</span>}
           </div>
           <div className="info-item">
-            <span className="info-label">Teléfono</span>
-             {isEditing ? <input type="tel" name="emergency_contact_phone" value={formData.emergency_contact_phone} onChange={handleChange} className="form-input-edit" /> : <span className="info-value">{profile.emergency_contact_phone}</span>}
+            <span className="info-label">Teléfono (+56)</span>
+             {isEditing ? (
+                <div className="phone-edit-wrapper">
+                    <span className="prefix-span">+56</span>
+                    <input 
+                        type="tel" 
+                        value={phoneEdit} 
+                        onChange={handlePhoneEditChange} 
+                        className="form-input-edit phone-input" 
+                        placeholder="9XXXXXXXX"
+                    />
+                </div>
+             ) : (
+                <span className="info-value phone-display">{profile.emergency_contact_phone}</span>
+             )}
           </div>
         </div>
       </div>
@@ -166,8 +216,12 @@ const ProfilePage = () => {
 
       {isEditing && (
         <div className="edit-actions">
-          <button onClick={handleSave} className="btn-create-record">Guardar Cambios</button>
-          <button onClick={() => { setIsEditing(false); setFormData(profile); }} className="btn-cancel-edit">Cancelar</button>
+          <button onClick={handleSave} className="btn-create-record">
+              <Save size={18} style={{marginRight: '5px'}}/> Guardar Cambios
+          </button>
+          <button onClick={() => { setIsEditing(false); setFormData(profile); setPhoneEdit(profile.emergency_contact_phone?.replace(/^\+56/, '')); }} className="btn-cancel-edit">
+              <X size={18} style={{marginRight: '5px'}}/> Cancelar
+          </button>
         </div>
       )}
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import axios from 'axios'; 
 import { requestPublicPasswordReset, getUserProfile } from '../services/AuthService';
 import '../Styles/loginStyles.css';
 import logo from '../assets/logo.png'; 
@@ -50,7 +50,12 @@ const Login = () => {
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
       
-      const response = await axios.post(`${API_URL}/auth/login`, credentials);
+      const response = await axios.post(`${API_URL}/auth/login`, credentials, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
       const data = response.data;
       const token = data.session?.access_token || data.token;
       
@@ -108,7 +113,7 @@ const Login = () => {
 
     } catch (error) {
       console.error("Login Error:", error);
-      alert('Error: Credenciales incorrectas o problema de conexión');
+      alert(`Error: ${error.response?.data?.error || error.message}`);
     }
   };
 
@@ -190,7 +195,7 @@ const Login = () => {
               )}
 
               {cooldownTime > 0 && (
-                <p style={{color: '#d97706', fontWeight: 'bold', fontSize: '0.9rem'}}>
+                <p className="cooldown-text">
                   Espera {formatTime(cooldownTime)} para intentar de nuevo.
                 </p>
               )}

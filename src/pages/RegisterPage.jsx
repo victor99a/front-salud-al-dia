@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import axios from 'axios'; 
 import '../Styles/signUpStyles.css';
 import logo from '../assets/logo.png';
 import { formatRut, isValidEmail } from "../utils/validations";
@@ -43,7 +43,11 @@ const Signup = () => {
 
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      const response = await axios.post(`${API_URL}/auth/signup`, formData);
+      
+      const response = await axios.post(`${API_URL}/auth/signup`, formData, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+
       const data = response.data;
 
       if (data.user || data.session) {

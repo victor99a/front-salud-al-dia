@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { HeartPulse, X, Send, Stethoscope, Activity, Loader2 } from 'lucide-react';
+import axios from 'axios'; 
 import '../../Styles/ChatWidgetStyles.css';
 
 const ChatWidget = ({ userId }) => {
@@ -35,14 +36,14 @@ const ChatWidget = ({ userId }) => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/api/ai/send`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, message: currentInput }),
+      const response = await axios.post(`${API_URL}/api/ai/send`, { 
+        userId, 
+        message: currentInput 
+      }, {
+        headers: { 'Content-Type': 'application/json' }
       });
 
-      const data = await response.json();
-      setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: response.data.response }]);
     } catch (error) {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Lo siento, tengo dificultades técnicas. Intenta más tarde.' }]);
     } finally {

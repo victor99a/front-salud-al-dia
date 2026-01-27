@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import axios from 'axios'; 
 import "../Styles/HistoryStyles.css";
 import { descargarHistorial } from "../services/downloadService";
 import { formatDateLong } from "../utils/formatDate";
@@ -7,20 +8,18 @@ export default function HistoryPage() {
   const [history, setHistory] = useState([]);
   const userId = localStorage.getItem("user_id");
 
-  const API_URL =
-    import.meta.env.VITE_API_REGISTRO_URL || "http://localhost:3001";
+  const API_URL = import.meta.env.VITE_API_REGISTRO_URL || "http://localhost:3001";
 
   useEffect(() => {
     if (!userId) return;
 
     const fetchHistory = async () => {
       try {
-        const response = await fetch(
-          `${API_URL}/api/registros/historial/${userId}`
+        const response = await axios.get(
+          `${API_URL}/api/registros/historial/${userId}`,
+          { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }
         );
-
-        const data = await response.json();
-        setHistory(data);
+        setHistory(response.data);
       } catch (error) {
         console.error("Error al obtener historial:", error);
       }

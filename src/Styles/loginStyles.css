@@ -178,3 +178,10 @@
 }
 .status-msg.success { color: #16a34a; }
 .status-msg.error { color: #dc2626; }
+
+.cooldown-text {
+  color: #d97706;
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
