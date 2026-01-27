@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import ContactPage from "./pages/ContactPage";
 import HomePage from "./pages/HomePage";
@@ -17,26 +17,23 @@ import SpecialistDashboard from "./pages/SpecialistDashboard";
 import PatientFile from "./pages/PatientFile";
 
 import Navbar from "./components/Navbar";
-import ProtectedRoute from "./components/Admin/ProtectedRoute";
 import ChatWidget from "./components/Chat/ChatWidget";
+import Loader from "./components/Loader"; 
 import { isAdmin } from "./services/AuthService";
 
-const SpecialistRoute = ({ children }) => {
-    const token = localStorage.getItem('token');
-    const role = localStorage.getItem('user_role');
-    
-    if (!token) return <Navigate to="/login" />;
-    if (role !== 'specialist' && role !== 'admin') return <Navigate to="/dashboard" />;
-    
-    return children;
-};
+import PatientGuard from "./components/Guards/PatientGuard";
+import SpecialistGuard from "./components/Guards/SpecialistGuard";
+import AdminGuard from "./components/Guards/AdminGuard";
 
 function App() {
   const [currentUserId, setCurrentUserId] = useState(localStorage.getItem('user_id'));
   const [isUserAdmin, setIsUserAdmin] = useState(false);
   const [userRole, setUserRole] = useState(localStorage.getItem('user_role'));
+  const [isAuthChecking, setIsAuthChecking] = useState(true);
 
   const refreshAppState = async () => {
+      setIsAuthChecking(true);
+      
       const token = localStorage.getItem('token');
       const userId = localStorage.getItem('user_id');
       const role = localStorage.getItem('user_role');
@@ -54,6 +51,10 @@ function App() {
       } else {
         setIsUserAdmin(false);
       }
+      
+      setTimeout(() => {
+          setIsAuthChecking(false);
+      }, 1500); 
   };
 
   useEffect(() => {
@@ -67,9 +68,16 @@ function App() {
     };
   }, []);
 
+  if (isAuthChecking) {
+    return <Loader message="Verificando credenciales y permisos..." />;
+  }
+
   return (
     <Router>
-      <Navbar />
+      <Navbar 
+        isUserAdmin={isUserAdmin} 
+        userRole={userRole} 
+      />
       
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -80,40 +88,75 @@ function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/historial" element={<HistoryPage />} />
-        <Route path="/perfil" element={<ProfilePage />} />
-        <Route path="/registro-salud" element={<HealthRegisterPage />} />
-        <Route path="/ficha-medica" element={<MedicalRecords />} />
+        <Route 
+          path="/dashboard" 
+          element={
+            <PatientGuard>
+              <Dashboard />
+            </PatientGuard>
+          } 
+        />
+        <Route 
+          path="/historial" 
+          element={
+            <PatientGuard>
+              <HistoryPage />
+            </PatientGuard>
+          } 
+        />
+        <Route 
+          path="/perfil" 
+          element={
+            <PatientGuard>
+              <ProfilePage />
+            </PatientGuard>
+          } 
+        />
+        <Route 
+          path="/registro-salud" 
+          element={
+            <PatientGuard>
+              <HealthRegisterPage />
+            </PatientGuard>
+          } 
+        />
+        <Route 
+          path="/ficha-medica" 
+          element={
+            <PatientGuard>
+              <MedicalRecords />
+            </PatientGuard>
+          } 
+        />
 
         <Route 
             path="/panel-medico" 
             element={
-                <SpecialistRoute>
+                <SpecialistGuard>
                     <SpecialistDashboard />
-                </SpecialistRoute>
+                </SpecialistGuard>
             } 
         />
         <Route 
             path="/paciente/:id" 
             element={
-                <SpecialistRoute>
+                <SpecialistGuard>
                     <PatientFile />
-                </SpecialistRoute>
+                </SpecialistGuard>
             } 
         />
 
         <Route
           path="/admin"
           element={
-            <ProtectedRoute>
+            <AdminGuard>
               <AdminPage />
-            </ProtectedRoute>
+            </AdminGuard>
           }
         />
       </Routes>
 
-      {currentUserId && !isUserAdmin && userRole !== 'specialist' && (
+      {!isAuthChecking && currentUserId && !isUserAdmin && userRole !== 'specialist' && (
         <ChatWidget userId={currentUserId} />
       )}
       

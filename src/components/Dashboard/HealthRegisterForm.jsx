@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import axios from "axios"; 
 import "../../Styles/healthRegister.css";
 
 export default function HealthRegisterForm() {
@@ -10,15 +10,13 @@ export default function HealthRegisterForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ✅ VALIDACIÓN SALUD (sin romper lógica)
     if (glucose <= 0 || systolic <= 0 || diastolic <= 0) {
-      alert("❌ Los valores de salud deben ser mayores a 0");
+      alert("Los valores de salud deben ser mayores a 0");
       return;
     }
 
     try {
-      const API_URL =
-        import.meta.env.VITE_API_REGISTRO_URL || "http://localhost:3001";
+      const API_URL = import.meta.env.VITE_API_REGISTRO_URL || "http://localhost:3001";
 
       const payload = {
         patientId: localStorage.getItem("user_id"),
@@ -27,23 +25,22 @@ export default function HealthRegisterForm() {
         diastolica: Number(diastolic),
       };
 
-      console.log("Enviando:", payload);
-
       await axios.post(`${API_URL}/api/registros`, payload, {
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem('token')}`
         },
       });
 
-      alert("✅ Registro guardado correctamente");
+      alert("Registro guardado correctamente");
 
       setGlucose("");
       setSystolic("");
       setDiastolic("");
 
     } catch (error) {
-      console.error("Error al guardar:", error.response?.data || error.message);
-      alert("❌ Error al guardar registro");
+      console.error("Error al guardar:", error);
+      alert("Error al guardar registro");
     }
   };
 
@@ -53,7 +50,7 @@ export default function HealthRegisterForm() {
         <h2>Glucosa (mg/dL)</h2>
         <input
           type="number"
-          min="1"                     
+          min="1"
           placeholder="Ej: 120"
           value={glucose}
           onChange={(e) => setGlucose(e.target.value)}
@@ -66,7 +63,7 @@ export default function HealthRegisterForm() {
         <div className="pressure-inputs">
           <input
             type="number"
-            min="1"                  
+            min="1"
             placeholder="Sistólica (Ej: 120)"
             value={systolic}
             onChange={(e) => setSystolic(e.target.value)}
@@ -75,7 +72,7 @@ export default function HealthRegisterForm() {
           <span>/</span>
           <input
             type="number"
-            min="1"                 
+            min="1"
             placeholder="Diastólica (Ej: 80)"
             value={diastolic}
             onChange={(e) => setDiastolic(e.target.value)}

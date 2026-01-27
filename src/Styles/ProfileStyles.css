@@ -298,6 +298,41 @@
   box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
 }
 
+.phone-edit-wrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: white;
+}
+
+.prefix-span {
+    padding: 8px 10px;
+    background: #f3f4f6;
+    color: #6b7280;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-right: 1px solid #e5e7eb;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+
+.form-input-edit.phone-input {
+    border: none;
+    padding: 8px;
+    width: 100%;
+    outline: none;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+.phone-display {
+    font-family: monospace;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    color: #1f2937;
+}
+
 @media (max-width: 600px) {
   .danger-zone {
     flex-direction: column;

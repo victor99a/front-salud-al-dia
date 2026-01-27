@@ -2,7 +2,7 @@
   width: 100%;
   background-color: #ffffff;
   border-bottom: 1px solid #f0f0f0;
-  position: sticky; /* Se queda pegado arriba */
+  position: sticky;
   top: 0;
   z-index: 1000;
   height: 75px;
@@ -25,7 +25,7 @@
   align-items: center;
   transition: transform 0.3s;
   margin-right: auto;
-  z-index: 1002; /* Para que sobresalga en móvil si es necesario */
+  z-index: 1002;
 }
 
 .nav-logo:hover {
@@ -37,9 +37,6 @@
   width: auto;
 }
 
-/* =========================================
-   2. MENÚ PRINCIPAL (ENLACES)
-   ========================================= */
 .nav-collapse {
   display: flex;
   align-items: center;
@@ -74,28 +71,18 @@
 .nav-item:hover { color: #2563eb; }
 .nav-item:hover::after { width: 100%; }
 
-
-/* =========================================
-   3. BOTONES DE LOGIN Y REGISTRO (CORREGIDOS)
-   ========================================= */
 .nav-auth {
   display: flex;
   align-items: center;
-  gap: 15px; /* Espacio entre botones */
+  gap: 15px;
 }
 
-/* --- Estilos base compartidos (IMPORTANTE) --- */
 .btn-login, .btn-register {
-  /* Dimensiones fijas para evitar desalineación */
   height: 40px !important; 
   width: 140px;
-  
-  /* Flexbox para centrar el texto perfectamente */
   display: flex;
   align-items: center;
   justify-content: center;
-  
-  /* Reset de estilos básicos */
   margin: 0;
   padding: 0;
   border-radius: 8px;
@@ -104,16 +91,12 @@
   text-decoration: none;
   cursor: pointer;
   transition: all 0.3s ease;
-  
-  /* EL SECRETO: box-sizing hace que el borde esté DENTRO de los 40px */
   box-sizing: border-box !important; 
 }
 
-/* --- Botón Iniciar Sesión --- */
 .btn-login {
   background-color: transparent;
   color: #2563eb;
-  /* Borde visible de 2px */
   border: 2px solid #e5e7eb; 
 }
 
@@ -122,12 +105,9 @@
   border-color: #2563eb;
 }
 
-/* --- Botón Registrarse --- */
 .btn-register {
   background-color: #2563eb;
   color: white;
-  /* TRUCO: Le ponemos el mismo borde (2px) pero del color del fondo.
-     Así ocupa el mismo espacio físico que el botón de login. */
   border: 2px solid #2563eb; 
 }
 
@@ -136,24 +116,16 @@
   border-color: #1d4ed8;
 }
 
-
-/* =========================================
-   4. LOGICA DEL BOTÓN SOS Y MÓVIL
-   ========================================= */
-
-/* SOS: En escritorio se ve el bloque normal */
 .sos-desktop-wrapper {
   display: block; 
 }
 
-/* SOS: En escritorio ocultamos el contenedor móvil */
 .nav-mobile-actions {
   display: none; 
   align-items: center;
   gap: 15px;
 }
 
-/* Hamburguesa: Oculta en escritorio */
 .hamburger {
   display: none;
   cursor: pointer;
@@ -168,15 +140,66 @@
   background-color: #333; 
 }
 
-/* =========================================
-   5. REGLAS PARA MÓVIL (Max 768px)
-   ========================================= */
+.nav-specialist-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-left: auto;
+}
+
+.specialist-info {
+    text-align: right;
+    line-height: 1.2;
+}
+
+.specialist-name {
+    display: block;
+    font-weight: bold;
+    color: #1e3a8a;
+    font-size: 0.95rem;
+}
+
+.specialist-role {
+    font-size: 0.8rem;
+    color: #64748b;
+    display: block;
+}
+
+.specialist-icon-box {
+    background: #eff6ff;
+    padding: 10px;
+    border-radius: 50%;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-logout-specialist {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-logout-specialist:hover {
+    background-color: #f8fafc;
+    color: #dc2626;
+    border-color: #fee2e2;
+}
+
 @media screen and (max-width: 768px) {
-    
-    /* 1. Barra superior móvil: Mostramos SOS y Hamburguesa */
     .nav-mobile-actions {
         display: flex;
-        margin-left: auto; /* Empuja a la derecha */
+        margin-left: auto;
         z-index: 1002;
     }
 
@@ -184,15 +207,13 @@
         display: block; 
     }
 
-    /* 2. Ocultamos el SOS "duplicado" del menú */
     .sos-desktop-wrapper {
         display: none;
     }
 
-    /* 3. Menú Desplegable (Estilo Cajón) */
     .nav-collapse {
         position: fixed;
-        left: -100%; /* Oculto a la izquierda */
+        left: -100%;
         top: 75px; 
         flex-direction: column;
         background-color: #ffffff;
@@ -206,7 +227,7 @@
     }
 
     .nav-collapse.active {
-        left: 0; /* Entra en escena */
+        left: 0;
     }
 
     .nav-menu {
@@ -229,12 +250,10 @@
         padding: 10px 0;
     }
 
-    /* Animación de Hamburguesa a X */
     .hamburger.active .bar:nth-child(2) { opacity: 0; }
     .hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
     .hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
-    /* Ajuste fino del botón SOS en la barra superior móvil */
     .sos-mobile-wrapper .sos-button-final {
         padding: 0 12px;
         height: 36px;

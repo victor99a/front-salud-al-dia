@@ -1,10 +1,13 @@
 import React, { useState } from "react";
+import axios from 'axios';
+import { AlertTriangle, Phone, MessageCircle, X, Copy, Check, Siren } from "lucide-react";
 import "../Styles/SosButtonStyles.css";
 
 const SosButton = () => {
   const [showModal, setShowModal] = useState(false);
   const [contactPhone, setContactPhone] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const USER_ID = localStorage.getItem("user_id");
 
@@ -18,17 +21,17 @@ const SosButton = () => {
     try {
       const API_SOS_URL = import.meta.env.VITE_API_SOS_URL || "http://localhost:3000";
 
-      const response = await fetch(
-        `${API_SOS_URL}/api/sos/emergency-contact/${USER_ID}`
+      const response = await axios.get(
+        `${API_SOS_URL}/api/sos/emergency-contact/${USER_ID}`,
+        { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }
       );
-      
-      if (!response.ok) throw new Error("Error en la petición al servidor");
 
-      const data = await response.json();
+      const data = response.data;
 
       if (data.success && data.phone) {
         setContactPhone(data.phone);
         setShowModal(true);
+        setCopied(false);
       } else {
         alert(data.message || "No se encontró un contacto de emergencia asociado.");
       }
@@ -47,9 +50,16 @@ const SosButton = () => {
   const handleWhatsApp = () => {
     if (contactPhone) {
       const cleanNum = contactPhone.replace(/\D/g, '');
-      const message = encodeURIComponent("🚨 ¡EMERGENCIA! Necesito ayuda urgente.");
-      
+      const message = encodeURIComponent("¡EMERGENCIA! Necesito ayuda urgente.");
       window.open(`https://wa.me/${cleanNum}?text=${message}`, "_blank");
+    }
+  };
+
+  const handleCopyNumber = () => {
+    if (contactPhone) {
+      navigator.clipboard.writeText(contactPhone);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
   };
 
@@ -61,40 +71,51 @@ const SosButton = () => {
         disabled={loading}
         aria-label="Emergencia SOS"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M18.6 2.5a2 2 0 0 1 2 2v15a2 2 0 0 1-2 2H5.4a2 2 0 0 1-2-2V4.5a2 2 0 0 1 2-2h13.2zM12 18h.01M12 21v1" /> 
-        </svg>
+        <Siren size={20} />
         <span>{loading ? "..." : "SOS"}</span>
       </button>
 
       {showModal && (
         <div className="sos-modal-overlay">
           <div className="sos-modal-content">
-            <div className="sos-modal-icon">🚨</div>
+            
+            <button 
+                className="sos-modal-close-icon"
+                onClick={() => setShowModal(false)}
+            >
+                <X size={24} />
+            </button>
+
+            <div className="sos-modal-header-icon">
+                <AlertTriangle size={48} color="#dc2626" />
+            </div>
+            
             <h3>Ayuda de Emergencia</h3>
             <p className="sos-info-text">
               Selecciona una opción para contactar a tu enlace de confianza:
             </p>
 
-            <div className="phone-display-box">
+            <div 
+                className="phone-display-box" 
+                onClick={handleCopyNumber}
+                title="Haz clic para copiar"
+            >
               <span className="phone-number">{contactPhone}</span>
+              <div className="copy-indicator">
+                {copied ? <Check size={14} /> : <Copy size={14} />}
+                <span>{copied ? "Copiado" : "Copiar"}</span>
+              </div>
             </div>
 
             <div className="sos-modal-actions-list">
               <button className="btn-whatsapp-action" onClick={handleWhatsApp}>
-                💬 Enviar WhatsApp
+                <MessageCircle size={20} />
+                Enviar WhatsApp
               </button>
 
               <button className="btn-call-action" onClick={handleCall}>
-                📞 Llamar por Teléfono
+                <Phone size={20} />
+                Llamar por Teléfono
               </button>
 
               <button

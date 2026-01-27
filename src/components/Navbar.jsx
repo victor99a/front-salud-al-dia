@@ -1,51 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import SosButton from './SosButton'; 
-import { isAdmin } from '../services/AuthService'; 
 import '../Styles/NavbarStyles.css';
 import logo1 from '../assets/logo1.png';
 import { Stethoscope, LogOut } from 'lucide-react';
 
-const Navbar = () => {
+const Navbar = ({ isUserAdmin, userRole }) => {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
-    const [isUserAdmin, setIsUserAdmin] = useState(false);
-    const [userRole, setUserRole] = useState(localStorage.getItem('user_role') || 'patient');
-    const [docName, setDocName] = useState(localStorage.getItem('user_name') || '');
-    const [token, setToken] = useState(localStorage.getItem('token'));
-
-    const refreshAuthState = async () => {
-        const currentToken = localStorage.getItem('token');
-        const currentRole = localStorage.getItem('user_role');
-        const currentName = localStorage.getItem('user_name');
-
-        setToken(currentToken);
-        if (currentRole) setUserRole(currentRole);
-        setDocName(currentName || '');
-
-        if (currentToken) {
-            try {
-                const adminStatus = await isAdmin();
-                setIsUserAdmin(adminStatus);
-                if (adminStatus) setUserRole('admin');
-            } catch (error) {
-                setIsUserAdmin(false);
-            }
-        } else {
-            setIsUserAdmin(false);
-            setUserRole('patient');
-        }
-    };
-
-    useEffect(() => {
-        refreshAuthState();
-        window.addEventListener('auth-change', refreshAuthState);
-        window.addEventListener('storage', refreshAuthState);
-        return () => {
-            window.removeEventListener('auth-change', refreshAuthState);
-            window.removeEventListener('storage', refreshAuthState);
-        };
-    }, []);
+    
+    const docName = localStorage.getItem('user_name') || '';
+    const token = localStorage.getItem('token');
 
     const handleLogout = () => {
         localStorage.clear();
@@ -61,25 +26,19 @@ const Navbar = () => {
                     <div className="nav-logo">
                         <img src={logo1} alt="Salud al Día" className="logo-img" />
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginLeft: 'auto' }}>
-                        <div style={{ textAlign: 'right', lineHeight: '1.2' }}>
-                            <span style={{ display: 'block', fontWeight: 'bold', color: '#1e3a8a', fontSize: '0.95rem' }}>
+                    <div className="nav-specialist-controls">
+                        <div className="specialist-info">
+                            <span className="specialist-name">
                                 {docName || 'Especialista'}
                             </span>
-                            <span style={{ fontSize: '0.8rem', color: '#64748b', display: 'block' }}>Profesional de Salud</span>
+                            <span className="specialist-role">Profesional de Salud</span>
                         </div>
-                        <div style={{ background: '#eff6ff', padding: '10px', borderRadius: '50%', color: '#2563eb', border: '1px solid #bfdbfe' }}>
+                        <div className="specialist-icon-box">
                             <Stethoscope size={20} />
                         </div>
                         <button 
                             onClick={handleLogout} 
                             className="btn-logout-specialist"
-                            style={{ 
-                                display: 'flex', alignItems: 'center', gap: '8px', 
-                                padding: '8px 16px', border: '1px solid #e2e8f0', 
-                                color: '#64748b', background: 'white', borderRadius: '8px',
-                                cursor: 'pointer', fontWeight: '600', transition: 'all 0.2s'
-                            }}
                         >
                             <LogOut size={16} /> Salir
                         </button>

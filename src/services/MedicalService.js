@@ -1,60 +1,44 @@
+import axios from 'axios';
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-const getHeaders = () => {
-  const token = localStorage.getItem('token');
-  return {
+const getConfig = () => ({
+  headers: {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
-  };
-};
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  }
+});
 
 export const createMedicalRecord = async (data) => {
   try {
-    const response = await fetch(`${API_URL}/medical/records`, {
-      method: 'POST',
-      headers: getHeaders(),
-      body: JSON.stringify(data)
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'Error al crear ficha');
-    }
-    
-    return await response.json();
+    const response = await axios.post(`${API_URL}/medical/records`, data, getConfig());
+    return response.data;
   } catch (error) {
-    throw error;
+    console.error("Error en createMedicalRecord:", error);
+    throw new Error(error.response?.data?.error || 'Error al crear ficha');
   }
 };
 
 export const getMedicalRecord = async (userId) => {
   try {
-    const response = await fetch(`${API_URL}/medical/records/${userId}`, {
-        headers: getHeaders()
-    });
-    
-    if (!response.ok) {
-        if(response.status === 404) return null;
-        throw new Error('Error al cargar datos');
-    }
-    
-    return await response.json();
+    const response = await axios.get(`${API_URL}/medical/records/${userId}`, getConfig());
+    return response.data;
   } catch (error) {
+    if (error.response && error.response.status === 404) {
+        console.warn("Ficha médica no encontrada (404) para usuario:", userId);
+        return null;
+    }
+    console.error("Error de red en getMedicalRecord:", error.message);
     return null;
   }
 };
 
 export const updateMedicalRecord = async (userId, updatedData) => {
   try {
-    const response = await fetch(`${API_URL}/medical/records/${userId}`, {
-      method: 'PUT',
-      headers: getHeaders(),
-      body: JSON.stringify(updatedData),
-    });
-
-    if (!response.ok) throw new Error('Error al actualizar datos');
-    return await response.json();
+    const response = await axios.put(`${API_URL}/medical/records/${userId}`, updatedData, getConfig());
+    return response.data;
   } catch (error) {
-    throw error;
+    console.error("Error en updateMedicalRecord:", error);
+    throw new Error(error.response?.data?.error || 'Error al actualizar datos');
   }
 };

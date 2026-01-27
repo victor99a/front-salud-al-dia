@@ -431,6 +431,77 @@
     color: #64748b;
 }
 
+.capitalize-text {
+    text-transform: capitalize;
+}
+
+.sos-section-embedded.no-record {
+    border-color: #e2e8f0;
+    border-left-color: #94a3b8;
+    border-right-color: #94a3b8;
+    background: #f8fafc;
+}
+
+.sos-label.gray {
+    color: #64748b;
+}
+
+.no-record-text {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin: 0;
+}
+
+.condition-text {
+    font-size: 0.9rem;
+    color: #334155;
+    font-weight: 700;
+    margin: 0;
+}
+
+.imc-value {
+    color: #1e40af;
+}
+
+.section-header h3 {
+    margin: 0;
+    color: #1e293b;
+    font-weight: 800;
+}
+
+.badges-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+}
+
+.status-badge-mini {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.status-badge-mini.badge-danger {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.status-badge-mini.badge-warning {
+    background-color: #ffedd5;
+    color: #9a3412;
+    border: 1px solid #fed7aa;
+}
+
+.status-cell {
+    vertical-align: top;
+}
+
 @media (max-width: 900px) {
     .file-grid { grid-template-columns: 1fr; }
     .vitals-cards-grid { grid-template-columns: 1fr; }

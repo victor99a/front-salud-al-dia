@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { isAdmin } from '../../services/AuthService';
-
-const ProtectedRoute = ({ children }) => {
+import { isAdmin } from '../../services/AuthService'; 
+const AdminGuard = ({ children }) => {
   const [authorized, setAuthorized] = useState(null);
 
   useEffect(() => {
@@ -20,4 +19,4 @@ const ProtectedRoute = ({ children }) => {
   return authorized ? children : <Navigate to="/" replace />;
 };
 
-export default ProtectedRoute;
+export default AdminGuard;
