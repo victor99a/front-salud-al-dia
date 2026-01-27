@@ -13,7 +13,7 @@ import PressureCard from '../components/Dashboard/PressureCard';
 import '../Styles/SpecialistStyles.css';
 
 const PatientFile = () => {
-  const { id } = useParams(); 
+  const { id: userId } = useParams(); 
   const navigate = useNavigate();
   const [medicalRecord, setMedicalRecord] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
@@ -25,11 +25,12 @@ const PatientFile = () => {
     const loadData = async () => {
       try {
         const token = localStorage.getItem('token');
+        
         const [record, dash, hist, profile] = await Promise.all([
-            getMedicalRecord(id),
-            getPatientDashboardData(id),
-            getPatientHistory(id),
-            getUserProfile(id, token)
+            getMedicalRecord(userId),
+            getPatientDashboardData(userId),
+            getPatientHistory(userId),
+            getUserProfile(userId, token)
         ]);
 
         setMedicalRecord(record);
@@ -43,8 +44,8 @@ const PatientFile = () => {
         setLoading(false);
       }
     };
-    loadData();
-  }, [id]);
+    if (userId) loadData();
+  }, [userId]);
 
   const calculateIMC = (weight, height) => {
     if (!weight || !height || height === 0) return '-';
@@ -63,7 +64,7 @@ const PatientFile = () => {
             </button>
             <div className="header-center-info">
                 <h1>Ficha Clínica Digital</h1>
-                <p className="patient-subtitle">ID Sistema: {id}</p>
+                <p className="patient-subtitle">Paciente: {userProfile ? `${userProfile.first_names} ${userProfile.last_names}` : userId}</p>
             </div>
             <div className="placeholder-side"></div>
         </header>
@@ -76,7 +77,7 @@ const PatientFile = () => {
                 <div className="info-group">
                     <label><User size={14}/> Nombre Completo</label>
                     <span className="value-text" style={{textTransform: 'capitalize'}}>
-                        {userProfile ? `${userProfile.first_names} ${userProfile.last_names}` : 'No encontrado'}
+                        {userProfile ? `${userProfile.first_names} ${userProfile.last_names}` : 'No disponible'}
                     </span>
                 </div>
 
@@ -93,7 +94,7 @@ const PatientFile = () => {
                           <FileWarning size={14} /> Ficha Médica Inexistente
                       </div>
                       <p style={{fontSize: '0.85rem', color: '#64748b', margin: 0}}>
-                          Este usuario no ha completado su registro inicial de salud o no ha otorgado consentimiento de datos.
+                          Este usuario no ha completado su registro inicial de salud.
                       </p>
                   </div>
                 ) : (
@@ -145,7 +146,7 @@ const PatientFile = () => {
                             <span>{medicalRecord.emergency_contact_name || 'No registrado'}</span>
                         </div>
                         <div className="sos-data-row">
-                            <strong>Número de Télefono:</strong>
+                            <strong>Número:</strong>
                             <span className="sos-phone-black">{medicalRecord.emergency_contact_phone || '---'}</span>
                         </div>
                     </div>
@@ -169,7 +170,7 @@ const PatientFile = () => {
                 <div className="history-section-mini">
                     <div className="section-header">
                         <h3 style={{margin: 0, color: '#1e293b', fontWeight: 800}}>Historial de Controles</h3>
-                        <button className="btn-download" onClick={() => window.open(getDownloadUrl(id), '_blank')}>
+                        <button className="btn-download" onClick={() => window.open(getDownloadUrl(userId), '_blank')}>
                             <Download size={16} /> Exportar PDF
                         </button>
                     </div>
@@ -197,7 +198,7 @@ const PatientFile = () => {
                                             {(h.glucose > 140 || h.systolic >= 140) ? <span className="status-dot red">Alerta</span> : <span className="status-dot green">Normal</span>}
                                         </td>
                                     </tr>
-                                )) : <tr><td colSpan="4" className="no-data">Sin registros historicos</td></tr>}
+                                )) : <tr><td colSpan="4" className="no-data">Sin registros históricos</td></tr>}
                             </tbody>
                         </table>
                     </div>

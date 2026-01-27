@@ -21,12 +21,12 @@ export const getPatients = async () => {
 
 export const getMedicalRecord = async (userId) => {
   try {
+    // Esta ruta coincide con el backend: app.get('/medical/records/:user_id')
     const response = await fetch(`${API_USERS_URL}/medical/records/${userId}`, { 
         headers: getHeaders() 
     });
     
     if (response.status === 404) return null;
-
     if (!response.ok) return null;
 
     return await response.json();
