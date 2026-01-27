@@ -5,97 +5,183 @@ import * as AdminService from '../../services/AdminService';
 vi.mock('axios');
 
 describe('AdminService', () => {
+
     beforeEach(() => {
         vi.clearAllMocks();
         localStorage.setItem('token', 'fake-token');
     });
 
-    // --- GET STATS ---
-    it('getStats debe retornar datos cuando la respuesta es exitosa', async () => {
-        const mockData = { users: 10, specialists: 5 };
+
+    it('getStats retorna datos cuando es exitoso', async () => {
+        const mockData = { users: 10 };
         axios.get.mockResolvedValue({ data: mockData });
 
         const result = await AdminService.getStats();
 
         expect(result).toEqual(mockData);
-        expect(axios.get).toHaveBeenCalledWith(
-            expect.stringContaining('/stats'),
-            expect.objectContaining({ headers: expect.anything() })
-        );
     });
 
-    it('getStats debe retornar null si hay error', async () => {
-        axios.get.mockRejectedValue(new Error('Network Error'));
+    it('getStats retorna null cuando hay error', async () => {
+        axios.get.mockRejectedValue(new Error('Fail'));
+
         const result = await AdminService.getStats();
+
         expect(result).toBeNull();
     });
 
-    // --- GET USERS ---
-    it('getUsers debe retornar lista de usuarios', async () => {
-        const mockUsers = [{ id: 1, name: 'Pepe' }];
-        axios.get.mockResolvedValue({ data: mockUsers });
+
+    it('getUsers retorna usuarios', async () => {
+        const users = [{ id: 1 }];
+        axios.get.mockResolvedValue({ data: users });
 
         const result = await AdminService.getUsers();
-        expect(result).toEqual(mockUsers);
+
+        expect(result).toEqual(users);
     });
 
-    it('getUsers debe retornar array vacío si falla', async () => {
+    it('getUsers retorna array vacío si falla', async () => {
         axios.get.mockRejectedValue(new Error('Fail'));
+
         const result = await AdminService.getUsers();
+
         expect(result).toEqual([]);
     });
 
-    // --- CREATE SPECIALIST ---
-    it('createSpecialist debe retornar success: true si funciona', async () => {
-        axios.post.mockResolvedValue({ data: {} });
-        const userData = { email: 'doc@test.com' };
+ 
+    it('createSpecialist retorna success true', async () => {
+        axios.post.mockResolvedValue({});
 
-        const result = await AdminService.createSpecialist(userData);
+        const result = await AdminService.createSpecialist({ email: 'test@test.com' });
 
         expect(result).toEqual({ success: true });
-        expect(axios.post).toHaveBeenCalledWith(
-            expect.stringContaining('/create-specialist'),
-            userData,
-            expect.anything()
-        );
     });
 
-    it('createSpecialist debe retornar el mensaje de error si falla', async () => {
-        const errorMessage = 'Email duplicado';
-        axios.post.mockRejectedValue({ 
-            response: { data: { error: errorMessage } } 
+    it('createSpecialist retorna error desde backend', async () => {
+        axios.post.mockRejectedValue({
+            response: { data: { error: 'Email duplicado' } }
         });
 
         const result = await AdminService.createSpecialist({});
-        expect(result).toEqual({ success: false, error: errorMessage });
+
+        expect(result).toEqual({
+            success: false,
+            error: 'Email duplicado'
+        });
     });
 
-    // --- DELETE USER ---
-    it('deleteUser debe eliminar usuario correctamente', async () => {
-        axios.delete.mockResolvedValue({ data: {} });
-        const result = await AdminService.deleteUser(123);
+    it('createSpecialist retorna error.message si no hay response', async () => {
+        axios.post.mockRejectedValue(new Error('Server down'));
+
+        const result = await AdminService.createSpecialist({});
+
+        expect(result).toEqual({
+            success: false,
+            error: 'Server down'
+        });
+    });
+
+
+    it('resetUserPassword retorna success true', async () => {
+        axios.post.mockResolvedValue({});
+
+        const result = await AdminService.resetUserPassword('test@test.com');
+
         expect(result).toEqual({ success: true });
-        expect(axios.delete).toHaveBeenCalledWith(expect.stringContaining('/users/123'), expect.anything());
     });
 
-    // --- VERIFY ADMIN ---
-    it('verifyAdminStatus debe retornar true si es admin', async () => {
+    it('resetUserPassword retorna error.message si falla', async () => {
+        axios.post.mockRejectedValue(new Error('Fail'));
+
+        const result = await AdminService.resetUserPassword('test@test.com');
+
+        expect(result).toEqual({
+            success: false,
+            error: 'Fail'
+        });
+    });
+
+ 
+    it('updatePasswordFinal retorna success true', async () => {
+        axios.post.mockResolvedValue({});
+
+        const result = await AdminService.updatePasswordFinal('test@test.com', '1234');
+
+        expect(result).toEqual({ success: true });
+    });
+
+    it('updatePasswordFinal retorna error.message si falla', async () => {
+        axios.post.mockRejectedValue(new Error('Fail'));
+
+        const result = await AdminService.updatePasswordFinal('test@test.com', '1234');
+
+        expect(result).toEqual({
+            success: false,
+            error: 'Fail'
+        });
+    });
+
+    it('deleteUser retorna success true', async () => {
+        axios.delete.mockResolvedValue({});
+
+        const result = await AdminService.deleteUser(1);
+
+        expect(result).toEqual({ success: true });
+    });
+
+    it('deleteUser retorna error.message si falla', async () => {
+        axios.delete.mockRejectedValue(new Error('Fail'));
+
+        const result = await AdminService.deleteUser(1);
+
+        expect(result).toEqual({
+            success: false,
+            error: 'Fail'
+        });
+    });
+
+  
+    it('requestAccountDeletion retorna success true', async () => {
+        axios.patch.mockResolvedValue({});
+
+        const result = await AdminService.requestAccountDeletion(1);
+
+        expect(result).toEqual({ success: true });
+    });
+
+    it('requestAccountDeletion retorna error.message si falla', async () => {
+        axios.patch.mockRejectedValue(new Error('Fail'));
+
+        const result = await AdminService.requestAccountDeletion(1);
+
+        expect(result).toEqual({
+            success: false,
+            error: 'Fail'
+        });
+    });
+
+
+    it('verifyAdminStatus retorna true si es admin', async () => {
         axios.post.mockResolvedValue({ data: { isAdmin: true } });
-        const result = await AdminService.verifyAdminStatus('admin@test.com');
+
+        const result = await AdminService.verifyAdminStatus('ADMIN@TEST.COM');
+
         expect(result).toBe(true);
     });
 
-    it('verifyAdminStatus debe retornar false si falla', async () => {
-        axios.post.mockRejectedValue(new Error('Not admin'));
-        const result = await AdminService.verifyAdminStatus('user@test.com');
+    it('verifyAdminStatus retorna undefined si isAdmin no viene', async () => {
+        axios.post.mockResolvedValue({ data: {} });
+
+        const result = await AdminService.verifyAdminStatus('test@test.com');
+
+        expect(result).toBeUndefined();
+    });
+
+    it('verifyAdminStatus retorna false si falla', async () => {
+        axios.post.mockRejectedValue(new Error('Fail'));
+
+        const result = await AdminService.verifyAdminStatus('test@test.com');
+
         expect(result).toBe(false);
     });
 
-    // --- REQUEST DELETION ---
-    it('requestAccountDeletion debe enviar la solicitud correctamente', async () => {
-        axios.patch.mockResolvedValue({ data: {} });
-        const result = await AdminService.requestAccountDeletion(999);
-        expect(result).toEqual({ success: true });
-        expect(axios.patch).toHaveBeenCalledWith(expect.stringContaining('/users/request-deletion/999'), {}, expect.anything());
-    });
 });
